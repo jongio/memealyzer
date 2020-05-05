@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Azure;
@@ -28,16 +27,21 @@ namespace azsdkdemoapi
             // 2. Add Azure SDK clients via AddAzureClients
             services.AddAzureClients(builder =>
             {
-                builder.AddBlobServiceClient(new Uri(Environment.GetEnvironmentVariable("AZURE_STORAGE_BLOB_URI")))
+                // 3. Read in default settings, including retry policies
+                builder.ConfigureDefaults(Configuration.GetSection("AzureDefaults"));
+                
+                // 4. Add the blob client
+                builder.AddBlobServiceClient(Configuration.GetSection("AzureBlobStorage"))
                     .ConfigureOptions((options, provider) =>
                     {
-                        options.Retry.MaxRetries = 10;
-                        options.Retry.Delay = TimeSpan.FromSeconds(3);
-                        options.Diagnostics.IsLoggingEnabled = true;
                         options.AddPolicy(provider.GetService<SimpleTracingPolicy>(), HttpPipelinePosition.PerCall);
-                    }).WithCredential(new DefaultAzureCredential());
+                    });
+                
+                // 5. Add DefaultAzureCredential for all clients
+                builder.UseCredential(new DefaultAzureCredential());
             });
 
+            // 6. Add App Insights
             services.AddApplicationInsightsTelemetry();
 
         }

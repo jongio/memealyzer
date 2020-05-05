@@ -33,7 +33,7 @@ resource "azurerm_app_service" "app" {
   }
 
   app_settings = {
-      "AZURE_STORAGE_BLOB_URI" = azurerm_storage_account.storage.primary_blob_endpoint,
+      "AZUREBLOBSTORAGE:SERVICEURI" = azurerm_storage_account.storage.primary_blob_endpoint,
       "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.logging.instrumentation_key
   }
 
@@ -103,4 +103,8 @@ resource "azurerm_role_assignment" "user_cli_storage" {
 
 output "storage_uri" {
     value = azurerm_storage_account.storage.primary_blob_endpoint
+}
+
+output "ai_key" {
+    value = azurerm_application_insights.logging.instrumentation_key
 }

@@ -19,7 +19,7 @@
       },
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "AZURE_STORAGE_BLOB_URI": "https://azsdkdemo2storage.blob.core.windows.net/"
+        "AZUREBLOBSTORAGE__SERVICEURI": "https://azsdkdemo4storage.blob.core.windows.net/"
       },
       "sourceFileMap": {
         "/Views": "${workspaceFolder}/Views"

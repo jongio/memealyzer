@@ -17,6 +17,8 @@ public class SimpleTracingPolicy : HttpPipelinePolicy
     public override async ValueTask ProcessAsync(HttpMessage message, ReadOnlyMemory<HttpPipelinePolicy> pipeline)
     {
         _logger.LogInformation($">> Request: {message.Request.Method} {message.Request.Uri}");
+        
+        // As an example, you can add custom headers via policies
         message.Request.Headers.Add("x-custom-header", DateTime.Now.Ticks.ToString());
         await ProcessNextAsync(message, pipeline);
         _logger.LogInformation($">> Response: {message.Response.Status} from {message.Request.Method} {message.Request.Uri}\n");
