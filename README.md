@@ -72,11 +72,10 @@ Run the following Terraform command to retrive the storage primary endpoint.
 
 `terraform output storage_uri`
 
-### Set Storage Aaccount Blob URI
+### Set Storage Account Blob URI
 
 1. Rename `/src/azsdkdemoconsole/.env.tmp` to `.env` and open it.
 1. Set the `AZURE_STORAGE_BLOB_URI` variable to the full storage account blob url from the previous step.
-1. Open `/src/azsdkdemoapi/.vscode/launch.json` and set `configuration/env/AZURE_STORAGE_BLOB_URI` to the full storage account blob url from the previous step.
 
 ### Azure CLI Login
 
@@ -91,6 +90,13 @@ Run the following Terraform command to retrive the storage primary endpoint.
 1. Hit F5 to debug the application and step through it with your audience.
 
 ## API Demo
+
+### Set Storage Account Blob URI
+
+1. Open `/src/azsdkdemoapi/.vscode/launch.json` and set:
+ - `configuration/env/AZUREBLOBSTORAGE:SERVICEURI` to the full storage account blob url returned from the terraform deployment.
+ - `configuration/env/APPINSIGHTS_INSTRUMENTATIONKEY` to the App Insights key returned from the terraform deployment.
+
 
 ### Run App Locally
 
@@ -153,3 +159,7 @@ Run the following Terraform command to retrive the storage primary endpoint.
    ```
 
    If you do not see those lines, that means that you started the log streaming after the first request. Since tokens are now obtained at the app level, you'll only see those Identity related messages once per app start, not once per request.
+
+### View the Logs in App Insights
+
+1. Go to App Insights in the Portal, click Logs, and then click the Trace query.  You will see the Azure Identity logs.  Be patient as it could take a few minutes from when the API was hit to when the trace appears.
