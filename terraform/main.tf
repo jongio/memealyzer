@@ -33,12 +33,8 @@ resource "azurerm_app_service" "app" {
   }
 
   app_settings = {
-      "AZURE_STORAGE_BLOB_URI" = azurerm_storage_account.storage.primary_blob_endpoint
-  }
-
-  site_config {
-    dotnet_framework_version = "v4.0"
-    scm_type                 = "LocalGit"
+      "AZURE_STORAGE_BLOB_URI" = azurerm_storage_account.storage.primary_blob_endpoint,
+      "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.logging.instrumentation_key
   }
 
   logs {
@@ -49,7 +45,38 @@ resource "azurerm_app_service" "app" {
         }
     }
   }
+  
+  depends_on = [azurerm_application_insights.logging]
 }
+
+resource "azurerm_application_insights" "logging" {
+  name                = "${var.basename}ai"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  application_type    = "web"
+}
+
+/*
+# The following was an attempt to turn on application-logging: filesystem with terraform native, wasn't able to figure it out, so using cli command below.
+resource "azurerm_log_analytics_workspace" "loganalytics" {
+  name                = "${azurerm_resource_group.rg.name}loganalytics"
+  resource_group_name = azurerm_resource_group.rg.name
+  location = var.location
+  sku = "PerGB2018"
+  retention_in_days = 30
+}
+
+resource "azurerm_monitor_diagnostic_setting" "logs" {
+  name               = "logs"
+  target_resource_id = azurerm_app_service.app.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.loganalytics.id
+
+  log {
+    category = "Info"
+  }
+}
+*/
+
 
 resource "null_resource" "azure-cli" {
     triggers = {

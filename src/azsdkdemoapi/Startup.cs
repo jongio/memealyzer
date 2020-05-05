@@ -37,6 +37,9 @@ namespace azsdkdemoapi
                         options.AddPolicy(provider.GetService<SimpleTracingPolicy>(), HttpPipelinePosition.PerCall);
                     }).WithCredential(new DefaultAzureCredential());
             });
+
+            services.AddApplicationInsightsTelemetry();
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
