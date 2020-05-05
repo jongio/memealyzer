@@ -18,7 +18,7 @@ namespace azsdkdemoconsole
             Env.Load("../../.env");
 
             // Set blob client options for more retries:
-            var options = new ClientOptions()
+            var options = new BlobClientOptions()
             {
                 Retry = {
                     MaxRetries = 10,
