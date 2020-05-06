@@ -5,19 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-
+using Azure.Identity;
+using System;
 
 namespace azsdkdemoapi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BlobController : ControllerBase
+    public class BlobDirectController : ControllerBase
     {
-        private readonly BlobServiceClient serviceClient;
 
-        public BlobController(BlobServiceClient serviceClient)
+        public BlobDirectController()
         {
-            this.serviceClient = serviceClient;
         }
 
         // GET: api/Blob
@@ -25,22 +24,21 @@ namespace azsdkdemoapi.Controllers
         public async Task<object> Get()
         {
             // Create a container in our Storage account:
-            var containerClient = this.serviceClient.GetBlobContainerClient("blobs");
+            var serviceUri = new Uri(Environment.GetEnvironmentVariable("AZUREBLOBSTORAGE__SERVICEURI"));
+            var serviceClient = new BlobServiceClient(serviceUri, new DefaultAzureCredential());
+            
+            var containerClient = serviceClient.GetBlobContainerClient("blobs");
             await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
 
             // Upload a blob to our container:
             var blobClient = containerClient.GetBlobClient("blob.txt");
-
-            var blob = await blobClient.UploadAsync(
-                new MemoryStream(
-                    Encoding.UTF8.GetBytes("Click here to view the latest Azure SDK releases: https://aka.ms/azsdk/releases")), 
-                    overwrite: true);
+            var blob = await blobClient.UploadAsync(new MemoryStream(Encoding.UTF8.GetBytes("Click here to view the latest Azure SDK releases: https://aka.ms/azsdk/releases")), overwrite: true);
 
             // Return the blob contents:
             var blobDownload = await blobClient.DownloadAsync();
             
             using var blobStreamReader = new StreamReader(blobDownload.Value.Content);
-            
+
             return new {Content = blobStreamReader.ReadToEnd()};
         }
     }

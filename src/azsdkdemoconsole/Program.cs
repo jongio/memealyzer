@@ -3,7 +3,6 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Azure.Core;
-using Azure.Core.Pipeline;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
@@ -11,12 +10,10 @@ using DotNetEnv;
 
 namespace azsdkdemoconsole
 {
-    class Program
+    partial class Program
     {
         static async Task Main(string[] args)
         {
-            Env.Load("../../.env");
-
             // Set blob client options for more retries:
             var options = new BlobClientOptions()
             {
@@ -62,24 +59,10 @@ namespace azsdkdemoconsole
 
             Console.Read();
         }
-    }
 
-    public class SimpleTracingPolicy : HttpPipelinePolicy
-    {
-        public override async ValueTask ProcessAsync(HttpMessage message, ReadOnlyMemory<HttpPipelinePolicy> pipeline)
+        static Program()
         {
-            Console.WriteLine($">> Request: {message.Request.Method} {message.Request.Uri}");
-            await ProcessNextAsync(message, pipeline);
-            Console.WriteLine($">> Response: {message.Response.Status} from {message.Request.Method} {message.Request.Uri}\n");
+            Env.Load("../../.env");
         }
-
-        #region public override void Process
-        public override void Process(HttpMessage message, ReadOnlyMemory<HttpPipelinePolicy> pipeline)
-        {
-            Console.WriteLine($">> Request: {message.Request.Uri}");
-            ProcessNext(message, pipeline);
-            Console.WriteLine($">> Response: {message.Response.Status} {message.Request.Method} {message.Request.Uri}");
-        }
-        #endregion public override void Process
     }
 }
