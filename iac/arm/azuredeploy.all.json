@@ -10,12 +10,7 @@
     },
     "variables": {
         "location": "[deployment().location]",
-        "rg": "[concat(parameters('baseName'), 'rg')]",
-        "storage": "[concat(parameters('baseName'), 'storage')]",
-        "plan": "[concat(parameters('baseName'), 'plan')]",
-        "app": "[concat(parameters('baseName'), 'app')]",
-        "ai": "[concat(parameters('baseName'), 'ai')]"
-
+        "rg": "[concat(parameters('baseName'), 'rg')]"
     },
     "resources": [
         {
@@ -38,103 +33,15 @@
             "properties": {
                 "mode": "Incremental",
                 "expressionEvaluationOptions": {
-                    "scope": "outer"
+                    "scope": "inner"
                 },
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "resources": [
-                        {
-                            "name": "[variables('storage')]",
-                            "type": "Microsoft.Storage/storageAccounts",
-                            "apiVersion": "2019-06-01",
-                            "tags": {
-                                "displayName": "storage"
-                            },
-                            "location": "[variables('location')]",
-                            "kind": "StorageV2",
-                            "sku": {
-                                "name": "Standard_LRS",
-                                "tier": "Standard"
-                            }
-                        },
-                        {
-                            "name": "[variables('plan')]",
-                            "type": "Microsoft.Web/serverfarms",
-                            "apiVersion": "2018-02-01",
-                            "location": "[variables('location')]",
-                            "sku": {
-                                "name": "B1",
-                                "capacity": 1
-                            },
-                            "tags": {
-                                "displayName": "plan"
-                            }
-                        },
-                        {
-                            "name": "[variables('app')]",
-                            "type": "Microsoft.Web/sites",
-                            "apiVersion": "2018-11-01",
-                            "location": "[variables('location')]",
-                            "tags": {
-                                "displayName": "app"
-                            },
-                            "dependsOn": [
-                                "[resourceId('Microsoft.Web/serverfarms', variables('plan'))]",
-                                "[resourceId('Microsoft.Storage/storageAccounts', variables('storage'))]",
-                                "[resourceId('Microsoft.Resources/resourceGroups', variables('rg'))]"
-
-
-                            ],
-                            "properties": {
-
-                                "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', variables('rg'), '/providers/Microsoft.Web/serverfarms/', variables('plan'))]",
-                                "siteConfig": {
-                                    "appSettings": [
-                                        {
-                                            "name": "AZUREBLOBSTORAGE:SERVICEURI",
-                                            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('storage')), '2019-06-01')]"
-                                            //"value": "[reference(concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', variables('rg'), '/providers/Microsoft.Storage/storageAccounts/', variables('storage')), '2019-06-01')]"
-
-
-                                        },
-                                        {
-                                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                            "value": "]"
-                                        }
-                                    ]
-                                },
-                                "applicationLogs": {
-                                    "fileSystem": {
-                                        "level": "Information"
-                                    }
-                                },
-                                "httpLogs": {
-                                    "fileSystem": {
-                                        "enabled": true,
-                                        "retentionInDays": 1,
-                                        "retentionInMb": 25
-                                    }
-                                }
-                            },
-                            "identity": {
-                                "type": "SystemAssigned"
-                            }
-
-                        },
-                        {
-                            "apiVersion": "2015-05-01",
-                            "name": "[variables('ai')]",
-                            "type": "Microsoft.Insights/components",
-                            "location": "[variables('location')]",
-                            "properties": {
-                                "ApplicationId": "[variables('app')]",
-                                "Application_Type": "web"
-                            }
-                        }
-                    ],
-                    "outputs": {
+                "parameters":  {
+                    "baseName": {
+                        "value": "[parameters('baseName')]"
                     }
+                },
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/jongio/azsdkdemo/master/iac/arm/azuredeploy.resources.json"
                 }
 
             }

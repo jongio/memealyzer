@@ -107,14 +107,15 @@
         },
         {
             "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2018-01-01-preview",
+            "apiVersion": "2018-09-01-preview",
             "name": "[guid(resourceGroup().id)]",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', variables('app'))]"
             ],
             "properties": {
                 "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
-                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('app')), '2018-11-01', 'Full').identity.principalId]"
+                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('app')), '2018-11-01', 'Full').identity.principalId]",
+                "principalType": "ServicePrincipal"
             }
         }
     ],
