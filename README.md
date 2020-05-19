@@ -67,8 +67,8 @@ Go to the ["Install Terraform"](https://learn.hashicorp.com/terraform/getting-st
 ### Deploy Azure Resources with ARM and PowerShell
 
 1. Open a PowerShell Terminal
-2. Open `/iac/arm/deploytemplate.ps1` and change baseName, azureUsername, and location to suit your needs.  azureUsername is the name of the local user that is signed into PowerShell.
-3. Run `/iac/arm/deploytemplate.ps1`. Navigate to the arm folder and run `.\deploytemplate.ps1`
+2. Open `/iac/arm/deployScriptExample.ps1` and change baseName, localUserName, and location to suit your needs.  localUserName is the name of the local user that is signed into PowerShell.
+3. Run `/iac/arm/deployScriptExample.ps1`. Navigate to the arm folder and run `.\deployScriptExample.ps1`
 
 ## Console App Demo
 

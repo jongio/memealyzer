@@ -5,7 +5,7 @@ resource "azurerm_resource_group" "rg" {
 
 resource "azurerm_storage_account" "storage" {
   name                     = "${var.basename}storage"
-  location = var.location
+  location                 = var.location
   resource_group_name      = azurerm_resource_group.rg.name
   account_tier             = "Standard"
   account_replication_type = "LRS"
@@ -26,26 +26,26 @@ resource "azurerm_app_service" "app" {
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.plan.id
-  
+
 
   identity {
-      type = "SystemAssigned"
+    type = "SystemAssigned"
   }
 
   app_settings = {
-      "AZUREBLOBSTORAGE:SERVICEURI" = azurerm_storage_account.storage.primary_blob_endpoint,
-      "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.logging.instrumentation_key
+    "AZUREBLOBSTORAGE:SERVICEURI"    = azurerm_storage_account.storage.primary_blob_endpoint,
+    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.logging.instrumentation_key
   }
 
   logs {
     http_logs {
-        file_system {
-            retention_in_days = 1
-            retention_in_mb = 25
-        }
+      file_system {
+        retention_in_days = 1
+        retention_in_mb   = 25
+      }
     }
   }
-  
+
   depends_on = [azurerm_application_insights.logging]
 }
 
@@ -56,32 +56,10 @@ resource "azurerm_application_insights" "logging" {
   application_type    = "web"
 }
 
-/*
-# The following was an attempt to turn on application-logging: filesystem with terraform native, wasn't able to figure it out, so using cli command below.
-resource "azurerm_log_analytics_workspace" "loganalytics" {
-  name                = "${azurerm_resource_group.rg.name}loganalytics"
-  resource_group_name = azurerm_resource_group.rg.name
-  location = var.location
-  sku = "PerGB2018"
-  retention_in_days = 30
-}
-
-resource "azurerm_monitor_diagnostic_setting" "logs" {
-  name               = "logs"
-  target_resource_id = azurerm_app_service.app.id
-  log_analytics_workspace_id = azurerm_log_analytics_workspace.loganalytics.id
-
-  log {
-    category = "Info"
-  }
-}
-*/
-
-
 resource "null_resource" "azure-cli" {
-    triggers = {
-        default_trigger = timestamp()
-    }
+  triggers = {
+    default_trigger = timestamp()
+  }
   provisioner "local-exec" {
     command = "az webapp log config --application-logging true --level information -n ${azurerm_app_service.app.name} -g ${azurerm_resource_group.rg.name} -o none"
   }
@@ -102,9 +80,9 @@ resource "azurerm_role_assignment" "user_cli_storage" {
 }
 
 output "storage_uri" {
-    value = azurerm_storage_account.storage.primary_blob_endpoint
+  value = azurerm_storage_account.storage.primary_blob_endpoint
 }
 
 output "ai_key" {
-    value = azurerm_application_insights.logging.instrumentation_key
+  value = azurerm_application_insights.logging.instrumentation_key
 }
