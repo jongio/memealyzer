@@ -7,8 +7,6 @@
             "defaultValue": ""
         }
     },
-    "functions": [
-    ],
     "variables": {
         "location": "[resourceGroup().location]",
         "storage": "[concat(parameters('baseName'), 'storage')]",
