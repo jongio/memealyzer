@@ -57,7 +57,7 @@ namespace azsdkdemoconsole
             // Write the blob contents
             Console.WriteLine($"Content: {blobStreamReader.ReadToEnd()}");
 
-            Console.Read();
+              
         }
 
         static Program()

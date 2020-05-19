@@ -42,7 +42,7 @@ We'll use Terraform to create the following Azure resources:
 
 It will also assign the "Storage Blob Data Contributor" role to the App Service Managed Identity and the to currently logged in Azure CLI user.
 
-> See `/terraform/main.tf` to see details of what is deployed with the Terraform script.
+> See `/iac/terraform/main.tf` to see details of what is deployed with the Terraform script.
 
 #### Install Terraform
 
@@ -63,6 +63,12 @@ Go to the ["Install Terraform"](https://learn.hashicorp.com/terraform/getting-st
 1. Run the following command to create the Azure resources.
 
    `terraform apply`
+
+### Deploy Azure Resources with ARM and PowerShell
+
+1. Open a PowerShell Terminal
+2. Open `/iac/arm/deploytemplate.ps1` and change baseName, azureUsername, and location to suit your needs.  azureUsername is the name of the local user that is signed into PowerShell.
+3. Run `/iac/arm/deploytemplate.ps1`. Navigate to the arm folder and run `.\deploytemplate.ps1`
 
 ## Console App Demo
 

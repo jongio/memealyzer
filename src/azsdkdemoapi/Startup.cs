@@ -29,14 +29,14 @@ namespace azsdkdemoapi
             {
                 // 3. Read in default settings, including retry policies
                 builder.ConfigureDefaults(Configuration.GetSection("AzureDefaults"));
-                
+
                 // 4. Add the blob client
                 builder.AddBlobServiceClient(Configuration.GetSection("AzureBlobStorage"))
                     .ConfigureOptions((options, provider) =>
                     {
                         options.AddPolicy(provider.GetService<SimpleTracingPolicy>(), HttpPipelinePosition.PerCall);
                     });
-                
+
                 // 5. Add DefaultAzureCredential for all clients
                 builder.UseCredential(new DefaultAzureCredential());
             });
