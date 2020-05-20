@@ -1,0 +1,132 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "baseName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "location": "[resourceGroup().location]",
+        "storage": "[concat(parameters('baseName'), 'storage')]",
+        "plan": "[concat(parameters('baseName'), 'plan')]",
+        "app": "[concat(parameters('baseName'), 'app')]",
+        "ai": "[concat(parameters('baseName'), 'ai')]"
+    },
+    "resources": [
+        {
+            "name": "[variables('storage')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "tags": {
+                "displayName": "storage"
+            },
+            "location": "[variables('location')]",
+            "kind": "StorageV2",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            }
+        },
+        {
+            "name": "[variables('plan')]",
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-02-01",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "B1",
+                "capacity": 1
+            },
+            "tags": {
+                "displayName": "plan"
+            },
+            "properties": {
+            }
+        },
+        {
+            "name": "[variables('app')]",
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "location": "[variables('location')]",
+            "tags": {
+                "displayName": "app"
+            },
+            "properties": {
+                "name": "[variables('app')]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('plan'))]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "AZUREBLOBSTORAGE:SERVICEURI",
+                            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('storage'))).primaryEndpoints.blob]"
+                        },
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "[reference(resourceId('Microsoft.Insights/components', variables('ai'))).InstrumentationKey]"
+                        }
+                    ]
+                }
+            },
+            "identity": {
+                "type": "SystemAssigned"
+            }
+        },
+        {
+            "name": "[concat(variables('app'), '/logs')]",
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2018-11-01",
+            "location": "[variables('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('app'))]"
+            ],
+            "properties": {
+                "applicationLogs": {
+                    "fileSystem": {
+                        "level": "Information"
+                    }
+                },
+                "httpLogs": {
+                    "fileSystem": {
+                        "retentionInMb": 35,
+                        "retentionInDays": 10,
+                        "enabled": true
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2015-05-01",
+            "name": "[variables('ai')]",
+            "type": "Microsoft.Insights/components",
+            "location": "[variables('location')]",
+            "properties": {
+                "ApplicationId": "[variables('app')]",
+                "Application_Type": "web"
+            },
+            "kind": "web"
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[guid(resourceGroup().id)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('app'))]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('app')), '2018-11-01', 'Full').identity.principalId]",
+                "principalType": "ServicePrincipal"
+            }
+        }
+    ],
+    "outputs": {
+        "storage_uri": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('storage'))).primaryEndpoints.blob]"
+        },
+        "ai_key": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.Insights/components', variables('ai'))).InstrumentationKey]"
+        }
+    }
+}

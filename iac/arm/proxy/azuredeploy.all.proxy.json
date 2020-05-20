@@ -9,7 +9,8 @@
     },
     "variables": {
         "location": "[deployment().location]",
-        "rg": "[concat(parameters('baseName'), 'rg')]"
+        "rg": "[concat(parameters('baseName'), 'rg')]",
+        "assetsBaseUrl": "[uri(deployment().properties.templateLink.uri, './')]"
     },
     "resources": [
         {
@@ -34,13 +35,13 @@
                 "expressionEvaluationOptions": {
                     "scope": "inner"
                 },
-                "parameters":  {
+                "parameters": {
                     "baseName": {
                         "value": "[parameters('baseName')]"
                     }
                 },
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/jongio/azsdkdemo/master/iac/arm/azuredeploy.resources.json"
+                    "uri": "[uri(variables('assetsBaseUrl'), './azuredeploy.resources.json')]"
                 }
             }
         }
