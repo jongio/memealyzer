@@ -1,0 +1,8 @@
+{
+    "max-line-length": [
+        true,
+        {
+            "limit": 120
+        }
+    ]
+}

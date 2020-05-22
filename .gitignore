@@ -36,3 +36,14 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
+
+
+
+# Java
+*.jar
+*.AppTest.*
+*.lst
+**target**
+.factorypath
+.classpath
+*.prefs

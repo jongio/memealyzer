@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Azure.Core;
 using Azure.Identity;
+using DotNetEnv;
+using System;
 
 namespace azsdkdemoapi
 {
@@ -19,6 +21,8 @@ namespace azsdkdemoapi
 
         public void ConfigureServices(IServiceCollection services)
         {
+            Env.Load("../../.env");
+
             services.AddControllers();
 
             // 1. Add Tracing policies via AddSingleton
@@ -31,17 +35,20 @@ namespace azsdkdemoapi
                 builder.ConfigureDefaults(Configuration.GetSection("AzureDefaults"));
 
                 // 4. Add the blob client
-                builder.AddBlobServiceClient(Configuration.GetSection("AzureBlobStorage"))
+                builder.AddBlobServiceClient(new Uri(Environment.GetEnvironmentVariable("AZURE_STORAGE_BLOB_URI")))
                     .ConfigureOptions((options, provider) =>
                     {
                         options.AddPolicy(provider.GetService<SimpleTracingPolicy>(), HttpPipelinePosition.PerCall);
                     });
 
-                // 5. Add DefaultAzureCredential for all clients
+                // 5. Add the queue client
+                builder.AddQueueServiceClient(new Uri(Environment.GetEnvironmentVariable("AZURE_STORAGE_QUEUE_URI")));
+
+                // 6. Add DefaultAzureCredential for all clients
                 builder.UseCredential(new DefaultAzureCredential());
             });
 
-            // 6. Add App Insights
+            // 7. Add App Insights
             services.AddApplicationInsightsTelemetry();
 
         }
