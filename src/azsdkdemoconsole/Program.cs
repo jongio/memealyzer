@@ -55,7 +55,7 @@ namespace azsdkdemoconsole
             using var blobStreamReader = new StreamReader(blobDownload.Value.Content);
 
             // Write the blob contents
-            Console.WriteLine($"Content: {blobStreamReader.ReadToEnd()}");
+            Console.WriteLine($"Content: {await blobStreamReader.ReadToEndAsync()}");
 
               
         }

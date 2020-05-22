@@ -54,7 +54,7 @@ namespace azsdkdemoapi.Controllers
 
             using var blobStreamReader = new StreamReader(blobDownload.Value.Content);
 
-            return new { Content = blobStreamReader.ReadToEnd() };
+            return new { Content = await blobStreamReader.ReadToEndAsync() };
         }
     }
 }
