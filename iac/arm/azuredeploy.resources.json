@@ -118,6 +118,7 @@
                 "principalType": "ServicePrincipal"
             }
         }
+        
     ],
     "outputs": {
         "storage_uri": {

@@ -118,6 +118,34 @@
                 "principalType": "ServicePrincipal"
             }
         }
+        ,
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[guid(resourceGroup().id)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('app'))]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '974c5e8b-45b9-4653-ba55-5f855dd0fb88')]",
+                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('app')), '2018-11-01', 'Full').identity.principalId]",
+                "principalType": "ServicePrincipal"
+            }
+        }
+        ,
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[guid(resourceGroup().id)]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('app'))]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8a0f0c08-91a1-4084-bc3d-661d67233fed')]",
+                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('app')), '2018-11-01', 'Full').identity.principalId]",
+                "principalType": "ServicePrincipal"
+            }
+        }
     ],
     "outputs": {
         "storage_uri": {

@@ -1,2 +1,2 @@
 #!/bin/bash
-./deploy.all.proxy.sh azsdkdemo11 westus "http://d64c0027.ngrok.io"
+./deploy.all.proxy.sh azsdkdemo11 westus "http://ce868b4a.ngrok.io"

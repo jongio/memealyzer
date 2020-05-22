@@ -18,9 +18,7 @@
         "pattern": "^\\s*Now listening on:\\s+(https?://\\S+)"
       },
       "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "AZUREBLOBSTORAGE__SERVICEURI": "",
-        "APPINSIGHTS_INSTRUMENTATIONKEY": ""
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "sourceFileMap": {
         "/Views": "${workspaceFolder}/Views"

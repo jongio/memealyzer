@@ -33,8 +33,12 @@ resource "azurerm_app_service" "app" {
   }
 
   app_settings = {
-    "AZUREBLOBSTORAGE:SERVICEURI"    = azurerm_storage_account.storage.primary_blob_endpoint,
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.logging.instrumentation_key
+    "AZURE_STORAGE_BLOB_URI"         = azurerm_storage_account.storage.primary_blob_endpoint,
+    "AZURE_STORAGE_QUEUE_URI"        = azurerm_storage_account.storage.primary_queue_endpoint,
+    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.logging.instrumentation_key,
+    "AZURE_STORAGE_BLOB_NAME"        = "blobs",
+    "AZURE_STORAGE_QUEUE_NAME"       = "messages",
+    "AZURE_STORAGE_QUEUE_MSG_COUNT"  = "10"
   }
 
   logs {
@@ -67,20 +71,51 @@ resource "null_resource" "azure-cli" {
   depends_on = [azurerm_app_service.app]
 }
 
-resource "azurerm_role_assignment" "app_mi_storage" {
-  scope                = azurerm_storage_account.storage.id
-  role_definition_name = "Storage Blob Data Contributor"
-  principal_id         = azurerm_app_service.app.identity[0].principal_id
+resource "azurerm_role_assignment" "app_mi_blob_storage" {
+  scope                            = azurerm_storage_account.storage.id
+  role_definition_name             = "Storage Blob Data Contributor"
+  principal_id                     = azurerm_app_service.app.identity[0].principal_id
+  skip_service_principal_aad_check = true
 }
 
-resource "azurerm_role_assignment" "user_cli_storage" {
+resource "azurerm_role_assignment" "user_cli_blob_storage" {
   scope                = azurerm_storage_account.storage.id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = data.azurerm_client_config.current.object_id
 }
 
-output "storage_uri" {
+resource "azurerm_role_assignment" "app_mi_queue_storage" {
+  scope                            = azurerm_storage_account.storage.id
+  role_definition_name             = "Storage Queue Data Contributor"
+  principal_id                     = azurerm_app_service.app.identity[0].principal_id
+  skip_service_principal_aad_check = true
+}
+
+resource "azurerm_role_assignment" "user_cli_queue_storage" {
+  scope                = azurerm_storage_account.storage.id
+  role_definition_name = "Storage Queue Data Contributor"
+  principal_id         = data.azurerm_client_config.current.object_id
+}
+
+resource "azurerm_role_assignment" "app_mi_queue_msg_storage" {
+  scope                            = azurerm_storage_account.storage.id
+  role_definition_name             = "Storage Queue Data Message Processor"
+  principal_id                     = azurerm_app_service.app.identity[0].principal_id
+  skip_service_principal_aad_check = true
+}
+
+resource "azurerm_role_assignment" "user_cli_queue_msg_storage" {
+  scope                = azurerm_storage_account.storage.id
+  role_definition_name = "Storage Queue Data Message Processor"
+  principal_id         = data.azurerm_client_config.current.object_id
+}
+
+output "storage_blob_uri" {
   value = azurerm_storage_account.storage.primary_blob_endpoint
+}
+
+output "storage_queue_uri" {
+  value = azurerm_storage_account.storage.primary_queue_endpoint
 }
 
 output "ai_key" {
