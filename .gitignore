@@ -46,3 +46,4 @@ msbuild.wrn
 **target**
 .factorypath
 .classpath
+*.prefs

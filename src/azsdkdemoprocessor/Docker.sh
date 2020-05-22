@@ -1,3 +1,3 @@
 #!/bin/bash
-docker build -t jongio/azsdkdemoprocessor:latest .
-docker run --rm -it --env-file=./../../.env jongio/azsdkdemoprocessor:latest
+docker build -t azsdkdemoprocessor:latest .
+docker run --rm -it --env-file=./../../.env azsdkdemoprocessor:latest

@@ -9,11 +9,13 @@ services:
     ports:
       - "5051:80"
     build:
-      context: .
-      dockerfile: src/azsdkdemoapi/Dockerfile
+      context: src/azsdkdemoapi/
+      dockerfile: Dockerfile
   azsdkdemoprocessor:
     image: azsdkdemoprocessor
     env_file: .env
+    volumes: 
+      - "${HOME}/.m2:/root/.m2"
     build:
-      context: .
-      dockerfile: src/azsdkdemoprocessor/Dockerfile
+      context: src/azsdkdemoprocessor/
+      dockerfile: Dockerfile

@@ -1,16 +1,19 @@
 package demo.sdk.az;
 
 import ch.qos.logback.classic.Logger;
-import com.azure.identity.*;
-import com.azure.storage.queue.*;
+import com.azure.identity.DefaultAzureCredential;
+import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.storage.queue.QueueAsyncClient;
+import com.azure.storage.queue.QueueClientBuilder;
 import com.microsoft.applicationinsights.logback.ApplicationInsightsAppender;
-import io.github.cdimascio.dotenv.*;
-import java.util.*;
+import io.github.cdimascio.dotenv.Dotenv;
+import java.io.IOException;
+import java.util.Collections;
 import org.slf4j.LoggerFactory;
 
 public class App {
-  static final Logger logger = (Logger) LoggerFactory.getLogger("root");
-  static final Dotenv env = Dotenv
+  private static final Logger LOGGER = (Logger) LoggerFactory.getLogger("root");
+  private static final Dotenv ENV = Dotenv
     .configure()
     .ignoreIfMissing()
     .systemProperties()
@@ -21,73 +24,63 @@ public class App {
     try {
       App app = new App();
       app.setInstrumentationKey();
-      app.process();
+      app.start();
+      Thread.currentThread().join();
     } catch (Exception e) {
-      logger.error("Program Execution Error", e);
+      LOGGER.error("Program Execution Error", e);
     }
   }
 
   private void setInstrumentationKey() {
-    ApplicationInsightsAppender appender = (ApplicationInsightsAppender) logger.getAppender(
+    ApplicationInsightsAppender appender = (ApplicationInsightsAppender) LOGGER.getAppender(
       "aiAppender"
     );
-    appender.setInstrumentationKey(env.get("APPINSIGHTS_INSTRUMENTATIONKEY"));
+    appender.setInstrumentationKey(ENV.get("APPINSIGHTS_INSTRUMENTATIONKEY"));
   }
 
-  private synchronized void process() {
-    DefaultAzureCredential cred = new DefaultAzureCredentialBuilder().build();
+  private void start() {
+    DefaultAzureCredential credential = new DefaultAzureCredentialBuilder()
+    .build();
 
-    QueueAsyncClient queueClient = new QueueClientBuilder()
-      .endpoint(env.get("AZURE_STORAGE_QUEUE_URI"))
-      .queueName(env.get("AZURE_STORAGE_QUEUE_NAME"))
-      .credential(cred)
+    QueueAsyncClient queueAsyncClient = new QueueClientBuilder()
+      .endpoint(ENV.get("AZURE_STORAGE_QUEUE_URI"))
+      .queueName(ENV.get("AZURE_STORAGE_QUEUE_NAME"))
+      .credential(credential)
       .buildAsyncClient();
 
-    queueClient
+    queueAsyncClient
       .createWithResponse(Collections.singletonMap("queue", "metadataMap"))
+      .doOnSuccess(
+        response -> LOGGER.info("Queue created: {}", response.getStatusCode())
+      )
+      .flatMapMany(
+        response ->
+          queueAsyncClient
+            .receiveMessages(
+              Integer.parseInt(ENV.get("AZURE_STORAGE_QUEUE_MSG_COUNT", "10"))
+            )
+            .repeat()
+      )
+      .flatMap(
+        message -> {
+          String msgId = message.getMessageId();
+          LOGGER.info(
+            "Message Received: {}, {}",
+            msgId,
+            message.getMessageText()
+          );
+          return queueAsyncClient.deleteMessageWithResponse(
+            msgId,
+            message.getPopReceipt()
+          );
+        }
+      )
+      .log()
       .subscribe(
-        response -> logger.info("Queue Created: {}", response.getStatusCode()),
-        error -> System.err.print(error.toString())
+        response -> {
+          LOGGER.info("Deleted message: {}", response.getStatusCode());
+        },
+        error -> LOGGER.error("Error: {}", error)
       );
-
-    while (true) {
-      logger.trace("Receive Msgs Started");
-      queueClient
-        .receiveMessages(
-          Integer.parseInt(env.get("AZURE_STORAGE_QUEUE_MSG_COUNT", "10"))
-        )
-        .subscribe(
-          message -> {
-            String msgId = message.getMessageId();
-
-            logger.info(
-              "Msg Received: {}, {}",
-              msgId,
-              message.getMessageText()
-            );
-
-            queueClient
-              .deleteMessageWithResponse(msgId, message.getPopReceipt())
-              .subscribe(
-                response ->
-                  logger.info(
-                    "Deleting Msg: {}, {}",
-                    msgId,
-                    response.getStatusCode()
-                  ),
-                deleteError -> System.err.print(deleteError.toString()),
-                () -> logger.info("Deleted Msg: {}", msgId)
-              );
-          },
-          error -> logger.error(error.toString()),
-          () -> logger.trace("Receive Msgs Complete")
-        );
-
-      try {
-        this.wait(5000);
-      } catch (InterruptedException e) {
-        logger.error("Error while waiting", e);
-      }
-    }
   }
 }
