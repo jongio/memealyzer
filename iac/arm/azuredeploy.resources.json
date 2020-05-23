@@ -21,7 +21,6 @@
             "tags": {
                 "displayName": "storage"
             },
-            "location": "[variables('location')]",
             "kind": "StorageV2",
             "sku": {
                 "name": "Standard_LRS",
@@ -76,6 +75,9 @@
             "type": "Microsoft.Web/sites/config",
             "apiVersion": "2018-11-01",
             "location": "[variables('location')]",
+            "tags": {
+                "displayName": "logs"
+            },
             "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', variables('app'))]"
             ],
@@ -99,6 +101,9 @@
             "name": "[variables('ai')]",
             "type": "Microsoft.Insights/components",
             "location": "[variables('location')]",
+            "tags": {
+                "displayName": "ai"
+            },
             "properties": {
                 "ApplicationId": "[variables('app')]",
                 "Application_Type": "web"
@@ -109,6 +114,9 @@
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2018-09-01-preview",
             "name": "[guid(resourceGroup().id)]",
+            "tags": {
+                "displayName": "blobrole"
+            },
             "dependsOn": [
                 "[resourceId('Microsoft.Web/sites', variables('app'))]"
             ],
@@ -118,7 +126,40 @@
                 "principalType": "ServicePrincipal"
             }
         }
-        
+        ,
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[guid(resourceGroup().id)]",
+            "tags": {
+                "displayName": "queuerole"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('app'))]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '974c5e8b-45b9-4653-ba55-5f855dd0fb88')]",
+                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('app')), '2018-11-01', 'Full').identity.principalId]",
+                "principalType": "ServicePrincipal"
+            }
+        }
+        ,
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[guid(resourceGroup().id)]",
+            "tags": {
+                "displayName": "queuerole2"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('app'))]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8a0f0c08-91a1-4084-bc3d-661d67233fed')]",
+                "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('app')), '2018-11-01', 'Full').identity.principalId]",
+                "principalType": "ServicePrincipal"
+            }
+        }
     ],
     "outputs": {
         "storage_uri": {

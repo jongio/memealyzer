@@ -1,21 +1,24 @@
 version: "3.4"
 
 services:
-  azsdkdemoapi:
+  api:
     image: azsdkdemoapi
     env_file: .env
+    volumes: 
+      - "${HOME}/.azure:/root/.azure"
     expose:
        - 80
     ports:
       - "5051:80"
     build:
-      context: src/azsdkdemoapi/
+      context: src/api/
       dockerfile: Dockerfile
-  azsdkdemoprocessor:
+  processor:
     image: azsdkdemoprocessor
     env_file: .env
     volumes: 
       - "${HOME}/.m2:/root/.m2"
+      - "${HOME}/.azure:/home/developer/.azure"
     build:
-      context: src/azsdkdemoprocessor/
+      context: src/processor/
       dockerfile: Dockerfile

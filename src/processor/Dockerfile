@@ -7,7 +7,11 @@ COPY src/ /usr/app/src
 RUN mvn package -Dmaven.test.skip=true assembly:single
 
 # Build runtime image
-FROM openjdk:8-jre-alpine
+FROM openkbs/jre-mvn-py3
+
+RUN pip3 install --user azure-cli 
+ENV PATH /home/developer/.local/bin/:$PATH
+
 WORKDIR /usr/app/
 COPY --from=build-env /usr/app/ .
 ENTRYPOINT ["java", "-jar", "target/processor-1.0-SNAPSHOT.jar"]
