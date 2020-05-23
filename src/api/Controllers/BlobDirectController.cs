@@ -24,7 +24,7 @@ namespace azsdkdemoapi.Controllers
         public async Task<object> Get()
         {
             // Create a container in our Storage account:
-            var serviceUri = new Uri(Environment.GetEnvironmentVariable("AZUREBLOBSTORAGE__SERVICEURI"));
+            var serviceUri = new Uri(Environment.GetEnvironmentVariable("AZURE_STORAGE_BLOB_URI"));
             var serviceClient = new BlobServiceClient(serviceUri, new DefaultAzureCredential());
             
             var containerClient = serviceClient.GetBlobContainerClient("blobs");

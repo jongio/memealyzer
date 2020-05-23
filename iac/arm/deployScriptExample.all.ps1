@@ -1,1 +1,0 @@
-.\deploy.all.ps1 -baseName azsdkdemo9 -location westus -localUserName "Jon Gallant"

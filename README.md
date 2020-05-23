@@ -10,7 +10,7 @@ This repo demonstrates Azure.Core HTTP Pipelines, custom policies and Azure.Iden
 
 ### Open Projects
 
-Open both `azsdkdemoapi` and `azsdkdemoconsole` in VS Code.
+Open both `api` and `console` folders in VS Code.
 
 ## Azure CLI
 
@@ -22,8 +22,6 @@ https://aka.ms/azcliget
 
 `az login`
 
-## Azure Setup
-
 ### Set Active Subscription
 
 `az account set -n {SUBSCRIPTION_NAME}`
@@ -32,25 +30,30 @@ Get subscription list with `az account list`
 
 See current selected/default subscription with `az account show`
 
-### Deploy Azure Resources with Terraform
+## Deployment
+
+To demonstrate a few alternatives for Azure deployments, we've created both ARM and Terraform examples.
+
+### Terraform
 
 We'll use Terraform to create the following Azure resources:
 
 1. App Service Plan
 1. App Service
 1. Storage Account
+1. Role Assignments
 
 It will also assign the "Storage Blob Data Contributor" role to the App Service Managed Identity and the to currently logged in Azure CLI user.
 
-> See `/iac/terraform/main.tf` to see details of what is deployed with the Terraform script.
+> Open `/iac/terraform/main.tf` to see details of what is deployed with the Terraform script.
 
 #### Install Terraform
 
-Go to the ["Install Terraform"](https://learn.hashicorp.com/terraform/getting-started/install.html#install-terraform) to install Terraform.
+Go to the [Install Terraform page](https://learn.hashicorp.com/terraform/getting-started/install.html#install-terraform) to install Terraform.
 
 #### Run Terraform
 
-1. Open a terminal and navigate to the `terraform` folder.
+1. Open a terminal and navigate to the `iac/terraform` folder.
 
 1. Run the following command to setup the Terraform modules.
 
@@ -64,24 +67,25 @@ Go to the ["Install Terraform"](https://learn.hashicorp.com/terraform/getting-st
 
    `terraform apply`
 
-### Deploy Azure Resources with ARM and PowerShell
+### ARM
 
-1. Open a PowerShell Terminal
-2. Open `/iac/arm/deployScriptExample.ps1` and change baseName, localUserName, and location to suit your needs.  localUserName is the name of the local user that is signed into PowerShell.
-3. Run `/iac/arm/deployScriptExample.ps1`. Navigate to the arm folder and run `.\deployScriptExample.ps1`
+We use the arm-proxy Azure CLI extension so that we can use local files instead of having to upload the ARM templates to a server.
 
-## Console App Demo
+1. Install [arm-proxy](https://github.com/noelbundick/arm-proxy)
 
-### Get the Storage Aaccount Blob URI
+   `az extension add -s https://github.com/noelbundick/arm-proxy/releases/download/v0.0.1/arm_proxy-0.0.1-py3-none-any.whl`
+2. Open a bash terminal. Navigate to `/iac/arm` and run `az arm-proxy start`.
+2. Copy the ngrok URL that is outputted and paste it the assetsBaseUrl variable in `deploy.sh`.
+3. Run `./deploy.sh` from bash terminal
 
-Run the following Terraform command to retrive the storage primary endpoint.
 
-`terraform output storage_uri`
+## Configuration
 
-### Set Storage Account Blob URI
+1. Open `.env` file and set the following, which are outputted from the deployment scripts above.
 
-1. Rename `/src/azsdkdemoconsole/.env.tmp` to `.env` and open it.
-1. Set the `AZURE_STORAGE_BLOB_URI` variable to the full storage account blob url from the previous step.
+- `AZURE_STORAGE_BLOB_URI`
+- `AZURE_STORAGE_QUEUE_URI`
+- `APPINSIGHTS_INSTRUMENTATIONKEY`
 
 ### Azure CLI Login
 
@@ -96,14 +100,6 @@ Run the following Terraform command to retrive the storage primary endpoint.
 1. Hit F5 to debug the application and step through it with your audience.
 
 ## API Demo
-
-### Set Storage Account Blob URI
-
-1. Open `/src/azsdkdemoapi/.vscode/launch.json` and set:
- - `configuration/env/AZUREBLOBSTORAGE:SERVICEURI` to the full storage account blob url returned from the terraform deployment.
- - `configuration/env/APPINSIGHTS_INSTRUMENTATIONKEY` to the App Insights key returned from the terraform deployment.
-
-
 ### Run App Locally
 
 1. Hit F5

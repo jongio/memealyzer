@@ -36,7 +36,7 @@ resource "azurerm_app_service" "app" {
     "AZURE_STORAGE_BLOB_URI"         = azurerm_storage_account.storage.primary_blob_endpoint,
     "AZURE_STORAGE_QUEUE_URI"        = azurerm_storage_account.storage.primary_queue_endpoint,
     "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.logging.instrumentation_key,
-    "AZURE_STORAGE_BLOB_NAME"        = "blobs",
+    "AZURE_STORAGE_BLOB_CONTAINER_NAME"        = "blobs",
     "AZURE_STORAGE_QUEUE_NAME"       = "messages",
     "AZURE_STORAGE_QUEUE_MSG_COUNT"  = "10"
   }
