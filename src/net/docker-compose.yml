@@ -1,0 +1,33 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+version: "3.8"
+
+services:
+  azsdkdemowebapp:
+    image: azsdkdemowebapp
+    build:
+      context: .
+      dockerfile: WebApp/Dockerfile
+    depends_on:
+      - azsdkdemoapi
+    ports:
+      - 1080:80
+      - 1443:443
+  azsdkdemoapi:
+    image: azsdkdemoapi
+    env_file: ../../.env
+    volumes: 
+        - "${HOME}/.azure:/root/.azure"
+    build:
+      context: .
+      dockerfile: Api/Dockerfile
+    ports:
+      - 2080:80
+      - 2443:443
+  azsdkdemoqueueservice:
+    image: azsdkdemoqueueservice
+    env_file: ../../.env
+    volumes: 
+        - "${HOME}/.azure:/root/.azure"
+    build:
+      context: .
+      dockerfile: Services/QueueService/Dockerfile

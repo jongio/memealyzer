@@ -9,6 +9,8 @@ crash.log
 project.lock.json
 .DS_Store
 *.pyc
+tf.plan
+debug.log
 
 # Visual Studio Code
 **/.vscode/settings.json

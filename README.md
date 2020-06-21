@@ -1,167 +1,56 @@
-# Azure SDK Demo
+# Azure SDK Demo - Azure Image Analyzer
 
-This repo demonstrates Azure.Core HTTP Pipelines, custom policies and Azure.Identity DefaultAzureCredential in a local and cloud ASP.NET Core API project.
+The repo demonstrates Azure SDK usage via a complete application.  This application takes in an image, uploads it to Blog Storage and enqueues a message into a Queue.  A process receives that message and uses Form Recognizer to extract the text from the image, then uses Text Analytics to get the sentiment of the text, and then stores the results in a Cosmos DB.
+
+![](assets/hero.png)
+
+## Pre-reqs
+
+The following are required to run this application.
+
+1. [Install Azure CLI](https://aka.ms/azcliget)
+1. [Install Terraform](https://terraform.io)
+1. [Install Git](https://git-scm.com/downloads) - Make sure you install Git Bash or have WSL
+1. [Install VS Code](https://code.visualstudio.com/)
+1. [Install Docker](https://docs.docker.com/get-docker/)
+1. An Azure Subscription
+
+## Azure Resources
+
+The following Azure resources will be deployed with the Terraform script.
+
+1. Resource Group
+1. Storage Account
+1. Cognitive Services Form Recognizer
+1. Cognitive Services Text Analytics
+1. Cosmos DB
+1. App Service: Plan
+1. App Service: Website
+1. App Service: API
+1. Application Insights
 
 ## Code Setup
 
-### Clone repo
-
-`git clone https://github.com/jongio/azsdkdemo`
-
-### Open Projects
-
-Open both `api` and `console` folders in VS Code.
-
-## Azure CLI
-
-### Install Azure CLI
-
-https://aka.ms/azcliget
-
-### Login to Azure CLI
-
-`az login`
-
-### Set Active Subscription
-
-`az account set -n {SUBSCRIPTION_NAME}`
-
-Get subscription list with `az account list`
-
-See current selected/default subscription with `az account show`
-
-## Deployment
-
-To demonstrate a few alternatives for Azure deployments, we've created both ARM and Terraform examples.
-
-### Terraform
-
-We'll use Terraform to create the following Azure resources:
-
-1. App Service Plan
-1. App Service
-1. Storage Account
-1. Role Assignments
-
-It will also assign the "Storage Blob Data Contributor" role to the App Service Managed Identity and the to currently logged in Azure CLI user.
-
-> Open `/iac/terraform/main.tf` to see details of what is deployed with the Terraform script.
-
-#### Install Terraform
-
-Go to the [Install Terraform page](https://learn.hashicorp.com/terraform/getting-started/install.html#install-terraform) to install Terraform.
-
-#### Run Terraform
-
-1. Open a terminal and navigate to the `iac/terraform` folder.
-
-1. Run the following command to setup the Terraform modules.
-
-   `terraform init`
-
-1. Run the following command to see what actions Terraform will take when the apply command is executed.
-
-   `terraform plan`
-
-1. Run the following command to create the Azure resources.
-
-   `terraform apply`
-
-### ARM
-
-We use the arm-proxy Azure CLI extension so that we can use local files instead of having to upload the ARM templates to a server.
-
-1. Install [arm-proxy](https://github.com/noelbundick/arm-proxy)
-
-   `az extension add -s https://github.com/noelbundick/arm-proxy/releases/download/v0.0.1/arm_proxy-0.0.1-py3-none-any.whl`
-2. Open a bash terminal. Navigate to `/iac/arm` and run `az arm-proxy start`.
-2. Copy the ngrok URL that is outputted and paste it the assetsBaseUrl variable in `deploy.sh`.
-3. Run `./deploy.sh` from bash terminal
-
-
-## Configuration
-
-1. Open `.env` file and set the following, which are outputted from the deployment scripts above.
-
-- `AZURE_STORAGE_BLOB_URI`
-- `AZURE_STORAGE_QUEUE_URI`
-- `APPINSIGHTS_INSTRUMENTATIONKEY`
-
-### Azure CLI Login
-
-1. Run `az login` so `DefaultAzureCredential` uses your Azure account to authenticate.
-
-### Open the code and explain it
-
-1. All the code can be found in `Program.cs`. Open it and explain the BlobClientOptions, HttpPipeline.
-
-### Run the app
-
-1. Hit F5 to debug the application and step through it with your audience.
-
-## API Demo
-### Run App Locally
-
-1. Hit F5
-1. View the Output in Browser.
-1. View the Output in VS Code Output Console.
-1. Show that Azure CLI Credential was used.
-
-   You will see the following lines in the output:
-
-   ```cmd
-   info: Azure-Identity[1]
-       AzureCliCredential.GetToken invoked. Scopes: [ https://storage.azure.com/.default ] ParentRequestId: c7e8b2b7-a86d-4710-a10e-99f44eedb8bc
-   info: Azure-Identity[2]
-       AzureCliCredential.GetToken succeeded. Scopes: [ https://storage.azure.com/.default ] ParentRequestId: c7e8b2b7-a86d-4710-a10e-99f44eedb8bc ExpiresOn: 2020-03-18T23:12:27.2820620+00:00
-   info: Azure-Identity[2]
-       DefaultAzureCredential.GetToken succeeded. Scopes: [ https://storage.azure.com/.default ] ParentRequestId: c7e8b2b7-a86d-4710-a10e-99f44eedb8bc ExpiresOn: 2020-03-18T23:12:27.2820620+00:00
-   ```
-
-1. Show the custom pipeline log entries.
-
-   You will see the following lines in the output:
-
-   ```cmd
-   info: SimpleTracingPolicy[0]
-     >> Response: 206 from GET https://azsdkdemostorage.blob.core.windows.net/blobs/blob.txt
-   ```
-
-### Deploy to Azure
-
-1. Open the VS Code Azure Extension.
-1. Under APP SERVICE, right-click on your app and select 'Deploy to Web App'.
-
-### Start Log Streaming
-
-1. Open the VS Code Azure Extension.
-1. Under APP SERVICE, right-click on your app and select 'Start Streaming Logs'
-
-### Run App on Azure
-
-1. Open a browser and hit the web api URL: https://azsdkdemoapp.azurewebsites.net/api/blob or https://{APP_NAME}.azurewebsites.net/api/blob
-1. View the output in the browser.
-
-### View the Log Stream
-
-1. Back to VS Code, go to the log stream and show that the policy logs are there and that Managed Identity was successfully used.
-
-   You will see the following lines for the custom policy:
-
-   ```cmd
-   2020-03-18 22:48:13.757 +00:00 [Information] SimpleTracingPolicy: >> Response: 206 from GET https://azsdkdemostorage.blob.core.windows.net/blobs/blob.txt
-   ```
-
-   You will see the following lines for Managed Identity:
-
-   ```cmd
-   2020-03-18 22:48:13.295 +00:00 [Information] Azure-Identity: ManagedIdentityCredential.GetToken succeeded. Scopes: [ https://storage.azure.com/.default ] ParentRequestId: 1fce14b9-720a-45a0-af21-146098f3ec25 ExpiresOn: 2020-03-19T01:49:40.0000000+00:00
-
-   2020-03-18 22:48:13.297 +00:00 [Information] Azure-Identity: DefaultAzureCredential.GetToken succeeded. Scopes: [ https://storage.azure.com/.default ] ParentRequestId: 1fce14b9-720a-45a0-af21-146098f3ec25 ExpiresOn: 2020-03-19T01:49:40.0000000+00:00
-   ```
-
-   If you do not see those lines, that means that you started the log streaming after the first request. Since tokens are now obtained at the app level, you'll only see those Identity related messages once per app start, not once per request.
-
-### View the Logs in App Insights
-
-1. Go to App Insights in the Portal, click Logs, and then click the Trace query.  You will see the Azure Identity logs.  Be patient as it could take a few minutes from when the API was hit to when the trace appears.
+1. Open Git Bash or WSL
+1. Clone Repo
+   `git clone https://github.com/jongio/azsdkdemo`
+1. Azure CLI Login
+   `az login`
+1. Create Azure Resources with Terraform
+   1. CD to `iac/terraform`
+   1. Terraform init: `terraform init`
+   1. Terraform plan: `terraform plan --out tf.plan`
+   1. Terraform apply: `terraform apply tf.plan`
+1. Update `.env` file
+   1. Rename `.env.tmp` to `.env`
+   1. Copy and paste the terraform output values to the .env file
+
+## Run Application
+
+1. CD to application root
+1. `Run docker-compose up --build`
+1. Navigate to http://localhost:1080
+1. Add an Image
+   1. Enter url into text box and click "Submit"
+   1. Or click "Add Random Meme"
+   1. The image will be added to the grid. Wait for the service to pick it up. You will eventually see the text and the image border color will change indicating the image text sentiment.

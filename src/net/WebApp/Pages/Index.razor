@@ -1,0 +1,117 @@
+﻿@page "/"
+@inject HttpClient Http
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
+<h1>Azure SDK Demo - Azure Image Analyzer</h1>
+
+<EditForm OnValidSubmit="HandleFormSubmit" Model="@image">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="url" @bind-Value="image.Url" size="100"/>
+
+    <button type="submit" value="submit" @onclick="@(()=> image.Type = ImageType.New)" disabled="@(!IsConnected)">Submit</button>
+    <button type="submit" value="random" @onclick="@(()=> image.Type = ImageType.Meme)" disabled="@(!IsConnected)">Add Random Meme</button>
+    <label>@image.Status</label>
+</EditForm>
+
+@if (images == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="container">
+        <div class="row text-center text-lg-left">
+            @foreach (var image in images)
+            {
+                <div class="col-md-4">
+                   <div class="card" style="width: 100%;">
+                        <img class="card-img-top border border-8 border-@image.Style img-thumbnail" src="@image.BlobUri" alt="">
+                        <div class="card-body">
+                            <p class="card-text">@image.Text</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private List<Image> images;
+    private Image image = new Image();
+    private HubConnection hubConnection;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        images = await Http.GetFromJsonAsync<List<Image>>("/images");
+
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Http.BaseAddress + "imagehub")
+            .Build();
+
+        hubConnection.On<Image>("ReceiveImage", (image) =>
+        {
+            int index = images.FindIndex(0, 1, f => f.Id == image.Id);
+            if (index >= 0)
+            {
+                images[index] = image;
+            }
+            else
+            {
+                images.Insert(0, image);
+            }
+
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    public async Task<Image> GetImageAsync(string id)
+    {
+        try
+        {
+            return await Http.GetFromJsonAsync<Image>($"/image/{id}");
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private async Task HandleFormSubmit()
+    {
+        if (image.Type == ImageType.Meme)
+        {
+            image.Url = "";
+        }
+        image.Status = "Uploading...";
+        var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, IgnoreNullValues = true };
+        var response = await Http.PostAsJsonAsync("/image", image, options);
+        image = await response.Content.ReadFromJsonAsync<Image>(options);
+        image.Status = response.StatusCode.ToString().ToLower() == "ok" ? "Processing..." : "Upload failed, try again.";
+        image.Sentiment = "loading";
+        image.Text = "Loading...";
+        images.Insert(0, image);
+
+        StateHasChanged();
+
+        var imageId = image.Id;
+        image = new Image();
+
+        await hubConnection.SendAsync("StartPoll", imageId);
+    }
+
+    public bool IsConnected =>
+        hubConnection != null && hubConnection.State == HubConnectionState.Connected;
+
+    public void Dispose()
+    {
+        _ = hubConnection.DisposeAsync();
+    }
+}
