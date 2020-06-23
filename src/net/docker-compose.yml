@@ -16,7 +16,7 @@ services:
     image: azsdkdemoapi
     env_file: ../../.env
     volumes: 
-        - "${HOME}/.azure:/root/.azure"
+        - "${USERPROFILE}/.azure:/root/.azure"
     build:
       context: .
       dockerfile: Api/Dockerfile
@@ -27,7 +27,7 @@ services:
     image: azsdkdemoqueueservice
     env_file: ../../.env
     volumes: 
-        - "${HOME}/.azure:/root/.azure"
+        - "${USERPROFILE}/.azure:/root/.azure"
     build:
       context: .
       dockerfile: Services/QueueService/Dockerfile

@@ -4,9 +4,7 @@ COPY . .
 RUN dotnet publish "Services/QueueService/QueueService.csproj" -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/core/runtime:3.1 AS base
-RUN apt-get update -y && apt-get install python3 python3-distutils python3-pip -y && pip3 install azure-cli
-ENV PATH /root/.local/bin/:$PATH
-
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 WORKDIR /app
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "QueueService.dll"]
