@@ -30,7 +30,7 @@ namespace azsdkdemoconsole
             options.AddPolicy(new SimpleTracingPolicy(), HttpPipelinePosition.PerCall);
 
             // Get storage account blob uri from environment
-            var blobServiceUri = new Uri(Environment.GetEnvironmentVariable("AZURE_STORAGE_BLOB_URI"));
+            var blobServiceUri = new Uri(Environment.GetEnvironmentVariable("AZURE_STORAGE_BLOB_ENDPOINT"));
 
             // Create a BlobServiceClient to our Storage account using DefaultAzureCredentials & our HTTP pipeline options:
             var serviceClient = new BlobServiceClient(blobServiceUri, 
@@ -62,7 +62,7 @@ namespace azsdkdemoconsole
 
         static Program()
         {
-            Env.Load("../../.env");
+            Env.Load("../../../.env");
         }
     }
 }
