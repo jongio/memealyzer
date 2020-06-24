@@ -9,11 +9,11 @@ The repo demonstrates Azure SDK usage via a complete application.  This applicat
 The following are required to run this application.
 
 1. [Install Azure CLI](https://aka.ms/azcliget)
-1. [Install Terraform](https://terraform.io)
+1. [Install Terraform](https://terraform.io) - download the CLI and add it to your path
 1. [Install Git](https://git-scm.com/downloads) - Make sure you install Git Bash or have WSL
 1. [Install VS Code](https://code.visualstudio.com/)
 1. [Install Docker](https://docs.docker.com/get-docker/)
-1. An Azure Subscription
+1. An [Azure Subscription](https://azure.microsoft.com/en-us/free/)
 
 ## Azure Resources
 
