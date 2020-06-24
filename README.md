@@ -9,25 +9,25 @@ The repo demonstrates Azure SDK usage via a complete application.  This applicat
 The following are required to run this application.
 
 1. [Install Azure CLI](https://aka.ms/azcliget)
-1. [Install Terraform](https://terraform.io) - download the CLI and add it to your path
+1. [Install Terraform](https://terraform.io)
 1. [Install Git](https://git-scm.com/downloads) - Make sure you install Git Bash or have WSL
 1. [Install VS Code](https://code.visualstudio.com/)
 1. [Install Docker](https://docs.docker.com/get-docker/)
-1. An [Azure Subscription](https://azure.microsoft.com/en-us/free/)
+1. An [Azure Subscription](https://azure.microsoft.com/free/)
 
 ## Azure Resources
 
 The following Azure resources will be deployed with the Terraform script.
 
-1. [Resource Group](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview#resource-groups)
-1. [Storage Account](https://docs.microsoft.com/en-us/azure/storage/common/storage-introduction)
-1. [Cognitive Services Form Recognizer](https://docs.microsoft.com/en-us/azure/cognitive-services/form-recognizer/overview)
-1. [Cognitive Services Text Analytics](https://azure.microsoft.com/en-us/services/cognitive-services/text-analytics/)
-1. [Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction)
-1. [App Service: Plan](https://docs.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
-1. [App Service: Web Apps](https://azure.microsoft.com/en-us/services/app-service/web/)
-1. [App Service: API Apps](https://azure.microsoft.com/en-us/services/app-service/api/)
-1. [Application Insights](https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview)
+1. [Resource Group](https://docs.microsoft.com/azure/azure-resource-manager/management/overview#resource-groups)
+1. [Storage Account](https://docs.microsoft.com/azure/storage/common/storage-introduction)
+1. [Cognitive Services Form Recognizer](https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview)
+1. [Cognitive Services Text Analytics](https://azure.microsoft.com/services/cognitive-services/text-analytics/)
+1. [Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/introduction)
+1. [App Service: Plan](https://docs.microsoft.com/azure/app-service/overview-hosting-plans)
+1. [App Service: Web Apps](https://azure.microsoft.com/services/app-service/web/)
+1. [App Service: API Apps](https://azure.microsoft.com/services/app-service/api/)
+1. [Application Insights](https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview)
 
 ## Code Setup
 
