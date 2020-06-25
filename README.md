@@ -8,7 +8,7 @@ The repo demonstrates Azure SDK usage via a complete application.  This applicat
 
 The following are required to run this application.
 
-1. A Terminal - We tested this with Git Bash and WSL. The Terraform deployment currently only works on Linux compatible systems. You will need to run all the commands below in your selected terminal.
+1. A Terminal - We tested this with Git Bash and WSL - it will not currently work with PowerShell or Windows Command Prompt. The Terraform deployment currently only works on Linux compatible systems. You will need to run all the commands below in your selected terminal.
 1. [Install Azure CLI](https://aka.ms/azcliget)
 1. [Install Terraform](https://terraform.io)
 1. [Install Git](https://git-scm.com/downloads) 
