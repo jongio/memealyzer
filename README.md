@@ -38,9 +38,9 @@ The following Azure resources will be deployed with the Terraform script.
    `az login`
 1. Create Azure Resources with Terraform
    1. CD to `iac/terraform`
-   1. Open `variables.tf` and change the `basename` variable from `azsdkdemo1` to something that will be globally unique.  It will be used as part of Azure resource names, so keep it short, lowercase, and no special characters.
    1. Terraform init: `terraform init`
-   1. Terraform plan: `terraform plan --out tf.plan`
+   1. Terraform plan: `terraform plan -var="basename=azsdkdemo1" --out tf.plan`
+      > Change the `basename` variable from `azsdkdemo1` to something that will be globally unique.  It will be used as part of Azure resource names, so keep it short, lowercase, and no special characters.
    1. Terraform apply: `terraform apply tf.plan`
 1. Update `.env` file
    1. Rename `.env.tmp` to `.env`
