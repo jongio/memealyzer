@@ -8,9 +8,10 @@ The repo demonstrates Azure SDK usage via a complete application.  This applicat
 
 The following are required to run this application.
 
+1. A Terminal - We tested this with Git Bash and WSL. The Terraform deployment currently only works on Linux compatible systems. You will need to run all the commands below in your selected terminal.
 1. [Install Azure CLI](https://aka.ms/azcliget)
 1. [Install Terraform](https://terraform.io)
-1. [Install Git](https://git-scm.com/downloads) - Make sure you install Git Bash or have WSL
+1. [Install Git](https://git-scm.com/downloads) 
 1. [Install VS Code](https://code.visualstudio.com/)
 1. [Install Docker](https://docs.docker.com/get-docker/)
 1. An [Azure Subscription](https://azure.microsoft.com/free/)
@@ -31,7 +32,7 @@ The following Azure resources will be deployed with the Terraform script.
 
 ## Code Setup
 
-1. Open Git Bash or WSL
+1. Open Git Bash or WSL - The same terminal you used to install the pre-reqs above.
 1. Clone Repo
    `git clone https://github.com/jongio/azsdkdemo`
 1. Azure CLI Login
