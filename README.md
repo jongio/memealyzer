@@ -45,11 +45,12 @@ The following Azure resources will be deployed with the Terraform script.
    1. Terraform apply: `terraform apply tf.plan`
 1. Update `.env` file
    1. Rename `.env.tmp` to `.env`
-   1. Copy and paste the terraform output values to the .env file
+   1. Copy and paste the terraform output values to the .env file.
+      > NOTE: .env files do not allow spaces around the `=`, so please remove any spaces after you copy and paste.
 
 ## Run Application
 
-1. CD to application root
+1. CD to `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`
 1. `Run docker-compose up --build`
 1. Navigate to http://localhost:1080
 1. Add an Image
