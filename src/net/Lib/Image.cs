@@ -36,21 +36,21 @@ namespace Lib
             get
             {
                 string style = "light";
-                switch (Sentiment)
+                switch (Sentiment?.ToLower())
                 {
-                    case "Positive":
+                    case "positive":
                         style = "success";
                         break;
-                    case "Negative":
+                    case "negative":
                         style = "danger";
                         break;
-                    case "Neutral":
+                    case "neutral":
                         style = "dark";
                         break;
-                    case "Mixed":
+                    case "mixed":
                         style = "warning";
                         break;
-                    case "Loading":
+                    case "loading":
                         style = "white";
                         break;
                 }
