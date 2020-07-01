@@ -49,3 +49,5 @@ msbuild.wrn
 .factorypath
 .classpath
 *.prefs
+
+/src/python/api

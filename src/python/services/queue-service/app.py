@@ -20,6 +20,8 @@ from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
 
+sleep = getenv("AZURE_STORAGE_QUEUE_RECEIVE_SLEEP", type=bool, default=1)
+
 credential = ChainedTokenCredential(
     AzureCliCredential(), EnvironmentCredential(), ManagedIdentityCredential()
 )
@@ -69,7 +71,7 @@ while True:
             for page in fr_result:
                 for line in page.lines:
                     lines_of_text.append(line.text)
-            text = ' '.join(lines_of_text)
+            text = " ".join(lines_of_text)
             lines_of_text.clear()
 
             print(text)
@@ -87,5 +89,5 @@ while True:
 
             print(message_json)
 
-    time.sleep(getenv("AZURE_STORAGE_QUEUE_RECEIVE_SLEEP", type=bool, default=1))
+    time.sleep(sleep)
 

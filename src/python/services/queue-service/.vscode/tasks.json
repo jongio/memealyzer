@@ -19,7 +19,7 @@
 				"docker-build"
 			],
 			"python": {
-				"file": "queue_service.py"
+				"file": "app.py"
 			}
 		}
 	]
