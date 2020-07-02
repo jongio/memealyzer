@@ -185,9 +185,9 @@ resource "azurerm_role_assignment" "app_mi_blob_storage" {
 }
 
 resource "azurerm_role_assignment" "user_cli_blob_storage" {
-  scope                = azurerm_storage_account.storage.id
-  role_definition_name = "Storage Blob Data Contributor"
-  principal_id         = data.azurerm_client_config.current.object_id
+  scope                            = azurerm_storage_account.storage.id
+  role_definition_name             = "Storage Blob Data Contributor"
+  principal_id                     = data.azurerm_client_config.current.object_id
 }
 
 resource "azurerm_role_assignment" "app_mi_queue_storage" {
@@ -198,9 +198,9 @@ resource "azurerm_role_assignment" "app_mi_queue_storage" {
 }
 
 resource "azurerm_role_assignment" "user_cli_queue_storage" {
-  scope                = azurerm_storage_account.storage.id
-  role_definition_name = "Storage Queue Data Contributor"
-  principal_id         = data.azurerm_client_config.current.object_id
+  scope                            = azurerm_storage_account.storage.id
+  role_definition_name             = "Storage Queue Data Contributor"
+  principal_id                     = data.azurerm_client_config.current.object_id
 }
 
 resource "azurerm_role_assignment" "app_mi_queue_msg_storage" {
@@ -211,9 +211,22 @@ resource "azurerm_role_assignment" "app_mi_queue_msg_storage" {
 }
 
 resource "azurerm_role_assignment" "user_cli_queue_msg_storage" {
-  scope                = azurerm_storage_account.storage.id
-  role_definition_name = "Storage Queue Data Message Processor"
-  principal_id         = data.azurerm_client_config.current.object_id
+  scope                            = azurerm_storage_account.storage.id
+  role_definition_name             = "Storage Queue Data Message Processor"
+  principal_id                     = data.azurerm_client_config.current.object_id
+}
+
+resource "azurerm_role_assignment" "app_mi_cogserv" {
+  scope                            = azurerm_storage_account.storage.id
+  role_definition_name             = "Cognitive Services User"
+  principal_id                     = azurerm_app_service.app.identity[0].principal_id
+  skip_service_principal_aad_check = true
+}
+
+resource "azurerm_role_assignment" "user_cli_cogserv" {
+  scope                            = azurerm_storage_account.storage.id
+  role_definition_name             = "Cognitive Services User"
+  principal_id                     = data.azurerm_client_config.current.object_id
 }
 
 output "AZURE_STORAGE_BLOB_ENDPOINT" {

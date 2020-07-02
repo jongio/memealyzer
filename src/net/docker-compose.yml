@@ -1,5 +1,5 @@
 # Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
-version: "3.8"
+version: "3.7"
 
 services:
   azsdkdemonetwebapp:

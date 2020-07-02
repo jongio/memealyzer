@@ -33,6 +33,7 @@ The following Azure resources will be deployed with the Terraform script.
 ## Code Setup
 
 1. Open Git Bash or WSL - The same terminal you used to install the pre-reqs above.
+   > NOTE: Known issue: The following terraform deployment doesn't work in WSL2. We are investigating that issue for now **use Git Bash**.
 1. Clone Repo
    `git clone https://github.com/jongio/azsdkdemo`
 1. Azure CLI Login

@@ -12,6 +12,7 @@ using Azure.Identity;
 using Azure.Storage.Queues;
 using DotNetEnv;
 using Lib;
+using Azure.Core.Diagnostics;
 
 namespace QueueService
 {
@@ -20,6 +21,8 @@ namespace QueueService
         static async Task Main(string[] args)
         {
             Env.Load("../../../../.env");
+
+            //using var listener = AzureEventSourceListener.CreateConsoleLogger();
 
             var cred = Identity.GetCredentialChain();
 
@@ -46,6 +49,9 @@ namespace QueueService
                 Env.GetString("AZURE_COSMOS_KEY"),
                 new CosmosClientOptions
                 {
+                    Diagnostics = {
+                        IsLoggingEnabled = false
+                    },
                     ConnectionMode = ConnectionMode.Direct,
                     ConsistencyLevel = ConsistencyLevel.Session,
                     SerializerOptions = new CosmosSerializationOptions { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase, IgnoreNullValues = true },
@@ -57,6 +63,8 @@ namespace QueueService
 
             while (true)
             {
+                Console.WriteLine("Receiving Messages...");
+
                 // Get Messages
                 var messages = await queueClient.ReceiveMessagesAsync(maxMessages: Env.GetInt("AZURE_STORAGE_QUEUE_MSG_COUNT", 10));
 
@@ -104,7 +112,9 @@ namespace QueueService
                     var deleteResponse = await queueClient.DeleteMessageAsync(message.MessageId, message.PopReceipt);
 
                     Console.WriteLine($"Queue Message Deleted: {message.MessageId}");
+
                 }
+                await Task.Delay(TimeSpan.FromSeconds(Env.GetInt("AZURE_STORAGE_QUEUE_RECEIVE_SLEEP", 1)));
             }
         }
     }

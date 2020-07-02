@@ -51,3 +51,4 @@ msbuild.wrn
 *.prefs
 
 /src/python/api
+env-configmap.yaml
