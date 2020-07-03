@@ -29,6 +29,30 @@ resource "azurerm_cognitive_account" "text_analytics" {
   sku_name = "S0"
 }
 
+resource "azurerm_key_vault" "key_vault" {
+  name                = "${var.basename}keyvault"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+  tenant_id           = data.azurerm_client_config.current.tenant_id
+  sku_name            = "standard"
+
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = data.azurerm_client_config.current.object_id
+
+    secret_permissions = [
+      "get", "set", "list"
+    ]
+
+  }
+}
+
+resource "azurerm_key_vault_secret" "key_vault_secret" {
+  name         = "cosmoskey"
+  value        = azurerm_cosmosdb_account.cosmos_account.primary_master_key
+  key_vault_id = azurerm_key_vault.key_vault.id
+}
+
 resource "azurerm_cosmosdb_account" "cosmos_account" {
   name                = "${var.basename}cosmosaccount"
   location            = azurerm_resource_group.rg.location
@@ -185,9 +209,9 @@ resource "azurerm_role_assignment" "app_mi_blob_storage" {
 }
 
 resource "azurerm_role_assignment" "user_cli_blob_storage" {
-  scope                            = azurerm_storage_account.storage.id
-  role_definition_name             = "Storage Blob Data Contributor"
-  principal_id                     = data.azurerm_client_config.current.object_id
+  scope                = azurerm_storage_account.storage.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = data.azurerm_client_config.current.object_id
 }
 
 resource "azurerm_role_assignment" "app_mi_queue_storage" {
@@ -198,9 +222,9 @@ resource "azurerm_role_assignment" "app_mi_queue_storage" {
 }
 
 resource "azurerm_role_assignment" "user_cli_queue_storage" {
-  scope                            = azurerm_storage_account.storage.id
-  role_definition_name             = "Storage Queue Data Contributor"
-  principal_id                     = data.azurerm_client_config.current.object_id
+  scope                = azurerm_storage_account.storage.id
+  role_definition_name = "Storage Queue Data Contributor"
+  principal_id         = data.azurerm_client_config.current.object_id
 }
 
 resource "azurerm_role_assignment" "app_mi_queue_msg_storage" {
@@ -211,9 +235,9 @@ resource "azurerm_role_assignment" "app_mi_queue_msg_storage" {
 }
 
 resource "azurerm_role_assignment" "user_cli_queue_msg_storage" {
-  scope                            = azurerm_storage_account.storage.id
-  role_definition_name             = "Storage Queue Data Message Processor"
-  principal_id                     = data.azurerm_client_config.current.object_id
+  scope                = azurerm_storage_account.storage.id
+  role_definition_name = "Storage Queue Data Message Processor"
+  principal_id         = data.azurerm_client_config.current.object_id
 }
 
 resource "azurerm_role_assignment" "app_mi_cogserv" {
@@ -224,9 +248,22 @@ resource "azurerm_role_assignment" "app_mi_cogserv" {
 }
 
 resource "azurerm_role_assignment" "user_cli_cogserv" {
-  scope                            = azurerm_storage_account.storage.id
-  role_definition_name             = "Cognitive Services User"
-  principal_id                     = data.azurerm_client_config.current.object_id
+  scope                = azurerm_storage_account.storage.id
+  role_definition_name = "Cognitive Services User"
+  principal_id         = data.azurerm_client_config.current.object_id
+}
+
+# KEY VAULT ACCESS POLICIES
+
+resource "azurerm_key_vault_access_policy" "user_cli_keyvault" {
+  key_vault_id = azurerm_key_vault.key_vault.id
+
+  tenant_id = data.azurerm_client_config.current.tenant_id
+  object_id = data.azurerm_client_config.current.object_id
+
+  secret_permissions = [
+    "get"
+  ]
 }
 
 output "AZURE_STORAGE_BLOB_ENDPOINT" {
@@ -245,14 +282,10 @@ output "AZURE_TEXT_ANALYTICS_ENDPOINT" {
   value = "https://${azurerm_cognitive_account.text_analytics.name}.cognitiveservices.azure.com/"
 }
 
+output "AZURE_KEYVAULT_ENDPOINT" {
+  value = azurerm_key_vault.key_vault.vault_uri
+}
+
 output "AZURE_COSMOS_ENDPOINT" {
   value = azurerm_cosmosdb_account.cosmos_account.endpoint
-}
-
-output "AZURE_COSMOS_KEY" {
-  value = azurerm_cosmosdb_account.cosmos_account.primary_master_key
-}
-
-output "APPINSIGHTS_INSTRUMENTATIONKEY" {
-  value = azurerm_application_insights.logging.instrumentation_key
 }

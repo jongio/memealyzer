@@ -11,13 +11,70 @@ using Azure.Storage.Blobs.Models;
 using Azure.Storage.Queues;
 using Azure.Cosmos;
 using Azure.Cosmos.Serialization;
+using Azure.Security.KeyVault.Secrets;
+using Azure.AI.FormRecognizer;
+using Azure.AI.TextAnalytics;
 using DotNetEnv;
 
 namespace Lib
 {
-    public static class Data
+    public class Data
     {
-        public async static Task<Image> EnqueueImageAsync(Image image = null)
+        public CosmosClient CosmosClient;
+        public CosmosContainer CosmosContainer;
+        public SecretClient SecretClient;
+        public ChainedTokenCredential credential = Identity.GetCredentialChain();
+        public BlobServiceClient BlobServiceClient;
+        public BlobContainerClient ContainerClient;
+        public QueueServiceClient QueueServiceClient;
+        public QueueClient QueueClient;
+        public TextAnalyticsClient TextAnalyticsClient;
+        public FormRecognizerClient FormRecognizerClient;
+
+        public Data()
+        {
+        }
+
+        public async Task InitializeAsync()
+        {
+            // KeyVault
+            SecretClient = new SecretClient(new Uri(Env.GetString("AZURE_KEYVAULT_ENDPOINT")), credential);
+            var cosmosKey = await SecretClient.GetSecretAsync(Env.GetString("AZURE_COSMOS_KEY_NAME", "cosmoskey"));
+
+            // Cosmos
+            CosmosClient = new CosmosClient(
+                            Env.GetString("AZURE_COSMOS_ENDPOINT"),
+                            cosmosKey.Value.Value,
+                            new CosmosClientOptions
+                            {
+                                ConnectionMode = ConnectionMode.Direct,
+                                ConsistencyLevel = ConsistencyLevel.Session
+                            });
+
+            CosmosContainer = CosmosClient.GetDatabase(Env.GetString("AZURE_COSMOS_DB")).GetContainer(Env.GetString("AZURE_COSMOS_CONTAINER"));
+
+            // Blob
+            BlobServiceClient = new BlobServiceClient(new Uri(Env.GetString("AZURE_STORAGE_BLOB_ENDPOINT")), credential);
+            ContainerClient = BlobServiceClient.GetBlobContainerClient(Env.GetString("AZURE_STORAGE_BLOB_CONTAINER_NAME"));
+            await ContainerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
+
+            // Queue
+            QueueServiceClient = new QueueServiceClient(new Uri(Env.GetString("AZURE_STORAGE_QUEUE_ENDPOINT")), credential);
+            QueueClient = QueueServiceClient.GetQueueClient(Env.GetString("AZURE_STORAGE_QUEUE_NAME"));
+            await QueueClient.CreateIfNotExistsAsync();
+
+            // FormRecognizerClient
+            FormRecognizerClient = new FormRecognizerClient(
+                new Uri(Env.GetString("AZURE_FORM_RECOGNIZER_ENDPOINT")),
+                credential);
+
+            // TextAnalyticsClient
+            TextAnalyticsClient = new TextAnalyticsClient(
+                new Uri(Env.GetString("AZURE_TEXT_ANALYTICS_ENDPOINT")),
+                credential);
+        }
+
+        public async Task<Image> EnqueueImageAsync(Image image = null)
         {
             using var http = new HttpClient();
 
@@ -26,37 +83,19 @@ namespace Lib
                 image = await http.GetFromJsonAsync<Image>(Env.GetString("MEME_ENDPOINT"));
             }
 
-            var cred = Identity.GetCredentialChain();
-
-            // BlobServiceClient
-            var blobServiceClient = new BlobServiceClient(new Uri(Env.GetString("AZURE_STORAGE_BLOB_ENDPOINT")), cred);
-            var containerClient = blobServiceClient.GetBlobContainerClient(Env.GetString("AZURE_STORAGE_BLOB_CONTAINER_NAME"));
-
-            //TODO: Move the container creation code to startup because it takes a while and we don't want to do on every request.
-            //await containerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
-
             // Get Image Stream
             using var imageStream = await http.GetStreamAsync(image.Url);
 
             // Upload to Blob
-            var blobClient = containerClient.GetBlobClient(image.BlobName);
+            var blobClient = ContainerClient.GetBlobClient(image.BlobName);
             await blobClient.UploadAsync(imageStream);
 
             Console.WriteLine($"Uploaded to Blob Storage: {blobClient.Uri}");
 
             image.BlobUri = blobClient.Uri.ToString();
 
-            // QueueClient
-            var queueServiceClient = new QueueServiceClient(
-                new Uri(Env.GetString("AZURE_STORAGE_QUEUE_ENDPOINT")), cred);
-
-            var queueClient = queueServiceClient.GetQueueClient(Env.GetString("AZURE_STORAGE_QUEUE_NAME"));
-
-            //TODO: Move the queue creation code to startup because it takes a while and we don't want to do on every request.
-            //await queueClient.CreateIfNotExistsAsync();
-
             // Send Queue Message
-            var sendReceipt = await queueClient.SendMessageAsync(
+            var sendReceipt = await QueueClient.SendMessageAsync(
                 JsonSerializer.Serialize<Image>(image,
                     new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
                 );
@@ -65,41 +104,19 @@ namespace Lib
             return image;
         }
 
-        public async static IAsyncEnumerable<Image> GetImagesAsync()
+        public async IAsyncEnumerable<Image> GetImagesAsync()
         {
-            var cosmosClient = new CosmosClient(
-                Env.GetString("AZURE_COSMOS_ENDPOINT"),
-                Env.GetString("AZURE_COSMOS_KEY"),
-                new CosmosClientOptions
-                {
-                    ConnectionMode = ConnectionMode.Direct,
-                    ConsistencyLevel = ConsistencyLevel.Session
-                });
-
-            var cosmosContainer = cosmosClient.GetDatabase(Env.GetString("AZURE_COSMOS_DB")).GetContainer(Env.GetString("AZURE_COSMOS_CONTAINER"));
-
-            await foreach (var item in cosmosContainer.GetItemQueryIterator<Image>("SELECT * FROM c F ORDER BY F.createdDate DESC"))
+            await foreach (var item in CosmosContainer.GetItemQueryIterator<Image>("SELECT * FROM c F ORDER BY F.createdDate DESC"))
             {
                 yield return item;
             }
         }
 
-        public async static Task<Image> GetImageAsync(string id)
+        public async Task<Image> GetImageAsync(string id)
         {
-            var cosmosClient = new CosmosClient(
-                Env.GetString("AZURE_COSMOS_ENDPOINT"),
-                Env.GetString("AZURE_COSMOS_KEY"),
-                new CosmosClientOptions
-                {
-                    ConnectionMode = ConnectionMode.Direct,
-                    ConsistencyLevel = ConsistencyLevel.Session
-                });
-
-            var cosmosContainer = cosmosClient.GetDatabase(Env.GetString("AZURE_COSMOS_DB")).GetContainer(Env.GetString("AZURE_COSMOS_CONTAINER"));
-
             QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c F WHERE F.id = @id").WithParameter("@id", id);
 
-            await foreach (Image item in cosmosContainer.GetItemQueryIterator<Image>(queryDefinition))
+            await foreach (Image item in CosmosContainer.GetItemQueryIterator<Image>(queryDefinition))
             {
                 return item;
             }
