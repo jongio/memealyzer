@@ -13,6 +13,8 @@ using Microsoft.Extensions.Logging;
 using DotNetEnv;
 using Api.Hubs;
 using Microsoft.AspNetCore.ResponseCompression;
+using Lib;
+using Api.Services;
 
 namespace Api
 {
@@ -31,6 +33,9 @@ namespace Api
         public void ConfigureServices(IServiceCollection services)
         {
             Env.Load("../../../.env");
+            
+            services.AddSingleton(typeof(Data));
+            services.AddHostedService<DataHostedService>();
             services.AddSignalR();
             services.AddControllers();
             services.AddCors(options =>
