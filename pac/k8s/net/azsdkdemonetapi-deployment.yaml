@@ -123,7 +123,7 @@ spec:
             configMapKeyRef:
               key: MEME_ENDPOINT
               name: env
-        image: vyta/azsdkdemonetapi
+        image: azsdkdemonetapi
         imagePullPolicy: "IfNotPresent"
         name: azsdkdemonetapi
         ports:
@@ -137,6 +137,6 @@ spec:
       serviceAccountName: ""
       volumes:
       - hostPath:
-          path: /home/vyta/.azure
+          path: /home/jon/.azure
         name: azsdkdemonetapi-hostpath0
 status: {}

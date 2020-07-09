@@ -123,7 +123,7 @@ spec:
             configMapKeyRef:
               key: MEME_ENDPOINT
               name: env
-        image: vyta/azsdkdemonetqueueservice
+        image: azsdkdemonetqueueservice
         imagePullPolicy: "IfNotPresent"
         name: azsdkdemonetqueueservice
         resources: {}
@@ -134,6 +134,6 @@ spec:
       serviceAccountName: ""
       volumes:
       - hostPath:
-          path: /home/vyta/.azure
+          path: /home/jon/.azure
         name: azsdkdemonetqueueservice-hostpath0
 status: {}

@@ -26,7 +26,7 @@ spec:
         io.kompose.service: azsdkdemonetwebapp
     spec:
       containers:
-        image: vyta/azsdkdemonetwebapp
+        image: azsdkdemonetwebapp
         imagePullPolicy: "IfNotPresent"
         name: azsdkdemonetwebapp
         ports:

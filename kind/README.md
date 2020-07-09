@@ -1,6 +1,6 @@
 # Local Kind Cluster Configuration
 
-Create a kind cluster with the configuration in `config.yaml`:
+1. Create a kind cluster with the configuration in `config.yaml`:
 
 ```sh
 kind create cluster --config ./config.yaml
@@ -26,10 +26,18 @@ kind: Cluster
     - role: worker
 ```
 
-This configuration maps the control-plane node port 80 to your host's 8888, making it easy to access the NodePort service that will be created by the nginx deployment configured for kind:
+2. This configuration maps the control-plane node port 80 to your host's 8888, making it easy to access the NodePort service that will be created by the nginx deployment configured for kind:
 
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
 ```
 
 You should now be able to hit the controller at http://localhost:8888
+
+3. Load local images onto nodes:
+
+```sh
+kind load docker-image azsdkdemonetwebapp
+kind load docker-image azsdkdemonetapi
+kind load docker-image azsdkdemonetqueueservice
+```
