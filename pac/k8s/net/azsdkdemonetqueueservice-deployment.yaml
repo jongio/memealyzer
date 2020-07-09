@@ -28,11 +28,6 @@ spec:
     spec:
       containers:
       - env:
-        - name: APPINSIGHTS_INSTRUMENTATIONKEY
-          valueFrom:
-            configMapKeyRef:
-              key: APPINSIGHTS_INSTRUMENTATIONKEY
-              name: env
         - name: AZURE_CLIENT_ID
           valueFrom:
             configMapKeyRef:
@@ -58,15 +53,20 @@ spec:
             configMapKeyRef:
               key: AZURE_COSMOS_ENDPOINT
               name: env
-        - name: AZURE_COSMOS_KEY
+        - name: AZURE_COSMOS_KEY_NAME
           valueFrom:
             configMapKeyRef:
-              key: AZURE_COSMOS_KEY
+              key: AZURE_COSMOS_KEY_NAME
               name: env
         - name: AZURE_FORM_RECOGNIZER_ENDPOINT
           valueFrom:
             configMapKeyRef:
               key: AZURE_FORM_RECOGNIZER_ENDPOINT
+              name: env
+        - name: AZURE_KEYVAULT_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              key: AZURE_KEYVAULT_ENDPOINT
               name: env
         - name: AZURE_STORAGE_BLOB_CONTAINER_NAME
           valueFrom:
@@ -123,8 +123,8 @@ spec:
             configMapKeyRef:
               key: MEME_ENDPOINT
               name: env
-        image: azsdkdemonetqueueservice
-        imagePullPolicy: "Never"
+        image: vyta/azsdkdemonetqueueservice
+        imagePullPolicy: "IfNotPresent"
         name: azsdkdemonetqueueservice
         resources: {}
         volumeMounts:
@@ -134,6 +134,6 @@ spec:
       serviceAccountName: ""
       volumes:
       - hostPath:
-          path: /home/jon/.azure
+          path: /home/vyta/.azure
         name: azsdkdemonetqueueservice-hostpath0
 status: {}

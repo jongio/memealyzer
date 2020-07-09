@@ -26,14 +26,22 @@ spec:
         io.kompose.service: azsdkdemonetwebapp
     spec:
       containers:
-      - image: azsdkdemonetwebapp
-        imagePullPolicy: "Never"
+        image: vyta/azsdkdemonetwebapp
+        imagePullPolicy: "IfNotPresent"
         name: azsdkdemonetwebapp
         ports:
         - containerPort: 80
         - containerPort: 443
         resources: {}
+        volumeMounts:
+        - name: web-config
+          mountPath: /var/www/web/appsettings.json
+          readOnly: true
+          subPath: appsettings.json
       restartPolicy: Always
       serviceAccountName: ""
-      volumes: null
+      volumes:
+        - name: web-config
+          configMap:
+            name: websettings
 status: {}

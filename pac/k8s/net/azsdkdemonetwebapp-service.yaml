@@ -10,7 +10,6 @@ metadata:
     io.kompose.service: azsdkdemonetwebapp
   name: azsdkdemonetwebapp
 spec:
-  type: ClusterIP
   ports:
   - name: "1080"
     port: 1080

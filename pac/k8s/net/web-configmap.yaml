@@ -1,0 +1,9 @@
+kind: ConfigMap
+metadata:
+  name: websettings
+apiVersion: v1
+data:
+  appsettings.json: |-
+    {
+        "API_ENDPOINT": "http://localhost:8888"
+    }
