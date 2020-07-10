@@ -1,0 +1,23 @@
+# Run 'skaffold dev'
+apiVersion: skaffold/v2beta4
+kind: Config
+metadata:
+  name: azsdkdemo
+build:
+  artifacts:
+  - image: azsdkdemonetwebapp
+    context: ../../src/net
+    docker:
+      dockerfile: WebApp/Dockerfile
+  - image: azsdkdemonetapi
+    context: ../../src/net
+    docker:
+      dockerfile: Api/Dockerfile
+  - image: azsdkdemonetqueueservice
+    context: ../../src/net
+    docker:
+      dockerfile: Services/QueueService/Dockerfile
+deploy:
+  kubectl:
+    manifests:
+    - ../k8s/net/*.yaml
