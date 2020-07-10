@@ -10,7 +10,6 @@ metadata:
     io.kompose.service: azsdkdemonetapi
   name: azsdkdemonetapi
 spec:
-  type: ClusterIP
   ports:
   - name: "2080"
     port: 2080

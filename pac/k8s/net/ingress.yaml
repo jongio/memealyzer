@@ -6,15 +6,21 @@ metadata:
       kubernetes.io/ingress.class: nginx
 spec:
   rules:
-  - host: localhost
-    http:
+  - http:
       paths:
-      - backend:
+      - path: /
+        backend:
           serviceName: azsdkdemonetwebapp
           servicePort: 1080
-  - host: localhost
-    http:
-      paths:
-      - backend:
+      - path: /images
+        backend:
+          serviceName: azsdkdemonetapi
+          servicePort: 2080
+      - path: /image
+        backend:
+          serviceName: azsdkdemonetapi
+          servicePort: 2080
+      - path: /imagehub
+        backend:
           serviceName: azsdkdemonetapi
           servicePort: 2080
