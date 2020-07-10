@@ -23,11 +23,3 @@ services:
     ports:
       - 2080:80
       - 2443:443
-  azsdkdemonetqueueservice:
-    image: azsdkdemonetqueueservice
-    env_file: ../../.env
-    volumes: 
-        - "${HOME}/.azure:/root/.azure"
-    build:
-      context: .
-      dockerfile: Services/QueueService/Dockerfile

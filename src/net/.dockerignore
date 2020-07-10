@@ -1,0 +1,3 @@
+# Ignore child projects' output folders for smaller contexts.
+*/bin
+*/obj
