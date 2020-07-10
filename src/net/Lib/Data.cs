@@ -30,6 +30,7 @@ namespace Lib
         public QueueClient QueueClient;
         public TextAnalyticsClient TextAnalyticsClient;
         public FormRecognizerClient FormRecognizerClient;
+        private HttpClient httpClient = new HttpClient();
 
         public Data()
         {
@@ -76,15 +77,13 @@ namespace Lib
 
         public async Task<Image> EnqueueImageAsync(Image image = null)
         {
-            using var http = new HttpClient();
-
             if (image?.Url is null || string.IsNullOrEmpty(image.Url))
             {
-                image = await http.GetFromJsonAsync<Image>(Env.GetString("MEME_ENDPOINT"));
+                image = await httpClient.GetFromJsonAsync<Image>(Env.GetString("MEME_ENDPOINT"));
             }
 
             // Get Image Stream
-            using var imageStream = await http.GetStreamAsync(image.Url);
+            using var imageStream = await httpClient.GetStreamAsync(image.Url);
 
             // Upload to Blob
             var blobClient = ContainerClient.GetBlobClient(image.BlobName);
