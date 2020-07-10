@@ -1,0 +1,123 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "baseName": {
+            "type": "string"
+        },
+        "searchSku": {
+            "defaultValue": "free",
+            "type": "string"
+        },
+        "location": {
+            "defaultValue": "[resourceGroup().location]",
+            "type": "string"
+        }
+    },
+    "variables": {
+        "storageAccountName": "[concat(parameters('baseName'), 'stg')]",
+        "storageApiVersion": "2019-06-01",
+        "cognitiveAccountName": "[concat(parameters('baseName'), '-cog')]",
+        "cognitiveApiVersion": "2017-04-18",
+        "searchAccountName": "[concat(parameters('baseName'), '-search')]",
+        "searchApiVersion": "2020-03-13"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "[variables('storageApiVersion')]",
+            "name": "[variables('storageAccountName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "supportsHttpsTrafficOnly": false,
+                "accessTier": "Hot"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "[variables('storageApiVersion')]",
+            "name": "[concat(variables('storageAccountName'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "[variables('storageApiVersion')]",
+            "name": "[concat(variables('storageAccountName'), '/default/images')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageAccountName'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+            ],
+            "properties": {
+                "publicAccess": "Blob"
+            }
+        },
+                {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "apiVersion": "[variables('cognitiveApiVersion')]",
+            "name": "[variables('cognitiveAccountName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "S0"
+            },
+            "kind": "CognitiveServices",
+            "properties": {
+                "apiProperties": {
+                    "statisticsEnabled": false
+                },
+                "publicNetworkAccess": "Enabled"
+            }
+        },
+                {
+            "type": "Microsoft.Search/searchServices",
+            "apiVersion": "[variables('searchApiVersion')]",
+            "name": "[variables('searchAccountName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "[parameters('searchSku')]"
+            },
+            "properties": {
+                "replicaCount": 1,
+                "partitionCount": 1,
+                "hostingMode": "Default",
+                "publicNetworkAccess": "Enabled",
+                "networkRuleSet": {
+                    "ipRules": []
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "DEMO_STORAGE_CONNECTION_STRING": {
+            "type": "string",
+            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(variables('storageAccountName'), variables('storageApiVersion')).keys[0].value,';EndpointSuffix=core.windows.net')]"
+        },
+        "DEMO_SEARCH_ENDPOINT": {
+            "type": "string",
+            "value": "[concat('https://', variables('searchAccountName'), '.search.windows.net')]"
+        },
+        "DEMO_SEARCH_KEY": {
+            "type": "string",
+            "value": "[listAdminKeys(variables('searchAccountName'), variables('searchApiVersion')).primaryKey]"
+        },
+        "DEMO_COGNITIVE_KEY": {
+            "type": "string",
+            "value": "[listKeys(variables('cognitiveAccountName'), variables('cognitiveApiVersion')).key1]"
+        }
+    }
+}
