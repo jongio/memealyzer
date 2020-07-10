@@ -2,8 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose convert --file ./src/net/docker-compose.yml -o ./pac/k8s/net
-      --volumes hostPath
+    kompose.cmd: kompose convert -o ../../pac/k8s/net --volumes hostPath
     kompose.version: 1.21.0 (992df58d8)
   creationTimestamp: null
   labels:
@@ -18,8 +17,7 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: kompose convert --file ./src/net/docker-compose.yml -o ./pac/k8s/net
-          --volumes hostPath
+        kompose.cmd: kompose convert -o ../../pac/k8s/net --volumes hostPath
         kompose.version: 1.21.0 (992df58d8)
       creationTimestamp: null
       labels:
@@ -27,21 +25,13 @@ spec:
     spec:
       containers:
       - image: azsdkdemonetwebapp
-        imagePullPolicy: "IfNotPresent"
+        imagePullPolicy: ""
         name: azsdkdemonetwebapp
         ports:
         - containerPort: 80
         - containerPort: 443
         resources: {}
-        volumeMounts:
-        - name: web-config
-          mountPath: /var/www/web/appsettings.json
-          readOnly: true
-          subPath: appsettings.json
       restartPolicy: Always
       serviceAccountName: ""
-      volumes:
-        - name: web-config
-          configMap:
-            name: websettings
+      volumes: null
 status: {}

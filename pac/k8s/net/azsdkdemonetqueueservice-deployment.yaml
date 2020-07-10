@@ -2,8 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose convert --file ./src/net/docker-compose.yml -o ./pac/k8s/net
-      --volumes hostPath
+    kompose.cmd: kompose convert -o ../../pac/k8s/net --volumes hostPath
     kompose.version: 1.21.0 (992df58d8)
   creationTimestamp: null
   labels:
@@ -19,8 +18,7 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: kompose convert --file ./src/net/docker-compose.yml -o ./pac/k8s/net
-          --volumes hostPath
+        kompose.cmd: kompose convert -o ../../pac/k8s/net --volumes hostPath
         kompose.version: 1.21.0 (992df58d8)
       creationTimestamp: null
       labels:
@@ -124,7 +122,7 @@ spec:
               key: MEME_ENDPOINT
               name: env
         image: azsdkdemonetqueueservice
-        imagePullPolicy: "IfNotPresent"
+        imagePullPolicy: ""
         name: azsdkdemonetqueueservice
         resources: {}
         volumeMounts:
