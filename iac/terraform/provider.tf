@@ -10,6 +10,10 @@ provider "azurerm" {
   features {}
 }
 
+provider "azuread" {
+  version = "~> 0.11"
+}
+
 provider "random" {
   version = "~>2"
 }
@@ -22,3 +26,5 @@ provider "null" {
 
 # Make client_id, tenant_id, subscription_id and object_id variables
 data "azurerm_client_config" "current" {}
+
+data "azurerm_subscription" "sub" {}

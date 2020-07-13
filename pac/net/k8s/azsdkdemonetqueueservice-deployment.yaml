@@ -108,16 +108,6 @@ spec:
             configMapKeyRef:
               key: AZURE_TEXT_ANALYTICS_ENDPOINT
               name: env
-        - name: AZURITE_ACCOUNT_KEY
-          valueFrom:
-            configMapKeyRef:
-              key: AZURITE_ACCOUNT_KEY
-              name: env
-        - name: AZURITE_ACCOUNT_NAME
-          valueFrom:
-            configMapKeyRef:
-              key: AZURITE_ACCOUNT_NAME
-              name: env
         - name: MEME_ENDPOINT
           valueFrom:
             configMapKeyRef:
