@@ -13,6 +13,7 @@ from azure.storage.queue import QueueServiceClient
 from azure.ai.formrecognizer import FormRecognizerClient
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.cosmos import CosmosClient
+from azure.keyvault.secrets import SecretClient
 
 from smart_getenv import getenv
 from dotmap import DotMap
@@ -42,8 +43,14 @@ ta_client = TextAnalyticsClient(
     endpoint=getenv("AZURE_TEXT_ANALYTICS_ENDPOINT"), credential=credential
 )
 
+secret_client = SecretClient(
+    vault_url=getenv("AZURE_KEYVAULT_ENDPOINT"), credential=credential
+)
+
+secret = secret_client.get_secret(getenv("AZURE_COSMOS_KEY_NAME"))
+
 cosmos_client = CosmosClient(
-    url=getenv("AZURE_COSMOS_ENDPOINT"), credential=getenv("AZURE_COSMOS_KEY")
+    url=getenv("AZURE_COSMOS_ENDPOINT"), credential=secret.value
 )
 
 cosmos_database_client = cosmos_client.get_database_client(
@@ -56,31 +63,41 @@ cosmos_container_client = cosmos_database_client.get_container_client(
 
 while True:
 
-    print("Receiving messages...")
+    print("Receiving messages from queue")
+    
     batches = queue_client.receive_messages(
         messages_per_page=getenv("AZURE_STORAGE_QUEUE_MSG_COUNT", default="10")
     )
+
     for batch in batches.by_page():
         for message in batch:
             message_json = DotMap(json.loads(message.content))
 
+            print("Message received: " + message_json.id)
+
+            print("Extracting text from image")
             fr_poller = fr_client.begin_recognize_content_from_url(message_json.url)
             fr_result = fr_poller.result()
 
-            text = " ".join([line.text for page in fr_result for line in page.lines])
+            message_json.text = " ".join([line.text for page in fr_result for line in page.lines])
 
-            print(text)
-            message_json.text = text
+            print("Image text: " + message_json.text)
 
-            if text:
-                ta_response = ta_client.analyze_sentiment([text])
+            if message_json.text:
+                print("Analyzing text sentiment")
+                ta_response = ta_client.analyze_sentiment([message_json.text])
+
                 for doc in ta_response:
-                    print(doc.sentiment)
+                    print("Image text sentiment: " + doc.sentiment)
                     message_json.sentiment = doc.sentiment
+            else:
+                print("No text found in image");
 
-                cosmos_container_client.upsert_item(message_json.toDict())
+            print("Saving document")
+            cosmos_container_client.upsert_item(message_json.toDict())
 
-                queue_client.delete_message(message)
+            print("Deleting message from queue")    
+            queue_client.delete_message(message)
 
             print(message_json)
 
