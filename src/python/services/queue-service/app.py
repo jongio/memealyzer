@@ -67,12 +67,7 @@ while True:
             fr_poller = fr_client.begin_recognize_content_from_url(message_json.url)
             fr_result = fr_poller.result()
 
-            lines_of_text = []
-            for page in fr_result:
-                for line in page.lines:
-                    lines_of_text.append(line.text)
-            text = " ".join(lines_of_text)
-            lines_of_text.clear()
+            text = " ".join([line.text for page in fr_result for line in page.lines])
 
             print(text)
             message_json.text = text
