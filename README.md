@@ -25,9 +25,7 @@ The following Azure resources will be deployed with the Terraform script.
 1. [Cognitive Services Form Recognizer](https://docs.microsoft.com/azure/cognitive-services/form-recognizer/overview)
 1. [Cognitive Services Text Analytics](https://azure.microsoft.com/services/cognitive-services/text-analytics/)
 1. [Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/introduction)
-1. [App Service: Plan](https://docs.microsoft.com/azure/app-service/overview-hosting-plans)
-1. [App Service: Web Apps](https://azure.microsoft.com/services/app-service/web/)
-1. [App Service: API Apps](https://azure.microsoft.com/services/app-service/api/)
+1. [Key Vault](https://azure.microsoft.com/services/key-vault/)
 1. [Application Insights](https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview)
 
 ## Code Setup
@@ -44,16 +42,29 @@ The following Azure resources will be deployed with the Terraform script.
       > Change the `basename` variable from `azsdkdemo1` to something that will be globally unique.  It will be used as part of Azure resource names, so keep it short, lowercase, and no special characters.
    1. Terraform apply: `terraform apply tf.plan`
 1. Update `.env` file
-   1. Rename `.env.tmp` to `.env`
-   1. Copy and paste the terraform output values to the .env file.
+   1. Copy and paste the terraform output values to the `.env` file in the root of this repo.
       > NOTE: .env files do not allow spaces around the `=`, so please remove any spaces after you copy and paste.
 
 ## Run Application
 
-1. CD to `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`
-1. `Run docker-compose up --build`
+### Docker Compose
+1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`
+1. Run `docker-compose up --build`
 1. Navigate to http://localhost:1080
 1. Add an Image
    1. Enter url into text box and click "Submit"
    1. Or click "Add Random Meme"
    1. The image will be added to the grid. Wait for the service to pick it up. You will eventually see the text and the image border color will change indicating the image text sentiment.
+
+### Local Kubernetes
+1. Copy the values outputted from the terraform commands above (they should be in your `.env` file if you followed the Code Setup steps above) into the `pac/net/k8s/env-configmap.yaml` file.
+1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`.
+1. Run `docker-compose build` to build the containers locally.
+1. CD to `pac/net/k8s`.
+2. Run `./mount.sh` to mount your local `.azure` folder to the container, so we can use AzureCliCredential in Kubernetes.
+3. Run `kubectl apply -f .`
+4. Navigate to http://localhost:31389
+
+### Azure Kubernetes Service
+
+> Instructions coming soon...

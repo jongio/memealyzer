@@ -1,4 +1,3 @@
-.env
 .terraform
 terraform.tfstate.backup
 .terraform.tfstate.lock.info
@@ -51,4 +50,3 @@ msbuild.wrn
 *.prefs
 
 /src/python/api
-env-configmap.yaml
