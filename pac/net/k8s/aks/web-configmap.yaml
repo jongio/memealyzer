@@ -1,0 +1,9 @@
+kind: ConfigMap
+metadata:
+  name: websettings
+apiVersion: v1
+data:
+  appsettings.json: |-
+    {
+        "API_ENDPOINT": "http://52.175.250.202"
+    }

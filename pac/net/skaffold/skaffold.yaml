@@ -5,15 +5,15 @@ metadata:
   name: azsdkdemo
 build:
   artifacts:
-  - image: azsdkdemonetwebapp
+  - image: jongio/azsdkdemonetwebapp
     context: ../../src/net
     docker:
       dockerfile: WebApp/Dockerfile
-  - image: azsdkdemonetapi
+  - image: jongio/azsdkdemonetapi
     context: ../../src/net
     docker:
       dockerfile: Api/Dockerfile
-  - image: azsdkdemonetqueueservice
+  - image: jongio/azsdkdemonetqueueservice
     context: ../../src/net
     docker:
       dockerfile: Services/QueueService/Dockerfile

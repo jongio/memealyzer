@@ -3,7 +3,7 @@ version: "3.7"
 
 services:
   azsdkdemonetwebapp:
-    image: azsdkdemonetwebapp
+    image: jongio/azsdkdemonetwebapp
     build:
       context: .
       dockerfile: WebApp/Dockerfile
@@ -13,7 +13,7 @@ services:
       - 1080:80
       - 1443:443
   azsdkdemonetapi:
-    image: azsdkdemonetapi
+    image: jongio/azsdkdemonetapi
     env_file: ../../.env
     volumes: 
         - "${HOME}/.azure:/root/.azure"
@@ -24,7 +24,7 @@ services:
       - 2080:80
       - 2443:443
   azsdkdemonetqueueservice:
-    image: azsdkdemonetqueueservice
+    image: jongio/azsdkdemonetqueueservice
     env_file: ../../.env
     volumes: 
         - "${HOME}/.azure:/root/.azure"
