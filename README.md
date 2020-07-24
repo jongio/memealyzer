@@ -26,6 +26,7 @@ The following Azure resources will be deployed with the Terraform script.
 1. [Cognitive Services Text Analytics](https://azure.microsoft.com/services/cognitive-services/text-analytics/)
 1. [Cosmos DB](https://docs.microsoft.com/azure/cosmos-db/introduction)
 1. [Key Vault](https://azure.microsoft.com/services/key-vault/)
+1. [Azure Kubernetes Service](https://docs.microsoft.com/azure/aks/)
 1. [Application Insights](https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview)
 
 ## Code Setup
@@ -42,7 +43,7 @@ The following Azure resources will be deployed with the Terraform script.
       > Change the `basename` variable from `azsdkdemo1` to something that will be globally unique.  It will be used as part of Azure resource names, so keep it short, lowercase, and no special characters.
    1. Terraform apply: `terraform apply tf.plan`
 1. Update `.env` file
-   1. Copy and paste the terraform output values to the `.env` file in the root of this repo.
+   1. Copy and paste the Terraform output values to the `.env` file in the root of this repo.
       > NOTE: .env files do not allow spaces around the `=`, so please remove any spaces after you copy and paste.
 
 ## Run Application
@@ -57,14 +58,32 @@ The following Azure resources will be deployed with the Terraform script.
    1. The image will be added to the grid. Wait for the service to pick it up. You will eventually see the text and the image border color will change indicating the image text sentiment.
 
 ### Local Kubernetes
-1. Copy the values outputted from the terraform commands above (they should be in your `.env` file if you followed the Code Setup steps above) into the `pac/net/k8s/env-configmap.yaml` file.
+1. Copy the values outputted from the Terraform commands above (they should be in your `.env` file if you followed the [Code Setup](#Code-Setup) steps above) into the `pac/net/k8s/local/env-configmap.yaml` file.
 1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`.
 1. Run `docker-compose build` to build the containers locally.
-1. CD to `pac/net/k8s`.
-2. Run `./mount.sh` to mount your local `.azure` folder to the container, so we can use AzureCliCredential in Kubernetes.
-3. Run `kubectl apply -f .`
-4. Navigate to http://localhost:31389
+1. CD to `pac/net/k8s/local`.
+1. Run `./mount.sh` to mount your local `.azure` folder to the container, so we can use AzureCliCredential in Kubernetes.
+1. Run `kubectl apply -f .`
+1. Navigate to http://localhost:31389
 
 ### Azure Kubernetes Service
 
-> Instructions coming soon...
+1. Copy the values outputted from the Terraform commands above (they should be in your `.env` file if you followed the Code Setup steps above) into the `pac/net/k8s/aks/env-configmap.yaml` file.
+1. Run the `az aks get-credentials` command that was outputted from the `terraform apply` command you ran earlier. It is something like `az aks get-credentials --resource-group azsdkdemo100rg --name azsdkdemo100aks`. Replace the resource group and cluster name with the one you created with Terraform earlier.
+1. Install [Helm](https://helm.sh/) - This will be used for an nginx ingress controller that will expose a Public IP for our cluster and handle routing.
+1. Run the following commands:
+   ```
+   helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+   helm install nginx stable/nginx-ingress
+   ```
+1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`.
+1. Login to your container registry. `docker login` or `az acr login`.
+1. Search the entire project for image names that start with `jongio/` and replace with the name of your container registry.
+   > Note: This experience will be improved with Helm or Kustomize soon.
+1. Run `docker-compose push` to push the containers to your container registry of choice. 
+1. Run `az network public-ip list -g azsdkdemo100aksnodes --query '[0].ipAddress' --output tsv` to find the AKS cluster's public IP address.
+   > Note: Change the resource group to your `node_resource_group` name, this command is also outputted by the Terraform commands.
+1. Open `/pac/net/k8s/aks/web-configmap.yaml` and change the `API_ENDPOINT` value to the Public IP address.
+1. CD to `/pac/net/k8s/aks` and run `kubectl apply -f .`
+1. Open a browser and go to that Public IP.
+

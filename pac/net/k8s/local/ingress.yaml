@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress
+  annotations:
+      kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: azsdkdemonetwebapp
+          servicePort: 1080
+      - path: /images
+        backend:
+          serviceName: azsdkdemonetapi
+          servicePort: 2080
+      - path: /image
+        backend:
+          serviceName: azsdkdemonetapi
+          servicePort: 2080
+      - path: /imagehub
+        backend:
+          serviceName: azsdkdemonetapi
+          servicePort: 2080

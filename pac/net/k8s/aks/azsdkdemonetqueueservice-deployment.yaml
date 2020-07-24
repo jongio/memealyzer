@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd:
+      kompose convert --file ./src/net/docker-compose.yml -o ./pac/k8s/net
+      --volumes hostPath
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: azsdkdemonetqueueservice
+  name: azsdkdemonetqueueservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: azsdkdemonetqueueservice
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd:
+          kompose convert --file ./src/net/docker-compose.yml -o ./pac/k8s/net
+          --volumes hostPath
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: azsdkdemonetqueueservice
+    spec:
+      containers:
+        - env:
+            - name: AZURE_COSMOS_CONTAINER
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_COSMOS_CONTAINER
+                  name: env
+            - name: AZURE_COSMOS_DB
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_COSMOS_DB
+                  name: env
+            - name: AZURE_COSMOS_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_COSMOS_ENDPOINT
+                  name: env
+            - name: AZURE_COSMOS_KEY_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_COSMOS_KEY_NAME
+                  name: env
+            - name: AZURE_FORM_RECOGNIZER_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_FORM_RECOGNIZER_ENDPOINT
+                  name: env
+            - name: AZURE_KEYVAULT_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_KEYVAULT_ENDPOINT
+                  name: env
+            - name: AZURE_STORAGE_BLOB_CONTAINER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_STORAGE_BLOB_CONTAINER_NAME
+                  name: env
+            - name: AZURE_STORAGE_BLOB_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_STORAGE_BLOB_ENDPOINT
+                  name: env
+            - name: AZURE_STORAGE_QUEUE_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_STORAGE_QUEUE_ENDPOINT
+                  name: env
+            - name: AZURE_STORAGE_QUEUE_MSG_COUNT
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_STORAGE_QUEUE_MSG_COUNT
+                  name: env
+            - name: AZURE_STORAGE_QUEUE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_STORAGE_QUEUE_NAME
+                  name: env
+            - name: AZURE_STORAGE_QUEUE_RECEIVE_SLEEP
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_STORAGE_QUEUE_RECEIVE_SLEEP
+                  name: env
+            - name: AZURE_TEXT_ANALYTICS_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_TEXT_ANALYTICS_ENDPOINT
+                  name: env
+            - name: MEME_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  key: MEME_ENDPOINT
+                  name: env
+          image: jongio/azsdkdemonetqueueservice
+          imagePullPolicy: "IfNotPresent"
+          name: azsdkdemonetqueueservice
+          resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+status: {}

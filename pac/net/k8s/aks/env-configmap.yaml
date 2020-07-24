@@ -1,0 +1,22 @@
+apiVersion: v1
+data:
+  AZURE_COSMOS_ENDPOINT: https://azsdkdemo100cosmosaccount.documents.azure.com:443/
+  AZURE_FORM_RECOGNIZER_ENDPOINT: https://azsdkdemo100formrecognizer.cognitiveservices.azure.com/
+  AZURE_KEYVAULT_ENDPOINT: https://azsdkdemo100keyvault.vault.azure.net/
+  AZURE_STORAGE_BLOB_ENDPOINT: https://azsdkdemo100storage.blob.core.windows.net/
+  AZURE_STORAGE_QUEUE_ENDPOINT: https://azsdkdemo100storage.queue.core.windows.net/
+  AZURE_TEXT_ANALYTICS_ENDPOINT: https://azsdkdemo100textanalytics.cognitiveservices.azure.com/
+  AZURE_COSMOS_CONTAINER: images
+  AZURE_COSMOS_DB: azimageai
+  AZURE_COSMOS_KEY_NAME: cosmoskey
+  AZURE_STORAGE_BLOB_CONTAINER_NAME: blobs
+  AZURE_STORAGE_QUEUE_MSG_COUNT: "10"
+  AZURE_STORAGE_QUEUE_NAME: messages
+  AZURE_STORAGE_QUEUE_RECEIVE_SLEEP: "1"
+  MEME_ENDPOINT: https://meme-api.herokuapp.com/gimme/wholesomememes
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: azsdkdemonetapi-env
+  name: env
