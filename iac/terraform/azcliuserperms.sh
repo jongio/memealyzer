@@ -9,4 +9,8 @@ az role assignment create --assignee-object-id $principalId --role "Storage Queu
 az role assignment create --assignee-object-id $principalId --role "Storage Queue Data Message Processor"
 az role assignment create --assignee-object-id $principalId --role "Cognitive Services User"
 
+echo "Setting KeyVault Policy for Azure CLI User"
+basename=$1
+az keyvault set-policy -g "${basename}"rg -n "${basename}"keyvault --object-id $principalId --secret-permissions get set list delete
+
 echo "Done"

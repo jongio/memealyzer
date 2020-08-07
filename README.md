@@ -8,13 +8,13 @@ The repo demonstrates Azure SDK usage via a complete application.  This applicat
 
 The following are required to run this application.
 
-1. A Terminal - We tested this with Git Bash and WSL - it will not currently work with PowerShell or Windows Command Prompt. The Terraform deployment currently only works on Linux compatible systems. You will need to run all the commands below in your selected terminal.
+1. A Terminal - WSL, GitBash, PowerShell. The Terraform deployment will not work with Windows Command Prompt because it uses some shell scripts to fill Terraform gaps. You will need to run all the commands below in your selected terminal.
 1. [Install Azure CLI](https://aka.ms/azcliget)
 1. [Install Terraform](https://terraform.io)
 1. [Install Git](https://git-scm.com/downloads) 
 1. [Install VS Code](https://code.visualstudio.com/)
 1. [Install Docker](https://docs.docker.com/get-docker/)
-1. An [Azure Subscription](https://azure.microsoft.com/free/)
+1. [Azure Subscription](https://azure.microsoft.com/free/)
 
 ## Azure Resources
 
@@ -36,10 +36,6 @@ The following Azure resources will be deployed with the Terraform script.
    `git clone https://github.com/jongio/azsdkdemo`
 1. Azure CLI Login
    `az login`
-1. Assign Azure CLI Roles
-   This app uses the Azure CLI login to connect to Azure resources. You need to run the following script to assign the appropriate roles to the CLI user.
-   1. CD to `iac/terraform`
-   1. Run `./assigncliroles.sh`
 1. Create Azure Resources with Terraform
    1. CD to `iac/terraform`
    1. Terraform init: `terraform init`
@@ -50,11 +46,21 @@ The following Azure resources will be deployed with the Terraform script.
    1. Copy and paste the Terraform output values to the `.env` file in the root of this repo.
       > NOTE: .env files do not allow spaces around the `=`, so please remove any spaces after you copy and paste.
 
+## Permissions Setup
+This app uses the Azure CLI login to connect to Azure resources for local development. You need to run the following script to assign the appropriate roles to the Azure CLI user.
+
+1. CD to `iac/terraform`
+1. Run `./azcliuserperms.sh {basename}`
+   > You need to replace `{basename}` with the basename you used above, such as 'azsdkdemo1'.
+
+
 ## Run Application
 
 ### Docker Compose
 1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`
-1. Run `docker-compose up --build`
+1. Run Docker Compose
+   1. Linux: `docker-compose up --build`
+   1. Windows: `docker-compose -f docker-compose.windows.yml up --build`
 1. Navigate to http://localhost:1080
 1. Add an Image
    1. Enter url into text box and click "Submit"
