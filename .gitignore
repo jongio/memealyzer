@@ -8,7 +8,7 @@ crash.log
 project.lock.json
 .DS_Store
 *.pyc
-tf.plan
+*.plan
 debug.log
 
 # Visual Studio Code
