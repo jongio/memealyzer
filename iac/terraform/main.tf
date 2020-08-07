@@ -9,6 +9,7 @@ resource "azurerm_storage_account" "storage" {
   resource_group_name      = azurerm_resource_group.rg.name
   account_tier             = "Standard"
   account_replication_type = "LRS"
+  allow_blob_public_access = true
 }
 
 resource "azurerm_cognitive_account" "form_recognizer" {
@@ -144,57 +145,37 @@ module "script" {
 }
 
 # BLOB STORAGE ROLES
-resource "azurerm_role_assignment" "cli_blob_storage" {
-  scope                = azurerm_storage_account.storage.id
-  role_definition_name = "Storage Blob Data Contributor"
-  principal_id         = data.azurerm_client_config.current.object_id
-}
-
 resource "azurerm_role_assignment" "mi_blob_storage" {
-  scope                = azurerm_storage_account.storage.id
-  role_definition_name = "Storage Blob Data Contributor"
-  principal_id         = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
+  scope                            = azurerm_storage_account.storage.id
+  role_definition_name             = "Storage Blob Data Contributor"
+  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
+  skip_service_principal_aad_check = true
 }
 
 # QUEUE STORAGE ROLES
-resource "azurerm_role_assignment" "cli_queue_storage" {
-  scope                = azurerm_storage_account.storage.id
-  role_definition_name = "Storage Queue Data Contributor"
-  principal_id         = data.azurerm_client_config.current.object_id
-}
-
 resource "azurerm_role_assignment" "mi_queue_storage" {
-  scope                = azurerm_storage_account.storage.id
-  role_definition_name = "Storage Queue Data Contributor"
-  principal_id         = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
+  scope                            = azurerm_storage_account.storage.id
+  role_definition_name             = "Storage Queue Data Contributor"
+  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
+  skip_service_principal_aad_check = true
 }
 
 # QUEUE MSG STORAGE ROLES
 
-resource "azurerm_role_assignment" "cli_queue_msg_storage" {
-  scope                = azurerm_storage_account.storage.id
-  role_definition_name = "Storage Queue Data Message Processor"
-  principal_id         = data.azurerm_client_config.current.object_id
-}
-
 resource "azurerm_role_assignment" "mi_queue_msg_storage" {
-  scope                = azurerm_storage_account.storage.id
-  role_definition_name = "Storage Queue Data Message Processor"
-  principal_id         = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
+  scope                            = azurerm_storage_account.storage.id
+  role_definition_name             = "Storage Queue Data Message Processor"
+  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
+  skip_service_principal_aad_check = true
 }
 
 # COG SERV ROLES
 
-resource "azurerm_role_assignment" "cli_cogserv" {
-  scope                = data.azurerm_subscription.sub.id
-  role_definition_name = "Cognitive Services User"
-  principal_id         = data.azurerm_client_config.current.object_id
-}
-
 resource "azurerm_role_assignment" "mi_cogserv" {
-  scope                = data.azurerm_subscription.sub.id
-  role_definition_name = "Cognitive Services User"
-  principal_id         = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
+  scope                            = data.azurerm_subscription.sub.id
+  role_definition_name             = "Cognitive Services User"
+  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
+  skip_service_principal_aad_check = true
 }
 
 output "AZURE_STORAGE_BLOB_ENDPOINT" {

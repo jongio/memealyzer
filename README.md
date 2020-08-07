@@ -36,6 +36,10 @@ The following Azure resources will be deployed with the Terraform script.
    `git clone https://github.com/jongio/azsdkdemo`
 1. Azure CLI Login
    `az login`
+1. Assign Azure CLI Roles
+   This app uses the Azure CLI login to connect to Azure resources. You need to run the following script to assign the appropriate roles to the CLI user.
+   1. CD to `iac/terraform`
+   1. Run `./assigncliroles.sh`
 1. Create Azure Resources with Terraform
    1. CD to `iac/terraform`
    1. Terraform init: `terraform init`
