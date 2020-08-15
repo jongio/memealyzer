@@ -1,6 +1,12 @@
 # Azure SDK Demo - Memealyzer
 
+Meme + Analyzer = Memealyzer
+
 The repo demonstrates Azure SDK usage via a complete application.  This application takes in an image, uploads it to Blog Storage and enqueues a message into a Queue.  A process receives that message and uses Form Recognizer to extract the text from the image, then uses Text Analytics to get the sentiment of the text, and then stores the results in a Cosmos DB.
+
+If the text in the image is positive then the border color will change to green, if neutral then black, and if negative it will change to red.
+
+Download the [Azure SDK Releases](https://aka.ms/azsdk)
 
 ![](assets/hero.png)
 
