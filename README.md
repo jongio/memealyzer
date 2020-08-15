@@ -4,6 +4,11 @@ The repo demonstrates Azure SDK usage via a complete application.  This applicat
 
 ![](assets/hero.png)
 
+## .NET Architecture
+![](assets/arch.png)
+
+> This is the current .NET architecture - we are in the process of developing for other languages as well.
+
 ## Pre-reqs
 
 The following are required to run this application.
