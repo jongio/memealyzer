@@ -1,8 +1,13 @@
-# Azure SDK Demo - Azure Image Analyzer
+# Azure SDK Demo - Memealyzer
 
 The repo demonstrates Azure SDK usage via a complete application.  This application takes in an image, uploads it to Blog Storage and enqueues a message into a Queue.  A process receives that message and uses Form Recognizer to extract the text from the image, then uses Text Analytics to get the sentiment of the text, and then stores the results in a Cosmos DB.
 
 ![](assets/hero.png)
+
+## .NET Architecture
+![](assets/arch.png)
+
+> This is the current .NET architecture - we are in the process of developing for other languages and architectures as well.
 
 ## Pre-reqs
 
