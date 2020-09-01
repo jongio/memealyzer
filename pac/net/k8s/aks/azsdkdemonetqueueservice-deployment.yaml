@@ -126,7 +126,7 @@ spec:
                   key: AZURE_STORAGE_ACCOUNT_NAME
                   name: env
           image: jongio/azsdkdemonetqueueservice
-          imagePullPolicy: "IfNotPresent"
+          imagePullPolicy: "Always"
           name: azsdkdemonetqueueservice
           resources: {}
       restartPolicy: Always

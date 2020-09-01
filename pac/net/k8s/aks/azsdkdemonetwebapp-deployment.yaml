@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - image: jongio/azsdkdemonetwebapp
-        imagePullPolicy: "IfNotPresent"
+        imagePullPolicy: "Always"
         name: azsdkdemonetwebapp
         ports:
         - containerPort: 80

@@ -126,7 +126,7 @@ spec:
                   key: AZURE_STORAGE_ACCOUNT_NAME
                   name: env
           image: jongio/azsdkdemonetapi
-          imagePullPolicy: "IfNotPresent"
+          imagePullPolicy: "Always"
           name: azsdkdemonetapi
           ports:
             - containerPort: 80
