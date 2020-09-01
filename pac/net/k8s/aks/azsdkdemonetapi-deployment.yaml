@@ -100,6 +100,31 @@ spec:
                 configMapKeyRef:
                   key: MEME_ENDPOINT
                   name: env
+            - name: AZURE_STORAGE_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_STORAGE_TYPE
+                  name: env
+            - name: AZURE_STORAGE_KEY_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_STORAGE_KEY_NAME
+                  name: env
+            - name: AZURE_STORAGE_TABLE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_STORAGE_TABLE_NAME
+                  name: env
+            - name: AZURE_STORAGE_TABLE_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_STORAGE_TABLE_ENDPOINT
+                  name: env
+            - name: AZURE_STORAGE_ACCOUNT_NAME
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_STORAGE_ACCOUNT_NAME
+                  name: env
           image: jongio/azsdkdemonetapi
           imagePullPolicy: "IfNotPresent"
           name: azsdkdemonetapi

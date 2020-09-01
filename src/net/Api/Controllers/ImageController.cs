@@ -12,27 +12,27 @@ namespace Api.Controllers
     [Route("[controller]")]
     public class ImageController : ControllerBase
     {
-        private readonly ILogger<ImageController> _logger;
-        private Data _data;
+        private readonly ILogger<ImageController> logger;
+        private Clients clients;
 
-        public ImageController(ILogger<ImageController> logger, Data data)
+        public ImageController(ILogger<ImageController> logger, Clients clients)
         {
-            _logger = logger;
-            _data = data;
+            this.logger = logger;
+            this.clients = clients;
 
         }
 
         [HttpPost]
         public async Task<Image> Post([FromBody] Image image = null)
         {
-            return await _data.EnqueueImageAsync(image);
+            return await clients.EnqueueImageAsync(image);
         }
 
         [HttpGet]
         [Route("/images")]
         public async IAsyncEnumerable<Image> Get()
         {
-            await foreach (var image in _data.GetImagesAsync())
+            await foreach (var image in clients.DataProvider.GetImagesAsync())
             {
                 yield return image;
             }
@@ -42,7 +42,7 @@ namespace Api.Controllers
         [Route("/image/{id}")]
         public async Task<IActionResult> GetById(string id)
         {
-            var image = await _data.GetImageAsync(id);
+            var image = await clients.DataProvider.GetImageAsync(id);
             if(image is null){
                 return NotFound(id);
             }

@@ -56,9 +56,15 @@ resource "azurerm_key_vault" "key_vault" {
   }
 }
 
-resource "azurerm_key_vault_secret" "key_vault_secret" {
+resource "azurerm_key_vault_secret" "cosmos_key_secret" {
   name         = "cosmoskey"
   value        = azurerm_cosmosdb_account.cosmos_account.primary_master_key
+  key_vault_id = azurerm_key_vault.key_vault.id
+}
+
+resource "azurerm_key_vault_secret" "storage_key_secret" {
+  name         = "storagekey"
+  value        = azurerm_storage_account.storage.primary_access_key
   key_vault_id = azurerm_key_vault.key_vault.id
 }
 
@@ -184,6 +190,14 @@ output "AZURE_STORAGE_BLOB_ENDPOINT" {
 
 output "AZURE_STORAGE_QUEUE_ENDPOINT" {
   value = azurerm_storage_account.storage.primary_queue_endpoint
+}
+
+output "AZURE_STORAGE_TABLE_ENDPOINT" {
+  value = azurerm_storage_account.storage.primary_table_endpoint
+}
+
+output "AZURE_STORAGE_ACCOUNT_NAME" {
+  value = azurerm_storage_account.storage.name
 }
 
 output "AZURE_FORM_RECOGNIZER_ENDPOINT" {

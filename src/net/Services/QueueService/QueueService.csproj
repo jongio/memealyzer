@@ -5,12 +5,11 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Azure.AI.FormRecognizer" Version="3.0.0-preview.1" />
+    <PackageReference Include="Azure.AI.FormRecognizer" Version="3.0.0" />
     <PackageReference Include="Azure.AI.TextAnalytics" Version="5.0.0" />
-    <PackageReference Include="Azure.Cosmos" Version="4.0.0-preview3" />
-    <PackageReference Include="Azure.Identity" Version="1.2.0" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.5.0" />
-    <PackageReference Include="Azure.Storage.Queues" Version="12.4.0" />
+    <PackageReference Include="Azure.Identity" Version="1.2.2" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.5.1" />
+    <PackageReference Include="Azure.Storage.Queues" Version="12.4.1" />
     <PackageReference Include="DotNetEnv" Version="1.4.0" />
     <PackageReference Include="System.Net.Http.Json" Version="3.2.0" />
   </ItemGroup>
@@ -18,4 +17,8 @@
   <ItemGroup>
     <ProjectReference Include=".\..\..\Lib\Lib.csproj" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <RestoreSources>https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json;https://api.nuget.org/v3/index.json</RestoreSources>
+  </PropertyGroup>
 </Project>
