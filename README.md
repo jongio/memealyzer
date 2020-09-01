@@ -2,7 +2,7 @@
 
 Meme + Analyzer = Memealyzer
 
-The repo demonstrates Azure SDK usage via a complete application.  This application takes in an image, uploads it to Blog Storage and enqueues a message into a Queue.  A process receives that message and uses Form Recognizer to extract the text from the image, then uses Text Analytics to get the sentiment of the text, and then stores the results in a Cosmos DB.
+The repo demonstrates Azure SDK usage via a complete application.  This application takes in an image, uploads it to Blog Storage and enqueues a message into a Queue.  A process receives that message and uses Form Recognizer to extract the text from the image, then uses Text Analytics to get the sentiment of the text, and then stores the results in Cosmos DB or Azure Table Storage.
 
 If the text in the image is positive then the border color will change to green, if neutral then black, and if negative it will change to red.
 
@@ -120,6 +120,7 @@ This app uses the Azure CLI login to connect to Azure resources for local develo
 1. Login to your container registry. `docker login` or `az acr login`.
 1. Search the entire project for image names that start with `jongio/` and replace with the name of your container registry.
    > Note: This experience will be improved with Helm or Kustomize soon.
+1. Run `docker-compose build` to build your containers locally.
 1. Run `docker-compose push` to push the containers to your container registry of choice. 
 1. Run `az network public-ip list -g azsdkdemo100aksnodes --query '[0].ipAddress' --output tsv` to find the AKS cluster's public IP address.
    > Note: Change the resource group to your `node_resource_group` name, this command is also outputted by the Terraform commands.
