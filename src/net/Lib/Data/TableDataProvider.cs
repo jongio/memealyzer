@@ -31,10 +31,13 @@ namespace Lib.Data
             SecretClient = new SecretClient(new Uri(Env.GetString("AZURE_KEYVAULT_ENDPOINT")), credential);
             var storageKey = await SecretClient.GetSecretAsync(Env.GetString("AZURE_STORAGE_KEY_NAME", "storagekey"));
 
-            TableServiceClient = new TableServiceClient(new Uri(Env.GetString("AZURE_STORAGE_TABLE_ENDPOINT")),
-                new TableSharedKeyCredential(Env.GetString("AZURE_STORAGE_ACCOUNT_NAME"), storageKey.Value.Value));
+            TableClient = new TableClient(
+                new Uri(Env.GetString("AZURE_STORAGE_TABLE_ENDPOINT")),
+                Env.GetString("AZURE_STORAGE_TABLE_NAME"),
+                new TableSharedKeyCredential(
+                    Env.GetString("AZURE_STORAGE_ACCOUNT_NAME"), 
+                    storageKey.Value.Value));
 
-            TableClient = TableServiceClient.GetTableClient(Env.GetString("AZURE_STORAGE_TABLE_NAME"));
             await TableClient.CreateIfNotExistsAsync();
         }
 
