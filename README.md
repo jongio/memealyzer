@@ -1,4 +1,4 @@
-# Azure SDK Demo - Memealyzer
+# Memealyzer
 
 Meme + Analyzer = Memealyzer
 
@@ -45,6 +45,9 @@ The following Azure resources will be deployed with the Terraform script.
 1. Open Git Bash or WSL - The same terminal you used to install the pre-reqs above.
 1. Clone Repo
    `git clone https://github.com/jongio/azsdkdemo`
+
+## Azure Setup
+
 1. Azure CLI Login
    `az login`
 1. Create Azure Resources with Terraform
@@ -56,6 +59,19 @@ The following Azure resources will be deployed with the Terraform script.
 1. Update `.env` file
    1. Copy and paste the Terraform output values to the `.env` file in the root of this repo.
       > NOTE: .env files do not allow spaces around the `=`, so please remove any spaces after you copy and paste.
+
+## Service Configuration
+
+### Data Provider
+
+You can configure which store the app uses to store your image metadata, either Cosmos DB or Azure Table Storage.
+
+1. Open `.env` file
+1. Find the `AZURE_STORAGE_TYPE` setting
+1. Set it to one of the following values:
+   - `COSMOS_SQL` - This will instruct the app to use Cosmos DB.
+   - `STORAGE_TABLE` - This will instruct the app to use Azure Storage Tables.  As of 8/31/2020, this option uses a dev build of the Azure Tables client library, which will go to preview soon.
+
 
 ## Permissions Setup
 This app uses the Azure CLI login to connect to Azure resources for local development. You need to run the following script to assign the appropriate roles to the Azure CLI user.
@@ -84,6 +100,7 @@ This app uses the Azure CLI login to connect to Azure resources for local develo
 1. Run `docker-compose build` to build the containers locally.
 1. CD to `pac/net/k8s/local`.
 1. Run `./mount.sh` to mount your local `.azure` folder to the container, so we can use AzureCliCredential in Kubernetes.
+1. Run `kubectl config use-context docker-desktop` to use your local Kubernetes cluster.
 1. Run `kubectl apply -f .`
 1. Navigate to http://localhost:31389
 
@@ -91,11 +108,13 @@ This app uses the Azure CLI login to connect to Azure resources for local develo
 
 1. Copy the values outputted from the Terraform commands above (they should be in your `.env` file if you followed the Code Setup steps above) into the `pac/net/k8s/aks/env-configmap.yaml` file.
 1. Run the `az aks get-credentials` command that was outputted from the `terraform apply` command you ran earlier. It is something like `az aks get-credentials --resource-group azsdkdemo100rg --name azsdkdemo100aks`. Replace the resource group and cluster name with the one you created with Terraform earlier.
-1. Install [Helm](https://helm.sh/) - This will be used for an nginx ingress controller that will expose a Public IP for our cluster and handle routing.
+1. Install [Helm](https://helm.sh/) - This will be used for an [nginx ingress controller](https://github.com/kubernetes/ingress-nginx/tree/master/charts/ingress-nginx) that will expose a Public IP for our cluster and handle routing.
 1. Run the following commands:
    ```
+   helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
    helm repo add stable https://kubernetes-charts.storage.googleapis.com/
-   helm install nginx stable/nginx-ingress
+   helm repo update
+   helm install nginx ingress-nginx/ingress-nginx
    ```
 1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`.
 1. Login to your container registry. `docker login` or `az acr login`.
@@ -105,6 +124,7 @@ This app uses the Azure CLI login to connect to Azure resources for local develo
 1. Run `az network public-ip list -g azsdkdemo100aksnodes --query '[0].ipAddress' --output tsv` to find the AKS cluster's public IP address.
    > Note: Change the resource group to your `node_resource_group` name, this command is also outputted by the Terraform commands.
 1. Open `/pac/net/k8s/aks/web-configmap.yaml` and change the `API_ENDPOINT` value to the Public IP address.
+1. Make sure you are in the right Kubernetes context by running `kubectl config get-contexts` and use `kubectl config use-context` to set it.
 1. CD to `/pac/net/k8s/aks` and run `kubectl apply -f .`
-1. Open a browser and go to that Public IP.
+1. Open a browser and go to the AKS cluster's Public IP.
 

@@ -34,7 +34,7 @@ namespace Api
         {
             Env.Load("../../../.env");
             
-            services.AddSingleton(typeof(Data));
+            services.AddSingleton(typeof(Clients));
             services.AddHostedService<DataHostedService>();
             services.AddSignalR();
             services.AddControllers();

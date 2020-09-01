@@ -15,13 +15,12 @@ using Azure.Security.KeyVault.Secrets;
 using Azure.AI.FormRecognizer;
 using Azure.AI.TextAnalytics;
 using DotNetEnv;
+using Lib.Data;
 
 namespace Lib
 {
-    public class Data
+    public class Clients
     {
-        public CosmosClient CosmosClient;
-        public CosmosContainer CosmosContainer;
         public SecretClient SecretClient;
         public ChainedTokenCredential credential = Identity.GetCredentialChain();
         public BlobServiceClient BlobServiceClient;
@@ -30,29 +29,18 @@ namespace Lib
         public QueueClient QueueClient;
         public TextAnalyticsClient TextAnalyticsClient;
         public FormRecognizerClient FormRecognizerClient;
+        public IDataProvider DataProvider;
         private HttpClient httpClient = new HttpClient();
 
-        public Data()
+        public Clients()
         {
         }
 
         public async Task InitializeAsync()
         {
-            // KeyVault
-            SecretClient = new SecretClient(new Uri(Env.GetString("AZURE_KEYVAULT_ENDPOINT")), credential);
-            var cosmosKey = await SecretClient.GetSecretAsync(Env.GetString("AZURE_COSMOS_KEY_NAME", "cosmoskey"));
 
-            // Cosmos
-            CosmosClient = new CosmosClient(
-                            Env.GetString("AZURE_COSMOS_ENDPOINT"),
-                            cosmosKey.Value.Value,
-                            new CosmosClientOptions
-                            {
-                                ConnectionMode = ConnectionMode.Direct,
-                                ConsistencyLevel = ConsistencyLevel.Session
-                            });
-
-            CosmosContainer = CosmosClient.GetDatabase(Env.GetString("AZURE_COSMOS_DB")).GetContainer(Env.GetString("AZURE_COSMOS_CONTAINER"));
+            DataProvider = new DataProviderFactory().GetDataProvider(Env.GetString("AZURE_STORAGE_TYPE"));
+            await DataProvider.InitializeAsync(credential);
 
             // Blob
             BlobServiceClient = new BlobServiceClient(new Uri(Env.GetString("AZURE_STORAGE_BLOB_ENDPOINT")), credential);
@@ -79,7 +67,8 @@ namespace Lib
         {
             if (image?.Url is null || string.IsNullOrEmpty(image.Url))
             {
-                image = await httpClient.GetFromJsonAsync<Image>(Env.GetString("MEME_ENDPOINT"));
+                var memeImage = await httpClient.GetFromJsonAsync<Image>(Env.GetString("MEME_ENDPOINT"));
+                image.Url = memeImage.Url;
             }
 
             // Get Image Stream
@@ -101,25 +90,6 @@ namespace Lib
 
             Console.WriteLine($"Added to Queue: {sendReceipt.Value.MessageId}");
             return image;
-        }
-
-        public async IAsyncEnumerable<Image> GetImagesAsync()
-        {
-            await foreach (var item in CosmosContainer.GetItemQueryIterator<Image>("SELECT * FROM c F ORDER BY F.createdDate DESC"))
-            {
-                yield return item;
-            }
-        }
-
-        public async Task<Image> GetImageAsync(string id)
-        {
-            QueryDefinition queryDefinition = new QueryDefinition("SELECT * FROM c F WHERE F.id = @id").WithParameter("@id", id);
-
-            await foreach (Image item in CosmosContainer.GetItemQueryIterator<Image>(queryDefinition))
-            {
-                return item;
-            }
-            return null;
         }
     }
 }

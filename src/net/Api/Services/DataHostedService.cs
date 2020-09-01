@@ -19,8 +19,8 @@ namespace Api.Services
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                var data = scope.ServiceProvider.GetRequiredService<Data>();
-                await data.InitializeAsync();
+                var clients = scope.ServiceProvider.GetRequiredService<Clients>();
+                await clients.InitializeAsync();
             }
         }
 

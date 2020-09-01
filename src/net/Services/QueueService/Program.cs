@@ -3,16 +3,8 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Azure;
-using Azure.AI.FormRecognizer;
-using Azure.AI.TextAnalytics;
-using Azure.Cosmos;
-using Azure.Cosmos.Serialization;
-using Azure.Identity;
-using Azure.Storage.Queues;
 using DotNetEnv;
 using Lib;
-using Azure.Core.Diagnostics;
 
 namespace QueueService
 {
@@ -24,26 +16,26 @@ namespace QueueService
 
             //using var listener = AzureEventSourceListener.CreateConsoleLogger();
 
-            var data = new Data();
-            await data.InitializeAsync();
+            var clients = new Clients();
+            await clients.InitializeAsync();
 
             while (true)
             {
                 Console.WriteLine("Receiving Messages...");
 
                 // Get Messages
-                var messages = await data.QueueClient.ReceiveMessagesAsync(maxMessages: Env.GetInt("AZURE_STORAGE_QUEUE_MSG_COUNT", 10));
+                var messages = await clients.QueueClient.ReceiveMessagesAsync(maxMessages: Env.GetInt("AZURE_STORAGE_QUEUE_MSG_COUNT", 10));
 
                 foreach (var message in messages.Value)
                 {
                     Console.WriteLine(message.MessageText);
 
+
                     // Deserialize Message
-                    var image = JsonSerializer.Deserialize<Image>(message.MessageText,
-                        new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                    var image = clients.DataProvider.DeserializeImage(message.MessageText);
 
                     // Extract Text from Image
-                    var recognizeContentOperation = await data.FormRecognizerClient.StartRecognizeContentFromUriAsync(new Uri(image.BlobUri));
+                    var recognizeContentOperation = await clients.FormRecognizerClient.StartRecognizeContentFromUriAsync(new Uri(image.BlobUri));
                     var recognizeContentCompletion = await recognizeContentOperation.WaitForCompletionAsync();
                     var content = recognizeContentCompletion.Value;
                     var text = content.SelectMany(page => page.Lines).Aggregate(new StringBuilder(), (a, b) =>
@@ -59,7 +51,7 @@ namespace QueueService
                         Console.WriteLine($"Image Text: {image.Text}");
 
                         // Analyize Text Sentiment
-                        var documentSentiment = await data.TextAnalyticsClient.AnalyzeSentimentAsync(image.Text);
+                        var documentSentiment = await clients.TextAnalyticsClient.AnalyzeSentimentAsync(image.Text);
                         image.Sentiment = documentSentiment.Value.Sentiment.ToString();
 
                         Console.WriteLine($"Image Sentiment: {image.Sentiment}");
@@ -69,13 +61,13 @@ namespace QueueService
                         Console.WriteLine("No Text Extracted from Image.");
                     }
 
-                    // Create Cosmos Document
-                    var document = await data.CosmosContainer.UpsertItemAsync(image);
+                    // Save Document
+                    image = await clients.DataProvider.UpsertImageAsync(image);
 
-                    Console.WriteLine($"Cosmos Document Saved: {document.Value.Id}");
+                    Console.WriteLine($"Document Saved: {image.Id}");
 
                     // Delete Queue Message
-                    var deleteResponse = await data.QueueClient.DeleteMessageAsync(message.MessageId, message.PopReceipt);
+                    var deleteResponse = await clients.QueueClient.DeleteMessageAsync(message.MessageId, message.PopReceipt);
 
                     Console.WriteLine($"Queue Message Deleted: {message.MessageId}");
 

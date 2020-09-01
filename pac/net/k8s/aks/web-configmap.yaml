@@ -5,5 +5,5 @@ apiVersion: v1
 data:
   appsettings.json: |-
     {
-        "API_ENDPOINT": "http://52.175.250.202"
+        "API_ENDPOINT": "http://51.143.7.129"
     }

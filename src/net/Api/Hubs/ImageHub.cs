@@ -10,18 +10,18 @@ namespace Api.Hubs
 {
     public class ImageHub : Hub
     {
-        private Data _data;
+        private Clients clients;
 
-        public ImageHub(Data data)
+        public ImageHub(Clients clients)
         {
-            _data = data;
+            this.clients = clients;
         }
 
         public async Task StartPoll(string id)
         {
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 1000; i++)
             {
-                Image image = await _data.GetImageAsync(id);
+                Image image = await clients.DataProvider.GetImageAsync(id);
                 if (image != null)
                 {
                     await Clients.All.SendAsync("ReceiveImage", image);

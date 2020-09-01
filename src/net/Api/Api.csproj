@@ -9,4 +9,7 @@
     <PackageReference Include="DotNetEnv" Version="1.4.0"/>
     <PackageReference Include="System.Linq.Async" Version="4.1.1"/>
   </ItemGroup>
+  <PropertyGroup>
+    <RestoreSources>https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json;https://api.nuget.org/v3/index.json</RestoreSources>
+  </PropertyGroup>
 </Project>
