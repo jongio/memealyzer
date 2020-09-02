@@ -17,7 +17,6 @@ namespace WebApp
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
-
             var serverHost = string.IsNullOrEmpty(builder.Configuration["API_ENDPOINT"]) ?
                 builder.HostEnvironment.BaseAddress :
                 builder.Configuration["API_ENDPOINT"];

@@ -9,11 +9,10 @@ using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Queues;
-using Azure.Cosmos;
-using Azure.Cosmos.Serialization;
 using Azure.Security.KeyVault.Secrets;
 using Azure.AI.FormRecognizer;
 using Azure.AI.TextAnalytics;
+using Azure.Data.AppConfiguration;
 using DotNetEnv;
 using Lib.Data;
 
@@ -29,6 +28,7 @@ namespace Lib
         public QueueClient QueueClient;
         public TextAnalyticsClient TextAnalyticsClient;
         public FormRecognizerClient FormRecognizerClient;
+        public ConfigurationClient ConfigurationClient;
         public IDataProvider DataProvider;
         private HttpClient httpClient = new HttpClient();
 
@@ -41,6 +41,9 @@ namespace Lib
 
             DataProvider = new DataProviderFactory().GetDataProvider(Env.GetString("AZURE_STORAGE_TYPE"));
             await DataProvider.InitializeAsync(credential);
+
+            // App Config
+            ConfigurationClient = new ConfigurationClient(new Uri(Env.GetString("AZURE_APP_CONFIG_ENDPOINT")), credential);
 
             // Blob
             BlobServiceClient = new BlobServiceClient(new Uri(Env.GetString("AZURE_STORAGE_BLOB_ENDPOINT")), credential);

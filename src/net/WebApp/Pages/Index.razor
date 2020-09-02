@@ -29,7 +29,7 @@ else
             {
                 <div class="col-md-4">
                    <div class="card" style="width: 100%;">
-                        <img class="card-img-top border border-8 border-@image.Style img-thumbnail" src="@image.BlobUri" alt="">
+                        <img class="card-img-top border border-8 border-@image.Color img-thumbnail" style="border-style: @borderStyle !important" src="@image.BlobUri" alt="">
                         <div class="card-body">
                             <p class="card-text">@image.Text</p>
                         </div>
@@ -44,10 +44,13 @@ else
     private List<Image> images;
     private Image image = new Image();
     private HubConnection hubConnection;
+    private string borderStyle = "solid";
 
 
     protected override async Task OnInitializedAsync()
     {
+        await GetBorderStyle();
+
         images = await Http.GetFromJsonAsync<List<Image>>("/images");
 
         hubConnection = new HubConnectionBuilder()
@@ -70,6 +73,16 @@ else
         });
 
         await hubConnection.StartAsync();
+    }
+
+    public async Task GetBorderStyle()
+    {
+        try
+        {
+            var borderStyleSetting = await Http.GetFromJsonAsync<ConfigurationSetting>("/config?name=borderStyle");
+            borderStyle = borderStyleSetting.Value;
+        }
+        catch { }
     }
 
     public async Task<Image> GetImageAsync(string id)

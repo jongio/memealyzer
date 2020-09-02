@@ -4,6 +4,7 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Azure.Data.AppConfiguration" Version="1.0.1" />
     <PackageReference Include="DotNetEnv" Version="1.4.0" />
     <PackageReference Include="System.Linq.Async" Version="4.1.1" />
     <PackageReference Include="System.Net.Http.Json" Version="3.2.0" />

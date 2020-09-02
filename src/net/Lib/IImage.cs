@@ -15,6 +15,6 @@ namespace Lib
         string Sentiment { get; set; }
         string Status { get; set; }
         DateTime CreatedDate { get; set; }
-        string Style { get; }
+        string Color { get; }
     }
 }

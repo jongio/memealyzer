@@ -20,6 +20,10 @@ spec:
         backend:
           serviceName: azsdkdemonetapi
           servicePort: 2080
+      - path: /config
+        backend:
+          serviceName: azsdkdemonetapi
+          servicePort: 2080
       - path: /imagehub
         backend:
           serviceName: azsdkdemonetapi

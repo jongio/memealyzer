@@ -60,7 +60,7 @@ The following Azure resources will be deployed with the Terraform script.
    1. Copy and paste the Terraform output values to the `.env` file in the root of this repo.
       > NOTE: .env files do not allow spaces around the `=`, so please remove any spaces after you copy and paste.
 
-## Service Configuration
+## Configuration
 
 ### Data Provider
 
@@ -72,6 +72,17 @@ You can configure which store the app uses to store your image metadata, either 
    - `COSMOS_SQL` - This will instruct the app to use Cosmos DB.
    - `STORAGE_TABLE` - This will instruct the app to use Azure Storage Tables.  As of 8/31/2020, this option uses a dev build of the Azure Tables client library, which will go to preview soon.
 
+### Border Style
+
+You can configure the image border style with the Azure App Configuration service.  It will default to `solid`, but you can change it to any valid [CSS border style](https://www.w3schools.com/css/css_border.asp).  You can either do this in the Azure Portal, or via the Azure CLI with this command:
+
+```bash
+az appconfig kv set -y -n {basename}appconfig --key borderStyle --value dashed
+```
+
+> Replace {basename} with the basename you used when you created your Azure resources above.
+
+After you change the setting, reload the WebApp to see the new style take effect.
 
 ## Permissions Setup
 This app uses the Azure CLI login to connect to Azure resources for local development. You need to run the following script to assign the appropriate roles to the Azure CLI user.
@@ -115,6 +126,10 @@ This app uses the Azure CLI login to connect to Azure resources for local develo
    helm repo add stable https://kubernetes-charts.storage.googleapis.com/
    helm repo update
    helm install nginx ingress-nginx/ingress-nginx
+
+   # If you already have installed or get this error: Error: cannot re-use a name that is still in use
+
+   helm upgrade --install nginx ingress-nginx/ingress-nginx
    ```
 1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`.
 1. Login to your container registry. `docker login` or `az acr login`.
