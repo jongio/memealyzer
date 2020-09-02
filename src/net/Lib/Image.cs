@@ -8,7 +8,7 @@ namespace Lib
     {
         private string extension;
         private string blobName;
-        private string style = "light";
+        private string color = "light";
 
         [JsonPropertyName("id")]
         public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -68,34 +68,34 @@ namespace Lib
         [JsonPropertyName("type")]
         public ImageType Type { get; set; } = ImageType.New;
 
-        [JsonPropertyName("style")]
-        public string Style
+        [JsonPropertyName("color")]
+        public string Color
         {
             get
             {
                 switch (Sentiment?.ToLower())
                 {
                     case "positive":
-                        style = "success";
+                        color = "success";
                         break;
                     case "negative":
-                        style = "danger";
+                        color = "danger";
                         break;
                     case "neutral":
-                        style = "dark";
+                        color = "dark";
                         break;
                     case "mixed":
-                        style = "warning";
+                        color = "warning";
                         break;
                     case "loading":
-                        style = "white";
+                        color = "white";
                         break;
                 }
-                return style;
+                return color;
             }
             set
             {
-                style = value;
+                color = value;
             }
         }
     }

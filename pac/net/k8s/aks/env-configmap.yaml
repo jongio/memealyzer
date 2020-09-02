@@ -7,6 +7,7 @@ data:
   AZURE_STORAGE_QUEUE_ENDPOINT: https://azsdkdemoauthstorage.queue.core.windows.net/
   AZURE_TEXT_ANALYTICS_ENDPOINT: https://azsdkdemoauthtextanalytics.cognitiveservices.azure.com/
   AZURE_STORAGE_TABLE_ENDPOINT: https://azsdkdemoauthstorage.table.core.windows.net/
+  AZURE_APP_CONFIG_ENDPOINT: https://azsdkdemoauthappconfig.azconfig.io
   AZURE_COSMOS_CONTAINER: images
   AZURE_COSMOS_DB: azimageai
   AZURE_COSMOS_KEY_NAME: cosmoskey

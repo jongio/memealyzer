@@ -125,6 +125,11 @@ spec:
                 configMapKeyRef:
                   key: AZURE_STORAGE_ACCOUNT_NAME
                   name: env
+            - name: AZURE_APP_CONFIG_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  key: AZURE_APP_CONFIG_ENDPOINT
+                  name: env
           image: jongio/azsdkdemonetqueueservice
           imagePullPolicy: "Always"
           name: azsdkdemonetqueueservice

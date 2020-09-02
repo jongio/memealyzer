@@ -140,13 +140,24 @@ resource "azurerm_application_insights" "logging" {
   application_type    = "web"
 }
 
+# APP CONFIGURATION
+
+resource "azurerm_app_configuration" "appconfig" {
+  name                = "${var.basename}appconfig"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = "standard"
+}
+
 module "script" {
   source = "./modules/script"
   script = "./tweaks.sh"
   environment = {
     TEXT_ANALYTICS_NAME  = azurerm_cognitive_account.text_analytics.name,
     FORM_RECOGNIZER_NAME = azurerm_cognitive_account.form_recognizer.name,
-    RESOURCE_GROUP_NAME  = azurerm_resource_group.rg.name
+    RESOURCE_GROUP_NAME  = azurerm_resource_group.rg.name,
+    APP_CONFIG_NAME  = azurerm_app_configuration.appconfig.name
+
   }
 }
 
@@ -180,6 +191,15 @@ resource "azurerm_role_assignment" "mi_queue_msg_storage" {
 resource "azurerm_role_assignment" "mi_cogserv" {
   scope                            = data.azurerm_subscription.sub.id
   role_definition_name             = "Cognitive Services User"
+  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
+  skip_service_principal_aad_check = true
+}
+
+# APP CONFIG ROLES
+
+resource "azurerm_role_assignment" "mi_appconfig" {
+  scope                            = data.azurerm_subscription.sub.id
+  role_definition_name             = "App Configuration Data Owner"
   principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
   skip_service_principal_aad_check = true
 }
@@ -222,4 +242,8 @@ output "AKS_IP_ADDRESS" {
 
 output "AKS_CREDENTIALS" {
   value = "az aks get-credentials --resource-group ${azurerm_resource_group.rg.name} --name ${azurerm_kubernetes_cluster.aks.name}"
+}
+
+output "AZURE_APP_CONFIG_ENDPOINT" {
+  value = azurerm_app_configuration.appconfig.endpoint
 }
