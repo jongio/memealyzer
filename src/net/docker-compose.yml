@@ -31,3 +31,19 @@ services:
     build:
       context: .
       dockerfile: Services/QueueService/Dockerfile
+  azsdkdemonetfunctions:
+    image: jongio/azsdkdemonetfunctions
+    env_file: ../../.env
+    volumes: 
+        - "${HOME}/.azure:/root/.azure"
+    build:
+      context: .
+      dockerfile: Services/Functions/Dockerfile
+    ports:
+      - 3080:80
+      - 3443:443
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - 10000:10000
+      - 10001:10001

@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using DotNetEnv;
-using Api.Hubs;
 using Microsoft.AspNetCore.ResponseCompression;
 using Lib;
 using Api.Services;
@@ -74,7 +73,6 @@ namespace Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<ImageHub>("/imagehub");
             });
         }
     }

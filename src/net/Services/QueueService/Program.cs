@@ -71,6 +71,13 @@ namespace QueueService
 
                     Console.WriteLine($"Queue Message Deleted: {message.MessageId}");
 
+                    // Enqueue message to Client Sync Queue
+                    var sendReceipt = await clients.ClientSyncQueueClient.SendMessageAsync(
+                        Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize<IImage>(image,
+                            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
+                        )));
+
+                    Console.WriteLine($"Added to Client Sync Queue: {sendReceipt.Value.MessageId}");
                 }
                 await Task.Delay(TimeSpan.FromSeconds(Env.GetInt("AZURE_STORAGE_QUEUE_RECEIVE_SLEEP", 1)));
             }

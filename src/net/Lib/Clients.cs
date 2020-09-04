@@ -26,6 +26,7 @@ namespace Lib
         public BlobContainerClient ContainerClient;
         public QueueServiceClient QueueServiceClient;
         public QueueClient QueueClient;
+        public QueueClient ClientSyncQueueClient;
         public TextAnalyticsClient TextAnalyticsClient;
         public FormRecognizerClient FormRecognizerClient;
         public ConfigurationClient ConfigurationClient;
@@ -54,6 +55,10 @@ namespace Lib
             QueueServiceClient = new QueueServiceClient(new Uri(Env.GetString("AZURE_STORAGE_QUEUE_ENDPOINT")), credential);
             QueueClient = QueueServiceClient.GetQueueClient(Env.GetString("AZURE_STORAGE_QUEUE_NAME"));
             await QueueClient.CreateIfNotExistsAsync();
+
+            // Client Sync Queue
+            ClientSyncQueueClient = QueueServiceClient.GetQueueClient(Env.GetString("AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME"));
+            await ClientSyncQueueClient.CreateIfNotExistsAsync();
 
             // FormRecognizerClient
             FormRecognizerClient = new FormRecognizerClient(

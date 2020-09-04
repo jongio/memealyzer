@@ -68,6 +68,18 @@ resource "azurerm_key_vault_secret" "storage_key_secret" {
   key_vault_id = azurerm_key_vault.key_vault.id
 }
 
+resource "azurerm_key_vault_secret" "signalr_connection_string_secret" {
+  name         = "signalrconnectionstring"
+  value        = azurerm_signalr_service.signalr.primary_connection_string
+  key_vault_id = azurerm_key_vault.key_vault.id
+}
+
+resource "azurerm_key_vault_secret" "storage_connection_string_secret" {
+  name         = "storageconnectionstring"
+  value        = azurerm_storage_account.storage.primary_connection_string
+  key_vault_id = azurerm_key_vault.key_vault.id
+}
+
 resource "azurerm_cosmosdb_account" "cosmos_account" {
   name                = "${var.basename}cosmosaccount"
   location            = azurerm_resource_group.rg.location
@@ -149,6 +161,30 @@ resource "azurerm_app_configuration" "appconfig" {
   sku                 = "standard"
 }
 
+# SIGNALR SERVICE
+
+resource "azurerm_signalr_service" "signalr" {
+  name                = "${var.basename}signalr"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  sku {
+    name     = "Standard_F1"
+    capacity = 1
+  }
+
+  cors {
+    allowed_origins = ["*"]
+  }
+
+  features {
+    flag  = "ServiceMode"
+    value = "Serverless"
+  }
+}
+
+# Azure CLI Script to fill in Terraform gaps.
+
 module "script" {
   source = "./modules/script"
   script = "./tweaks.sh"
@@ -157,7 +193,6 @@ module "script" {
     FORM_RECOGNIZER_NAME = azurerm_cognitive_account.form_recognizer.name,
     RESOURCE_GROUP_NAME  = azurerm_resource_group.rg.name,
     APP_CONFIG_NAME  = azurerm_app_configuration.appconfig.name
-
   }
 }
 
@@ -246,4 +281,8 @@ output "AKS_CREDENTIALS" {
 
 output "AZURE_APP_CONFIG_ENDPOINT" {
   value = azurerm_app_configuration.appconfig.endpoint
+}
+
+output "AZURE_SIGNALR_HOSTNAME" {
+  value = azurerm_signalr_service.signalr.hostname
 }

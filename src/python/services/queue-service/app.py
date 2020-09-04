@@ -47,7 +47,7 @@ secret_client = SecretClient(
     vault_url=getenv("AZURE_KEYVAULT_ENDPOINT"), credential=credential
 )
 
-secret = secret_client.get_secret(getenv("AZURE_COSMOS_KEY_NAME"))
+secret = secret_client.get_secret(getenv("AZURE_COSMOS_KEY_SECRET_NAME"))
 
 cosmos_client = CosmosClient(
     url=getenv("AZURE_COSMOS_ENDPOINT"), credential=secret.value
@@ -58,7 +58,7 @@ cosmos_database_client = cosmos_client.get_database_client(
 )
 
 cosmos_container_client = cosmos_database_client.get_container_client(
-    getenv("AZURE_COSMOS_CONTAINER", default="images")
+    getenv("AZURE_COSMOS_COLLECTION", default="images")
 )
 
 while True:

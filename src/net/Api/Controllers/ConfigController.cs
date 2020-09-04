@@ -27,6 +27,7 @@ namespace Api.Controllers
         [Route("/config")]
         public async Task<ConfigurationSetting> Get([FromQuery] string name)
         {
+            //TODO: Move try/catch to here?
             return await clients.ConfigurationClient.GetConfigurationSettingAsync(name);
         }
     }

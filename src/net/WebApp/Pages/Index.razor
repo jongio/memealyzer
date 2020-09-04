@@ -1,5 +1,6 @@
 ﻿@page "/"
-@inject HttpClient Http
+@inject ApiServiceClient ApiServiceClient;
+@inject FunctionsServiceClient FunctionsServiceClient;
 @using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager NavigationManager
 @implements IDisposable
@@ -40,22 +41,19 @@ else
     </div>
 }
 
+
 @code {
     private List<Image> images;
     private Image image = new Image();
     private HubConnection hubConnection;
-    private string borderStyle = "solid";
-
+    private string borderStyle;
 
     protected override async Task OnInitializedAsync()
     {
-        await GetBorderStyle();
+        borderStyle = await ApiServiceClient.GetBorderStyle();
+        images = await ApiServiceClient.GetImages();
 
-        images = await Http.GetFromJsonAsync<List<Image>>("/images");
-
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(Http.BaseAddress + "imagehub")
-            .Build();
+        hubConnection = FunctionsServiceClient.GetHubConnection();
 
         hubConnection.On<Image>("ReceiveImage", (image) =>
         {
@@ -75,49 +73,16 @@ else
         await hubConnection.StartAsync();
     }
 
-    public async Task GetBorderStyle()
-    {
-        try
-        {
-            var borderStyleSetting = await Http.GetFromJsonAsync<ConfigurationSetting>("/config?name=borderStyle");
-            borderStyle = borderStyleSetting.Value;
-        }
-        catch { }
-    }
-
-    public async Task<Image> GetImageAsync(string id)
-    {
-        try
-        {
-            return await Http.GetFromJsonAsync<Image>($"/image/{id}");
-        }
-        catch
-        {
-            return null;
-        }
-    }
 
     private async Task HandleFormSubmit()
     {
-        if (image.Type == ImageType.Meme)
-        {
-            image.Url = "";
-        }
         image.Status = "Uploading...";
-        var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, IgnoreNullValues = true };
-        var response = await Http.PostAsJsonAsync("/image", image, options);
-        image = await response.Content.ReadFromJsonAsync<Image>(options);
-        image.Status = response.StatusCode.ToString().ToLower() == "ok" ? "Processing..." : "Upload failed, try again.";
-        image.Sentiment = "loading";
-        image.Text = "Loading...";
-        images.Insert(0, image);
+
+        var postedImage = await ApiServiceClient.PostImage(image.Type, image.Url);
+
+        images.Insert(0, postedImage);
 
         StateHasChanged();
-
-        var imageId = image.Id;
-        image = new Image();
-
-        await hubConnection.SendAsync("StartPoll", imageId);
     }
 
     public bool IsConnected =>

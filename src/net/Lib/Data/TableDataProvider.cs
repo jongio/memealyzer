@@ -14,7 +14,6 @@ namespace Lib.Data
         public TableServiceClient TableServiceClient;
         public TableClient TableClient;
         public SecretClient SecretClient;
-        public System.Type DataType { get => typeof(ImageTableEntity); }
 
         public TableDataProvider()
         {
@@ -29,7 +28,7 @@ namespace Lib.Data
         {
             // KeyVault
             SecretClient = new SecretClient(new Uri(Env.GetString("AZURE_KEYVAULT_ENDPOINT")), credential);
-            var storageKey = await SecretClient.GetSecretAsync(Env.GetString("AZURE_STORAGE_KEY_NAME", "storagekey"));
+            var storageKey = await SecretClient.GetSecretAsync(Env.GetString("AZURE_STORAGE_KEY_SECRET_NAME", "storagekey"));
 
             TableClient = new TableClient(
                 new Uri(Env.GetString("AZURE_STORAGE_TABLE_ENDPOINT")),
