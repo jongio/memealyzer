@@ -169,7 +169,7 @@ resource "azurerm_signalr_service" "signalr" {
   resource_group_name = azurerm_resource_group.rg.name
 
   sku {
-    name     = "Standard_F1"
+    name     = "Standard_S1"
     capacity = 1
   }
 
