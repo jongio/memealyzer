@@ -37,11 +37,11 @@ public class ApiServiceClient : ServiceClient
         {
             image.Url = url;
         }
+        image.Status = "Uploading...";
+        image.Sentiment = "loading";
         var response = await base.httpClient.PostAsJsonAsync("/image", image, options);
         image = await response.Content.ReadFromJsonAsync<Image>(options);
         image.Status = response.StatusCode.ToString().ToLower() == "ok" ? "Processing..." : "Upload failed, try again.";
-        image.Sentiment = "loading";
-        image.Text = "Loading...";
         return image;
 
         // TODO: Improve messaging to UI

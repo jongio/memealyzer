@@ -16,30 +16,30 @@ namespace Memealyzer
     {
         // public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
         // {
-        //     // FunctionsHostBuilderContext context = builder.GetContext();
+        //     FunctionsHostBuilderContext context = builder.GetContext();
 
-        //     // Env.Load("../../../../../../../.env");
+        //     Envs.Load();
 
-        //     // // KeyVault
-        //     // var secretClient = new SecretClient(new Uri(Env.GetString("AZURE_KEYVAULT_ENDPOINT")), Identity.GetCredentialChain());
-        //     // var storageConnectionString = secretClient.GetSecret(Env.GetString("AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME"));
-        //     // var signalRConnectionString = secretClient.GetSecret(Env.GetString("AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME"));
+        //     // KeyVault
+        //     var secretClient = new SecretClient(new Uri(Env.GetString("AZURE_KEYVAULT_ENDPOINT")), Identity.GetCredentialChain());
+        //     var storageConnectionString = secretClient.GetSecret(Env.GetString("AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME"));
+        //     var signalRConnectionString = secretClient.GetSecret(Env.GetString("AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME"));
 
-        //     // //Environment.SetEnvironmentVariable("Values:AzureWebJobsStorage", storageConnectionString.Value.Value);
+        //     //Environment.SetEnvironmentVariable("Values:AzureWebJobsStorage", storageConnectionString.Value.Value);
 
-        //     // builder.ConfigurationBuilder
-        //     // .AddInMemoryCollection(new Dictionary<string, string> {
-        //     //     { "ClientSyncQueueConnectionString", storageConnectionString.Value.Value },
-        //     //     { "AzureSignalRConnectionString", signalRConnectionString.Value.Value }
-        //     // })
-        //     // .AddEnvironmentVariables();
+        //     builder.ConfigurationBuilder
+        //     .AddInMemoryCollection(new Dictionary<string, string> {
+        //         { "ClientSyncQueueConnectionString", storageConnectionString.Value.Value },
+        //         { "AzureSignalRConnectionString", signalRConnectionString.Value.Value }
+        //     })
+        //     .AddEnvironmentVariables();
         // }
 
         public override void Configure(IFunctionsHostBuilder builder)
         {
             //FunctionsHostBuilderContext context = builder.GetContext();
 
-            Env.Load("../../../../../../../.env");
+            Envs.Load();
 
             // KeyVault
             var secretClient = new SecretClient(new Uri(Env.GetString("AZURE_KEYVAULT_ENDPOINT")), Identity.GetCredentialChain());

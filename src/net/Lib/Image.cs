@@ -62,6 +62,9 @@ namespace Lib
         [JsonPropertyName("status")]
         public string Status { get; set; }
 
+        [JsonPropertyName("error")]
+        public string Error { get; set; }
+
         [JsonPropertyName("createdDate")]
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 

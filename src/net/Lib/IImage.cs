@@ -16,5 +16,6 @@ namespace Lib
         string Status { get; set; }
         DateTime CreatedDate { get; set; }
         string Color { get; }
+        string Error { get; set; }
     }
 }

@@ -13,9 +13,8 @@
 
     <InputText id="url" @bind-Value="image.Url" size="100"/>
 
-    <button type="submit" value="submit" @onclick="@(()=> image.Type = ImageType.New)" disabled="@(!IsConnected)">Submit</button>
-    <button type="submit" value="random" @onclick="@(()=> image.Type = ImageType.Meme)" disabled="@(!IsConnected)">Add Random Meme</button>
-    <label>@image.Status</label>
+    <button type="submit" value="submit" @onclick="@(()=> image.Type = ImageType.New)" disabled="@(!IsConnected && !IsProcessing)">Add Meme</button>
+    <button type="submit" value="random" @onclick="@(()=> image.Type = ImageType.Meme)" disabled="@(!IsConnected && !IsProcessing)">Add Random Meme</button>
 </EditForm>
 
 @if (images == null)
@@ -33,6 +32,7 @@ else
                         <img class="card-img-top border border-8 border-@image.Color img-thumbnail" style="border-style: @borderStyle !important" src="@image.BlobUri" alt="">
                         <div class="card-body">
                             <p class="card-text">@image.Text</p>
+                            <p class="card-text">@image.Status</p>
                         </div>
                     </div>
                 </div>
@@ -46,6 +46,7 @@ else
     private List<Image> images;
     private Image image = new Image();
     private HubConnection hubConnection;
+    private bool IsProcessing = false;
     private string borderStyle;
 
     protected override async Task OnInitializedAsync()
@@ -76,12 +77,12 @@ else
 
     private async Task HandleFormSubmit()
     {
-        image.Status = "Uploading...";
+        var type = image.Type;
+        var url = image.Url;
+        image = new Image();
 
-        var postedImage = await ApiServiceClient.PostImage(image.Type, image.Url);
-
+        var postedImage = await ApiServiceClient.PostImage(type, url);
         images.Insert(0, postedImage);
-
         StateHasChanged();
     }
 

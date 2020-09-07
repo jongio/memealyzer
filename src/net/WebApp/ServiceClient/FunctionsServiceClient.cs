@@ -14,6 +14,4 @@ public class FunctionsServiceClient : ServiceClient
             .WithAutomaticReconnect()
             .Build();
     }
-
-    
 }

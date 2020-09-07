@@ -39,6 +39,9 @@ The following Azure resources will be deployed with the Terraform script.
 1. [Key Vault](https://azure.microsoft.com/services/key-vault/)
 1. [Azure Kubernetes Service](https://docs.microsoft.com/azure/aks/)
 1. [Application Insights](https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview)
+1. [Azure SignalR Service](https://azure.microsoft.com/services/signalr-service/)
+1. [Azure Functions](https://azure.microsoft.com/services/functions/)
+
 
 ## Code Setup
 
@@ -59,6 +62,7 @@ The following Azure resources will be deployed with the Terraform script.
 1. Update `.env` file
    1. Copy and paste the Terraform output values to the `.env` file in the root of this repo.
       > NOTE: .env files do not allow spaces around the `=`, so please remove any spaces after you copy and paste.
+   1. Set the CONTAINER_REGISTRY_NAME to your ACR or DockerHub registry name.
 
 ## Configuration
 
@@ -94,11 +98,13 @@ This app uses the Azure CLI login to connect to Azure resources for local develo
 
 ## Run Application
 
-### Docker Compose
+### Local Docker Compose
 1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`
 1. Run Docker Compose
-   1. Linux: `docker-compose up --build`
+   1. Linux: `./start.sh`
    1. Windows: `docker-compose -f docker-compose.windows.yml up --build`
+1. Start Azure Function
+   - Run `./startfunc.sh`
 1. Navigate to http://localhost:1080
 1. Add an Image
    1. Enter url into text box and click "Submit"
