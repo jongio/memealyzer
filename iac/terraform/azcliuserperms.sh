@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ -z "$1"]
+  then
+    echo "You need to run this script with the basename you used to created your resources. i.e., ./azcliuserperms.sh azsdkdemo01"
+    exit
+fi
+
 echo "Assigning Roles to Currently Logged in Azure CLI User"
 
 principalId=$(az ad signed-in-user show --query 'objectId' -o tsv)

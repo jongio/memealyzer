@@ -64,6 +64,12 @@ The following Azure resources will be deployed with the Terraform script.
       > NOTE: .env files do not allow spaces around the `=`, so please remove any spaces after you copy and paste.
    1. Set the AZURE_CONTAINER_REGISTRY_SERVER to your ACR LOGIN SERVER or DockerHub registry name.
 
+## .NET Local Machine Setup
+
+If you are running the .NET versino of this project locally, then you will need to install the following tools.
+1. [.NET Core SDK](https://dotnet.microsoft.com/download) - v3.1.402 minimum
+1. [Azure Functions Core Tools](https://docs.microsoft.com/azure/azure-functions/functions-run-local) - v3.0.2881 minimum
+
 ## Configuration
 
 ### Data Provider
@@ -112,6 +118,7 @@ This app uses the Azure CLI login to connect to Azure resources for local develo
    1. The image will be added to the grid. Wait for the service to pick it up. You will eventually see the text and the image border color will change indicating the image text sentiment.
 
 ### Local Kubernetes
+1. In Docker Desktop settings, Enable Kubernetes and setup to use WSL 2 as backend. [Docker Desktop WSL 2 backend](https://docs.docker.com/docker-for-windows/wsl/)
 1. Copy the values outputted from the Terraform commands above (they should be in your `.env` file if you followed the [Code Setup](#Code-Setup) steps above) into the `pac/net/k8s/local/env-configmap.yaml` file.
 1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`.
 1. Run `docker-compose build` to build the containers locally.
