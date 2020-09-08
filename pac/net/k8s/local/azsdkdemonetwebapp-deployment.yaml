@@ -26,7 +26,7 @@ spec:
         io.kompose.service: azsdkdemonetwebapp
     spec:
       containers:
-      - image: jongio/azsdkdemonetwebapp
+      - image: azsdkdemojongdevacr.azurecr.io/azsdkdemonetwebapp:1.0.0
         imagePullPolicy: "IfNotPresent"
         name: azsdkdemonetwebapp
         ports:

@@ -3,7 +3,7 @@ version: "3.7"
 
 services:
   azsdkdemonetwebapp:
-    image: ${CONTAINER_REGISTRY_NAME}/azsdkdemonetwebapp
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetwebapp:${CONTAINER_TAG}
     build:
       context: .
       dockerfile: WebApp/Dockerfile
@@ -13,7 +13,7 @@ services:
       - 1080:80
       - 1443:443
   azsdkdemonetapi:
-    image: ${CONTAINER_REGISTRY_NAME}/azsdkdemonetapi
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetapi:${CONTAINER_TAG}
     env_file: ../../.env
     volumes: 
         - "~/.azure:/root/.azure"
@@ -24,7 +24,7 @@ services:
       - 2080:80
       - 2443:443
   azsdkdemonetqueueservice:
-    image: ${CONTAINER_REGISTRY_NAME}/azsdkdemonetqueueservice
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetqueueservice:${CONTAINER_TAG}
     env_file: ../../.env
     volumes: 
         - "~/.azure:/root/.azure"
@@ -32,7 +32,7 @@ services:
       context: .
       dockerfile: Services/QueueService/Dockerfile
   # azsdkdemonetfunctions:
-  #   image: ${CONTAINER_REGISTRY_NAME}/azsdkdemonetfunctions
+  #   image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetfunctions:${CONTAINER_TAG}
   #   env_file: ../../.env
   #   volumes: 
   #       - "~/.azure:/root/.azure"

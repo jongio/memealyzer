@@ -57,25 +57,25 @@ resource "azurerm_key_vault" "key_vault" {
 }
 
 resource "azurerm_key_vault_secret" "cosmos_key_secret" {
-  name         = "cosmoskey"
+  name         = "CosmosKey"
   value        = azurerm_cosmosdb_account.cosmos_account.primary_master_key
   key_vault_id = azurerm_key_vault.key_vault.id
 }
 
 resource "azurerm_key_vault_secret" "storage_key_secret" {
-  name         = "storagekey"
+  name         = "StorageKey"
   value        = azurerm_storage_account.storage.primary_access_key
   key_vault_id = azurerm_key_vault.key_vault.id
 }
 
 resource "azurerm_key_vault_secret" "signalr_connection_string_secret" {
-  name         = "signalrconnectionstring"
+  name         = "SignalRConnectionString"
   value        = azurerm_signalr_service.signalr.primary_connection_string
   key_vault_id = azurerm_key_vault.key_vault.id
 }
 
 resource "azurerm_key_vault_secret" "storage_connection_string_secret" {
-  name         = "storageconnectionstring"
+  name         = "StorageConnectionString"
   value        = azurerm_storage_account.storage.primary_connection_string
   key_vault_id = azurerm_key_vault.key_vault.id
 }
@@ -169,7 +169,7 @@ resource "azurerm_signalr_service" "signalr" {
   resource_group_name = azurerm_resource_group.rg.name
 
   sku {
-    name     = "Standard_F1"
+    name     = "Standard_S1"
     capacity = 1
   }
 
@@ -181,6 +181,52 @@ resource "azurerm_signalr_service" "signalr" {
     flag  = "ServiceMode"
     value = "Serverless"
   }
+}
+
+# APP SERVICE PLAN
+
+resource "azurerm_app_service_plan" "plan" {
+  name                = "${var.basename}plan"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  sku {
+    tier = "Standard"
+    size = "S1"
+  }
+}
+
+# FUNCTION
+resource "azurerm_function_app" "function" {
+  name                = "${var.basename}function"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+  app_service_plan_id        = azurerm_app_service_plan.plan.id
+  storage_account_name       = azurerm_storage_account.storage.name
+  storage_account_access_key = azurerm_storage_account.storage.primary_access_key
+  os_type                    = "linux"
+  app_settings = {
+    "AzureWebJobsStorage" = azurerm_storage_account.storage.primary_connection_string
+  }
+  identity {
+    type = "SystemAssigned"
+  }
+  site_config {
+    cors {
+      allowed_origins = ["*"]
+      support_credentials = false
+    }
+    always_on = true
+  }
+}
+
+# ACR
+resource "azurerm_container_registry" "acr" {
+  name                = "${var.basename}acr"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                      = "Standard"
+  admin_enabled            = true
 }
 
 # Azure CLI Script to fill in Terraform gaps.
@@ -239,6 +285,22 @@ resource "azurerm_role_assignment" "mi_appconfig" {
   skip_service_principal_aad_check = true
 }
 
+# ACR ROLES
+
+resource "azurerm_role_assignment" "mi_acrpush" {
+  scope                            = data.azurerm_subscription.sub.id
+  role_definition_name             = "AcrPush"
+  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
+  skip_service_principal_aad_check = true
+}
+
+resource "azurerm_role_assignment" "mi_acrpull" {
+  scope                            = data.azurerm_subscription.sub.id
+  role_definition_name             = "AcrPull"
+  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
+  skip_service_principal_aad_check = true
+}
+
 output "AZURE_STORAGE_BLOB_ENDPOINT" {
   value = azurerm_storage_account.storage.primary_blob_endpoint
 }
@@ -283,6 +345,10 @@ output "AZURE_APP_CONFIG_ENDPOINT" {
   value = azurerm_app_configuration.appconfig.endpoint
 }
 
-output "AZURE_SIGNALR_HOSTNAME" {
-  value = azurerm_signalr_service.signalr.hostname
+output "FUNCTIONS_ENDPOINT" {
+  value = "http://${azurerm_function_app.function.default_hostname}"
+}
+
+output "AZURE_CONTAINER_REGISTRY_SERVER" {
+  value = azurerm_container_registry.acr.login_server
 }

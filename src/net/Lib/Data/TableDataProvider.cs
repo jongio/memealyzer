@@ -28,7 +28,7 @@ namespace Lib.Data
         {
             // KeyVault
             SecretClient = new SecretClient(new Uri(Env.GetString("AZURE_KEYVAULT_ENDPOINT")), credential);
-            var storageKey = await SecretClient.GetSecretAsync(Env.GetString("AZURE_STORAGE_KEY_SECRET_NAME", "storagekey"));
+            var storageKey = await SecretClient.GetSecretAsync(Env.GetString("AZURE_STORAGE_KEY_SECRET_NAME", "StorageKey"));
 
             TableClient = new TableClient(
                 new Uri(Env.GetString("AZURE_STORAGE_TABLE_ENDPOINT")),

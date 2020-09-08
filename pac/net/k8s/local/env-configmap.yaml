@@ -8,9 +8,14 @@ data:
   AZURE_TEXT_ANALYTICS_ENDPOINT: https://azsdkdemojongdevtextanalytics.cognitiveservices.azure.com/
   AZURE_STORAGE_TABLE_ENDPOINT: https://azsdkdemojongdevstorage.table.core.windows.net/
   AZURE_APP_CONFIG_ENDPOINT: https://azsdkdemojongdevappconfig.azconfig.io
+  FUNCTIONS_ENDPOINT: http://azsdkdemojongdevfunction.azurewebsites.net
+  AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME: sync
+  AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME: SignalRConnectionString
+  AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME: StorageConnectionString
+  AZURE_CONTAINER_REGISTRY_SERVER: azsdkdemojongdevacr.azurecr.io
   AZURE_COSMOS_COLLECTION: images
   AZURE_COSMOS_DB: azimageai
-  AZURE_COSMOS_KEY_SECRET_NAME: cosmoskey
+  AZURE_COSMOS_KEY_SECRET_NAME: CosmosKey
   AZURE_STORAGE_BLOB_CONTAINER_NAME: blobs
   AZURE_STORAGE_QUEUE_MSG_COUNT: "10"
   AZURE_STORAGE_QUEUE_NAME: messages
@@ -18,7 +23,7 @@ data:
   MEME_ENDPOINT: https://meme-api.herokuapp.com/gimme/wholesomememes
   AZURE_STORAGE_ACCOUNT_NAME: azsdkdemojongdevstorage
   AZURE_STORAGE_TYPE: COSMOS_SQL
-  AZURE_STORAGE_KEY_SECRET_NAME: storagekey
+  AZURE_STORAGE_KEY_SECRET_NAME: StorageKey
   AZURE_STORAGE_TABLE_NAME: images
 kind: ConfigMap
 metadata:

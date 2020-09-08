@@ -62,7 +62,7 @@ The following Azure resources will be deployed with the Terraform script.
 1. Update `.env` file
    1. Copy and paste the Terraform output values to the `.env` file in the root of this repo.
       > NOTE: .env files do not allow spaces around the `=`, so please remove any spaces after you copy and paste.
-   1. Set the CONTAINER_REGISTRY_NAME to your ACR or DockerHub registry name.
+   1. Set the AZURE_CONTAINER_REGISTRY_SERVER to your ACR LOGIN SERVER or DockerHub registry name.
 
 ## Configuration
 
@@ -101,7 +101,7 @@ This app uses the Azure CLI login to connect to Azure resources for local develo
 ### Local Docker Compose
 1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`
 1. Run Docker Compose
-   1. Linux: `./start.sh`
+   1. Linux: `./docker-up.sh`
    1. Windows: `docker-compose -f docker-compose.windows.yml up --build`
 1. Start Azure Function
    - Run `./startfunc.sh`

@@ -28,7 +28,7 @@ namespace Lib.Data
         {
             // KeyVault
             SecretClient = new SecretClient(new Uri(Env.GetString("AZURE_KEYVAULT_ENDPOINT")), credential);
-            var cosmosKey = await SecretClient.GetSecretAsync(Env.GetString("AZURE_COSMOS_KEY_SECRET_NAME", "cosmoskey"));
+            var cosmosKey = await SecretClient.GetSecretAsync(Env.GetString("AZURE_COSMOS_KEY_SECRET_NAME", "CosmosKey"));
 
             // Cosmos
             CosmosClient = new CosmosClient(
