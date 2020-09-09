@@ -20,7 +20,6 @@ namespace Api.Controllers
         {
             this.logger = logger;
             this.clients = clients;
-
         }
 
         [HttpGet]

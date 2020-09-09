@@ -145,15 +145,16 @@ This app uses the Azure CLI login to connect to Azure resources for local develo
    helm upgrade --install nginx ingress-nginx/ingress-nginx
    ```
 1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`.
-1. Login to your container registry. `docker login` or `az acr login`.
-1. Search the entire project for image names that start with `jongio/` and replace with the name of your container registry.
+1. Login to your container registry. `docker login` or `az acr login --name {REGISTRY_NAME}`.
+1. Search the entire project for image names that start with `azsdkdemojongdev` and replace with the name of your container registry.
    > Note: This experience will be improved with Helm or Kustomize soon.
-1. Run `docker-compose build` to build your containers locally.
-1. Run `docker-compose push` to push the containers to your container registry of choice. 
+1. Run `./docker-push.sh` to push the containers to your container registry of choice. 
 1. Run `az network public-ip list -g azsdkdemo100aksnodes --query '[0].ipAddress' --output tsv` to find the AKS cluster's public IP address.
    > Note: Change the resource group to your `node_resource_group` name, this command is also outputted by the Terraform commands.
-1. Open `/pac/net/k8s/aks/web-configmap.yaml` and change the `API_ENDPOINT` value to the Public IP address.
+1. Open `/pac/net/k8s/aks/web-configmap.yaml` and change:
+    1. `API_ENDPOINT` value to the Public IP address.
+    1. `FUNCTIONS_ENDPOINT` to the URI of your functions endpoint, i.e. `https://azsdkdemoauthfunction.azurewebsites.net`
 1. Make sure you are in the right Kubernetes context by running `kubectl config get-contexts` and use `kubectl config use-context` to set it.
-1. CD to `/pac/net/k8s/aks` and run `kubectl apply -f .`
+1. CD to `/pac/net/k8s/aks` and run `./kubectlapply.sh`
 1. Open a browser and go to the AKS cluster's Public IP.
 

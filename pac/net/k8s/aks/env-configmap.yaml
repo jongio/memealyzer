@@ -8,6 +8,11 @@ data:
   AZURE_TEXT_ANALYTICS_ENDPOINT: https://azsdkdemoauthtextanalytics.cognitiveservices.azure.com/
   AZURE_STORAGE_TABLE_ENDPOINT: https://azsdkdemoauthstorage.table.core.windows.net/
   AZURE_APP_CONFIG_ENDPOINT: https://azsdkdemoauthappconfig.azconfig.io
+  FUNCTIONS_ENDPOINT: http://azsdkdemoauthfunction.azurewebsites.net
+  AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME: sync
+  AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME: SignalRConnectionString
+  AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME: StorageConnectionString
+  AZURE_CONTAINER_REGISTRY_SERVER: azsdkdemoauthacr.azurecr.io
   AZURE_COSMOS_COLLECTION: images
   AZURE_COSMOS_DB: azimageai
   AZURE_COSMOS_KEY_SECRET_NAME: CosmosKey

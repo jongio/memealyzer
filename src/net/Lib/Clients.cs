@@ -45,7 +45,7 @@ namespace Lib
 
             // App Config
             ConfigurationClient = new ConfigurationClient(new Uri(Env.GetString("AZURE_APP_CONFIG_ENDPOINT")), credential);
-
+            
             // Blob
             BlobServiceClient = new BlobServiceClient(new Uri(Env.GetString("AZURE_STORAGE_BLOB_ENDPOINT")), credential);
             ContainerClient = BlobServiceClient.GetBlobContainerClient(Env.GetString("AZURE_STORAGE_BLOB_CONTAINER_NAME"));
