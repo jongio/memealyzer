@@ -1,0 +1,17 @@
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master 
+
+    - uses: Azure/docker-login@v1
+      with:
+        login-server: ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+
+    - name: "Docker Build"
+    - run: |
+        docker build -f ./src/net/Api/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetapi:${{ github.sha }} ./src/net
