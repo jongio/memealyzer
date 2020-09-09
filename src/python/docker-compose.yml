@@ -5,7 +5,7 @@ version: "3.8"
 
 services:
   azsdkdemonetwebapp:
-    image: jongio/azsdkdemonetwebapp
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetwebapp:${CONTAINER_TAG}
     build:
       context: ../net
       dockerfile: WebApp/Dockerfile
@@ -15,21 +15,37 @@ services:
       - 1080:80
       - 1443:443
   azsdkdemonetapi:
-    image: jongio/azsdkdemonetapi
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetapi:${CONTAINER_TAG}
     env_file: ../../.env
     volumes: 
-        - "${HOME}/.azure:/root/.azure"
+        - "~/.azure:/root/.azure"
     build:
       context: ../net
       dockerfile: Api/Dockerfile
     ports:
       - 2080:80
       - 2443:443
-  azsdkdemopythonqueueservice:
-    image: jongio/azsdkdemopythonqueueservice
+  azsdkdemonetqueueservice:
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetqueueservice:${CONTAINER_TAG}
     env_file: ../../.env
-    volumes:
-      - ${HOME}/.azure:/root/.azure
+    volumes: 
+        - "~/.azure:/root/.azure"
     build:
       context: .
       dockerfile: services/queue-service/Dockerfile
+  # azsdkdemonetfunctions:
+  #   image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetfunctions:${CONTAINER_TAG}
+  #   env_file: ../../.env
+  #   volumes: 
+  #       - "~/.azure:/root/.azure"
+  #   build:
+  #     context: .
+  #     dockerfile: Services/Functions/Dockerfile
+  #   ports:
+  #     - 3080:80
+  #     - 3443:443
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - 10000:10000
+      - 10001:10001

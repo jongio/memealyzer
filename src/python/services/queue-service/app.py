@@ -4,10 +4,8 @@ import time
 import json
 
 from azure.identity import (
-    AzureCliCredential,
-    ChainedTokenCredential,
     ManagedIdentityCredential,
-    EnvironmentCredential,
+    AzureCliCredential
 )
 from azure.storage.queue import QueueServiceClient
 from azure.ai.formrecognizer import FormRecognizerClient
@@ -24,7 +22,7 @@ load_dotenv(find_dotenv())
 sleep = getenv("AZURE_STORAGE_QUEUE_RECEIVE_SLEEP", type=bool, default=1)
 
 credential = ChainedTokenCredential(
-    AzureCliCredential(), EnvironmentCredential(), ManagedIdentityCredential()
+    ManagedIdentityCredential(), AzureCliCredential()
 )
 
 queue_service_client = QueueServiceClient(

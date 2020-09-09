@@ -9,7 +9,8 @@
             "type": "blazorwasm",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "browser": "edge"
+            "browser": "edge",
+            "url": "http://localhost:1080"
         }
     ]
 }
