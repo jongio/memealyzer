@@ -120,17 +120,15 @@ This app uses the Azure CLI login to connect to Azure resources for local develo
 ### Local Kubernetes
 1. In Docker Desktop settings, Enable Kubernetes and setup to use WSL 2 as backend. [Docker Desktop WSL 2 backend](https://docs.docker.com/docker-for-windows/wsl/)
 1. Copy the values outputted from the Terraform commands above (they should be in your `.env` file if you followed the [Code Setup](#Code-Setup) steps above) into the `pac/net/k8s/local/env-configmap.yaml` file.
-1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`.
-1. Run `docker-compose build` to build the containers locally.
 1. CD to `pac/net/k8s/local`.
 1. Run `./mount.sh` to mount your local `.azure` folder to the container, so we can use AzureCliCredential in Kubernetes.
-1. Run `kubectl config use-context docker-desktop` to use your local Kubernetes cluster.
-1. Run `kubectl apply -f .`
+1. Run `./deploy.sh`
 1. Navigate to http://localhost:31389
 
 ### Azure Kubernetes Service
 
-1. Copy the values outputted from the Terraform commands above (they should be in your `.env` file if you followed the Code Setup steps above) into the `pac/net/k8s/aks/env-configmap.yaml` file.
+1. For AKS, we recommend doing another Terraform deployment in a new Terraform workspace. 
+1. Copy the values outputted from Terraform to `env.prod` and `pac/net/k8s/aks/env-configmap.yaml` file.
 1. Run the `az aks get-credentials` command that was outputted from the `terraform apply` command you ran earlier. It is something like `az aks get-credentials --resource-group azsdkdemo100rg --name azsdkdemo100aks`. Replace the resource group and cluster name with the one you created with Terraform earlier.
 1. Install [Helm](https://helm.sh/) - This will be used for an [nginx ingress controller](https://github.com/kubernetes/ingress-nginx/tree/master/charts/ingress-nginx) that will expose a Public IP for our cluster and handle routing.
 1. Run the following commands:
@@ -144,18 +142,13 @@ This app uses the Azure CLI login to connect to Azure resources for local develo
 
    helm upgrade --install nginx ingress-nginx/ingress-nginx
    ```
-1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`.
-1. Login to your container registry. `docker login` or `az acr login --name {REGISTRY_NAME}`.
-1. Search the entire project for image names that start with `azsdkdemojongdev` and replace with the name of your container registry.
-   > Note: This experience will be improved with Helm or Kustomize soon.
-1. Run `./docker-push.sh` to push the containers to your container registry of choice. 
+1. CD to `/pac/net/k8s/aks` and run `./deploy.sh` - this will build containers, push them to ACR, apply K8S files, and deploy the Azure Function.
 1. Run `az network public-ip list -g azsdkdemo100aksnodes --query '[0].ipAddress' --output tsv` to find the AKS cluster's public IP address.
    > Note: Change the resource group to your `node_resource_group` name, this command is also outputted by the Terraform commands.
 1. Open `/pac/net/k8s/aks/web-configmap.yaml` and change:
     1. `API_ENDPOINT` value to the Public IP address.
     1. `FUNCTIONS_ENDPOINT` to the URI of your functions endpoint, i.e. `https://azsdkdemoauthfunction.azurewebsites.net`
-1. Make sure you are in the right Kubernetes context by running `kubectl config get-contexts` and use `kubectl config use-context` to set it.
-1. CD to `/pac/net/k8s/aks` and run `./kubectlapply.sh`
-1. Run `./deployfunc.sh`
+1. Rerun `./deploy.sh`
+   > Note: We'll fix this soon so you won't have to run this twice.
 1. Open a browser and go to the AKS cluster's Public IP.
 
