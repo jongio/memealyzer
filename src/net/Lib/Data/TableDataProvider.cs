@@ -34,7 +34,7 @@ namespace Lib.Data
                 new Uri(Env.GetString("AZURE_STORAGE_TABLE_ENDPOINT")),
                 Env.GetString("AZURE_STORAGE_TABLE_NAME"),
                 new TableSharedKeyCredential(
-                    Env.GetString("AZURE_STORAGE_ACCOUNT_NAME"), 
+                    Env.GetString("AZURE_STORAGE_ACCOUNT_NAME"),
                     storageKey.Value.Value));
 
             await TableClient.CreateIfNotExistsAsync();
@@ -49,6 +49,15 @@ namespace Lib.Data
                 return item;
             }
             return null;
+        }
+
+        public async Task<Image> DeleteImageAsync(string id)
+        {
+            var image = new ImageTableEntity { Id = id };
+            await TableClient.DeleteEntityAsync(image.PartitionKey, image.RowKey);
+            return image;
+
+            //TODO : Bubble up errors through the stack
         }
 
         public async IAsyncEnumerable<Image> GetImagesAsync()

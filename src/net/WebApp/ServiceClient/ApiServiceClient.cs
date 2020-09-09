@@ -29,14 +29,14 @@ public class ApiServiceClient : ServiceClient
         }
     }
 
-    public async Task<Image> PostImage(ImageType type, string url)
+    public async Task<HttpResponseMessage> DeleteImage(string id)
+    {
+        return await base.httpClient.DeleteAsync($"/image/{id}");
+    }
+
+    public async Task<Image> PostImage(Image image)
     {
         var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, IgnoreNullValues = true };
-        var image = new Image() { Type = type };
-        if (image.Type == ImageType.New)
-        {
-            image.Url = url;
-        }
         image.Status = "Uploading...";
         image.Sentiment = "loading";
         var response = await base.httpClient.PostAsJsonAsync("/image", image, options);

@@ -10,6 +10,7 @@ namespace Lib.Data
         Task InitializeAsync(TokenCredential credential);
         IAsyncEnumerable<Image> GetImagesAsync();
         Task<Image> GetImageAsync(string id);
+        Task<Image> DeleteImageAsync(string id);
         Task<Image> UpsertImageAsync(IImage image);
         IImage DeserializeImage(string json);
     }

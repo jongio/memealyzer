@@ -54,6 +54,15 @@ namespace Lib.Data
             return null;
         }
 
+        public async Task<Image> DeleteImageAsync(string id)
+        {
+            var partitionKey = new PartitionKey(id);
+            var response = await CosmosContainer.DeleteItemAsync<Image>(id, partitionKey);
+            return response.Value;
+
+            //TODO : Bubble up errors through the stack
+        }
+
         public async IAsyncEnumerable<Image> GetImagesAsync()
         {
             await foreach (var item in CosmosContainer.GetItemQueryIterator<Image>("SELECT * FROM c F ORDER BY F.createdDate DESC"))
