@@ -156,5 +156,6 @@ This app uses the Azure CLI login to connect to Azure resources for local develo
     1. `FUNCTIONS_ENDPOINT` to the URI of your functions endpoint, i.e. `https://azsdkdemoauthfunction.azurewebsites.net`
 1. Make sure you are in the right Kubernetes context by running `kubectl config get-contexts` and use `kubectl config use-context` to set it.
 1. CD to `/pac/net/k8s/aks` and run `./kubectlapply.sh`
+1. Run `./deployfunc.sh`
 1. Open a browser and go to the AKS cluster's Public IP.
 
