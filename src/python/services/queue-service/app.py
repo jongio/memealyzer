@@ -33,6 +33,10 @@ queue_client = queue_service_client.get_queue_client(
     queue=getenv("AZURE_STORAGE_QUEUE_NAME", default="messages")
 )
 
+client_sync_queue_client = queue_service_client.get_queue_client(
+    queue=getenv("AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME", default="sync")
+)
+
 fr_client = FormRecognizerClient(
     endpoint=getenv("AZURE_FORM_RECOGNIZER_ENDPOINT"), credential=credential
 )
@@ -94,8 +98,12 @@ while True:
             print("Saving document")
             cosmos_container_client.upsert_item(message_json.toDict())
 
+            
             print("Deleting message from queue")    
             queue_client.delete_message(message)
+
+            print("Send message to client sync queue")    
+            client_sync_queue_client.send_message(message)
 
             print(message_json)
 
