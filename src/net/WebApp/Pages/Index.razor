@@ -101,10 +101,10 @@ else
     private async Task HandleAddFormSubmit()
     {
         var type = image.Type;
-        var url = String.Copy(image.Url);
+        var url = !String.IsNullOrEmpty(image.Url) ? String.Copy(image.Url): "";
+    
         image = new Image();
 
-        Console.WriteLine(url);
         //TODO : Figure out why this renders the previous image and not the new image for a split second.
         Image postedImage = new Image{ Id = Guid.NewGuid().ToString(), Type = type, Url = url };
         postedImage = await ApiServiceClient.PostImage(postedImage);
