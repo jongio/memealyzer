@@ -12,7 +12,9 @@ jobs:
       run: echo $CONTAINER_TAG
       env: 
         CONTAINER_TAG: ${{ github.sha }}
-
+        AZURE_CONTAINER_REGISTRY_SERVER: ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}
+        API_ENDPOINT: ${{ secrets.API_ENDPOINT }}
+        FUNCTIONS_ENDPOINT: ${{ secrets.FUNCTIONS_ENDPOINT }}
     - uses: actions/checkout@v2 
 
     - uses: Azure/docker-login@v1
