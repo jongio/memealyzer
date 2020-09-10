@@ -6,6 +6,7 @@ echo "####"
 
 export DOTENV_FILENAME=.env
 source ../shared/loadenv.sh
+source ../shared/genfiles.sh
 ./build.sh
 ../shared/deploy.sh
 

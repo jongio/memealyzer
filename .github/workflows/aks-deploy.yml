@@ -4,7 +4,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master 
+    - uses: c-py/action-dotenv-to-setenv@v1
+      with:
+        env-file: .env.prod
+    
+    - name: Set Environment Variables
+      run: echo $CONTAINER_TAG
+      env: 
+        CONTAINER_TAG: ${{ github.sha }}
+
+    - uses: actions/checkout@v2 
 
     - uses: Azure/docker-login@v1
       with:
@@ -12,6 +21,37 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
 
-    - name: "Docker Build"
     - run: |
         docker build -f ./src/net/Api/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetapi:${{ github.sha }} ./src/net
+        docker build -f ./src/net/Services/QueueService/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetqueueservice:${{ github.sha }} ./src/net
+        docker build -f ./src/net/WebApp/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetwebapp:${{ github.sha }} ./src/net
+        docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetapi:${{ github.sha }}
+        docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetqueueservice:${{ github.sha }}
+        docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetwebapp:${{ github.sha }}
+    
+    - name: Gen files
+      run: |
+        cd ./pac/net/k8s/aks
+        sh ../shared/genfiles.sh
+    
+    # Set the target AKS cluster.
+    - uses: Azure/aks-set-context@v1
+      with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+        cluster-name: ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
+        resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}
+    - uses: Azure/k8s-deploy@v1
+      with:
+        manifests: |
+          pac/net/k8s/aks/templates/.bin/azsdkdemonetapi-deployment.yaml
+          pac/net/k8s/aks/templates/.bin/azsdkdemonetapi-service.yaml
+          pac/net/k8s/aks/templates/.bin/azsdkdemonetqueueservice-deployment.yaml
+          pac/net/k8s/aks/templates/.bin/azsdkdemonetwebapp-deployment.yaml
+          pac/net/k8s/aks/templates/.bin/azsdkdemonetwebapp-service.yaml
+          pac/net/k8s/aks/templates/.bin/env-configmap.yaml
+          pac/net/k8s/aks/templates/.bin/ingress.yaml
+          pac/net/k8s/aks/templates/.bin/web-configmap.yaml
+        images: |
+          ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetapi:${{ github.sha }}
+          ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetqueueservice:${{ github.sha }}
+          ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetwebapp:${{ github.sha }}
