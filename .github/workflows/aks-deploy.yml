@@ -3,18 +3,8 @@ on: [push, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-    - uses: c-py/action-dotenv-to-setenv@v1
-      with:
-        env-file: .env.prod
-    
-    - name: Set Environment Variables
-      run: echo $CONTAINER_TAG
-      env: 
-        CONTAINER_TAG: ${{ github.sha }}
-        AZURE_CONTAINER_REGISTRY_SERVER: ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}
-        API_ENDPOINT: ${{ secrets.API_ENDPOINT }}
-        FUNCTIONS_ENDPOINT: ${{ secrets.FUNCTIONS_ENDPOINT }}
+    steps:   
+
     - uses: actions/checkout@v2 
 
     - uses: Azure/docker-login@v1
@@ -30,9 +20,14 @@ jobs:
         docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetapi:${{ github.sha }}
         docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetqueueservice:${{ github.sha }}
         docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetwebapp:${{ github.sha }}
-    
+       
     - name: Gen files
       run: |
+        export CONTAINER_TAG=${{ github.sha }}
+        export AZURE_CONTAINER_REGISTRY_SERVER=${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}
+        export API_ENDPOINT=${{ secrets.API_ENDPOINT }}
+        export FUNCTIONS_ENDPOINT=${{ secrets.FUNCTIONS_ENDPOINT }}
+
         cd ./pac/net/k8s/aks
         sh ../shared/genfiles.sh
     
