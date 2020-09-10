@@ -1,5 +1,14 @@
 on: [push, workflow_dispatch]
 
+env:
+  AZURE_FUNCTIONAPP_NAME: ${{ secrets.AZURE_FUNCTION_APP_NAME }}  # set this to your application's name
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: './src/net/Services/Functions'    # set this to the path to your web app project, defaults to the repository root
+  DOTNET_VERSION: '3.1.401'              # set this to the dotnet version to use
+  CONTAINER_TAG: ${{ github.sha }}
+  AZURE_CONTAINER_REGISTRY_SERVER: ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}
+  API_ENDPOINT: ${{ secrets.API_ENDPOINT }}
+  FUNCTIONS_ENDPOINT: ${{ secrets.FUNCTIONS_ENDPOINT }}
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,11 +32,6 @@ jobs:
        
     - name: Gen files
       run: |
-        export CONTAINER_TAG=${{ github.sha }}
-        export AZURE_CONTAINER_REGISTRY_SERVER=${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}
-        export API_ENDPOINT=${{ secrets.API_ENDPOINT }}
-        export FUNCTIONS_ENDPOINT=${{ secrets.FUNCTIONS_ENDPOINT }}
-
         cd ./pac/net/k8s/aks
         sh ../shared/genfiles.sh
     
@@ -52,3 +56,27 @@ jobs:
           ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetapi:${{ github.sha }}
           ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetqueueservice:${{ github.sha }}
           ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetwebapp:${{ github.sha }}
+
+    - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: 'Resolve Project Dependencies Using Dotnet'
+      shell: bash
+      run: |
+        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+        dotnet build --configuration Release --output ./output
+        popd
+
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1
+      id: fa
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
