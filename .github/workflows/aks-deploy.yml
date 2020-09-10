@@ -14,8 +14,8 @@ jobs:
         password: ${{ secrets.REGISTRY_PASSWORD }}
 
     - run: |
-        docker build -f ./src/net/Api/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetapi:${{ github.sha }} ./src/net
-        docker build -f ./src/net/Services/QueueService/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetqueueservice:${{ github.sha }} ./src/net
+        docker build -f ./src/net/Api/Dockerfile.prod -t ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetapi:${{ github.sha }} ./src/net
+        docker build -f ./src/net/Services/QueueService/Dockerfile.prod -t ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetqueueservice:${{ github.sha }} ./src/net
         docker build -f ./src/net/WebApp/Dockerfile -t ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetwebapp:${{ github.sha }} ./src/net
         docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetapi:${{ github.sha }}
         docker push ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER }}/azsdkdemonetqueueservice:${{ github.sha }}

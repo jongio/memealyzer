@@ -13,9 +13,9 @@ services:
     image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetapi:${CONTAINER_TAG}
     build:
       context: ../../../../src/net
-      dockerfile: Api/Dockerfile
+      dockerfile: Api/Dockerfile.prod
   azsdkdemonetqueueservice:
     image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetqueueservice:${CONTAINER_TAG}
     build:
       context: ../../../../src/net
-      dockerfile: Services/QueueService/Dockerfile
+      dockerfile: Services/QueueService/Dockerfile.prod
