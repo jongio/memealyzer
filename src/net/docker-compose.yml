@@ -43,6 +43,7 @@ services:
   #     - 3080:80
   #     - 3443:443
   azurite:
+    container_name: azurite
     image: mcr.microsoft.com/azure-storage/azurite
     ports:
       - 10000:10000

@@ -85,7 +85,7 @@ namespace Lib
                         color = "danger";
                         break;
                     case "neutral":
-                        color = "dark";
+                        color = "warning";
                         break;
                     case "mixed":
                         color = "warning";
