@@ -5,10 +5,11 @@
 @inject NavigationManager NavigationManager
 @implements IDisposable
 
-<h1 class="text-center">Memealyzer</h1>
-
 <div class="container" style="margin-bottom:10px">
     <div class="row text-center">
+        <div class="col-md-12">
+            <img src=imgs/logo.png height="94" width="773" alt="Memealyzer" style="margin-bottom: 10px;" />
+        </div>
         <div class="col-md-12">
             <EditForm OnValidSubmit="HandleAddFormSubmit" Model="@image">
                 <DataAnnotationsValidator />
@@ -101,17 +102,17 @@ else
     private async Task HandleAddFormSubmit()
     {
         var type = image.Type;
-        var url = !String.IsNullOrEmpty(image.Url) ? String.Copy(image.Url): "";
-    
+        var url = !String.IsNullOrEmpty(image.Url) ? String.Copy(image.Url) : "";
+
         image = new Image();
 
         //TODO : Figure out why this renders the previous image and not the new image for a split second.
-        Image postedImage = new Image{ Id = Guid.NewGuid().ToString(), Type = type, Url = url };
+        Image postedImage = new Image { Id = Guid.NewGuid().ToString(), Type = type, Url = url };
         postedImage = await ApiServiceClient.PostImage(postedImage);
         images.Insert(0, postedImage);
         StateHasChanged();
     }
-    
+
     public async Task DeleteImage(string id)
     {
         int index = FindImageById(id);
@@ -122,8 +123,8 @@ else
         }
         StateHasChanged();
         var deletedImage = await ApiServiceClient.DeleteImage(id);
-      }
-     
+    }
+
     public bool IsConnected =>
         hubConnection != null && hubConnection.State == HubConnectionState.Connected;
 
