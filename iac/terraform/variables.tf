@@ -1,7 +1,7 @@
 variable "basename" {
   type        = string
   description = "The base name for all resources"
-  default     = "azsdkdemo100"
+  default     = "memealyzer100"
 }
 
 variable "location" {

@@ -39,26 +39,49 @@ The following Azure resources will be deployed with the Terraform script.
 1. [Key Vault](https://azure.microsoft.com/services/key-vault/)
 1. [Azure Kubernetes Service](https://docs.microsoft.com/azure/aks/)
 1. [Application Insights](https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview)
+1. [Azure SignalR Service](https://azure.microsoft.com/services/signalr-service/)
+1. [Azure Functions](https://azure.microsoft.com/services/functions/)
+
 
 ## Code Setup
 
 1. Open Git Bash or WSL - The same terminal you used to install the pre-reqs above.
 1. Clone Repo
-   `git clone https://github.com/jongio/azsdkdemo`
+   `git clone https://github.com/jongio/memealyzer`
 
 ## Azure Setup
 
 1. Azure CLI Login
    `az login`
+1. Select Azure Subscription - If you have more than one subscription, make sure you have the right one selected.
+   `az account set -s {SUBSCRIPTION_NAME}`
+1. Set Terraform Variables
+   1. Open `.env` file in the root of this project. Set the `TF_VAR_basename` setting to something unique
 1. Create Azure Resources with Terraform
    1. CD to `iac/terraform`
    1. Terraform init: `terraform init`
-   1. Terraform plan: `terraform plan -var="basename=azsdkdemo1" --out tf.plan`
-      > Change the `basename` variable from `azsdkdemo1` to something that will be globally unique.  It will be used as part of Azure resource names, so keep it short, lowercase, and no special characters.
-   1. Terraform apply: `terraform apply tf.plan`
+   1. Terraform plan: 
+      1. For dev: `./plan.sh`
+      1. For prod: `./plan.sh prod` - You can pass any value as the first parameter. You just need a matching `.env.{workspace}` file in the root of the repo. 
+   1. Terraform apply: `./apply.sh` - This will deploy the above resources to Azure.
+
+   > If you get this error: `Error validating token: IDX10223`, then run `az logout`, `az login`, and then run `./plan.sh` and `./apply.sh` again.
 1. Update `.env` file
    1. Copy and paste the Terraform output values to the `.env` file in the root of this repo.
       > NOTE: .env files do not allow spaces around the `=`, so please remove any spaces after you copy and paste.
+
+## Permissions Setup
+This app uses the Azure CLI login to connect to Azure resources for local development. You need to run the following script to assign the appropriate roles to the Azure CLI user.
+
+1. CD to `iac/terraform`
+1. Run `./azcliuserperms.sh {basename}`
+   > You need to replace `{basename}` with the basename you set in your `TF_VAR_basename` setting used above, such as `memealyzerdev` or `memealyzerprod`.
+
+## .NET Local Machine Setup
+
+If you are running the .NET versino of this project locally, then you will need to install the following tools.
+1. [.NET Core SDK](https://dotnet.microsoft.com/download) - v3.1.402 minimum
+1. [Azure Functions Core Tools](https://docs.microsoft.com/azure/azure-functions/functions-run-local) - v3.0.2881 minimum
 
 ## Configuration
 
@@ -84,63 +107,45 @@ az appconfig kv set -y -n {basename}appconfig --key borderStyle --value dashed
 
 After you change the setting, reload the WebApp to see the new style take effect.
 
-## Permissions Setup
-This app uses the Azure CLI login to connect to Azure resources for local development. You need to run the following script to assign the appropriate roles to the Azure CLI user.
-
-1. CD to `iac/terraform`
-1. Run `./azcliuserperms.sh {basename}`
-   > You need to replace `{basename}` with the basename you used above, such as 'azsdkdemo1'.
-
-
 ## Run Application
 
-### Docker Compose
+### Local Docker Compose
 1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`
-1. Run Docker Compose
-   1. Linux: `docker-compose up --build`
-   1. Windows: `docker-compose -f docker-compose.windows.yml up --build`
+1. Run Docker Compose to start the API, WebApp, Service, and Azurite containers.
+   1. Linux: `./run.sh`
+1. Start Azure Function
+   - Run `./func.sh`
 1. Navigate to http://localhost:1080
-1. Add an Image
-   1. Enter url into text box and click "Submit"
-   1. Or click "Add Random Meme"
+1. Add a Meme
+   1. Enter meme url into the text box and click "+".
+   1. Or to enter a random meme, just click "+".
    1. The image will be added to the grid. Wait for the service to pick it up. You will eventually see the text and the image border color will change indicating the image text sentiment.
 
 ### Local Kubernetes
-1. Copy the values outputted from the Terraform commands above (they should be in your `.env` file if you followed the [Code Setup](#Code-Setup) steps above) into the `pac/net/k8s/local/env-configmap.yaml` file.
-1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`.
-1. Run `docker-compose build` to build the containers locally.
+1. In Docker Desktop settings, Enable Kubernetes and setup to use WSL 2 as backend. [Docker Desktop WSL 2 backend](https://docs.docker.com/docker-for-windows/wsl/)
 1. CD to `pac/net/k8s/local`.
-1. Run `./mount.sh` to mount your local `.azure` folder to the container, so we can use AzureCliCredential in Kubernetes.
-1. Run `kubectl config use-context docker-desktop` to use your local Kubernetes cluster.
-1. Run `kubectl apply -f .`
+1. Run `./run.sh`
 1. Navigate to http://localhost:31389
 
 ### Azure Kubernetes Service
 
-1. Copy the values outputted from the Terraform commands above (they should be in your `.env` file if you followed the Code Setup steps above) into the `pac/net/k8s/aks/env-configmap.yaml` file.
-1. Run the `az aks get-credentials` command that was outputted from the `terraform apply` command you ran earlier. It is something like `az aks get-credentials --resource-group azsdkdemo100rg --name azsdkdemo100aks`. Replace the resource group and cluster name with the one you created with Terraform earlier.
-1. Install [Helm](https://helm.sh/) - This will be used for an [nginx ingress controller](https://github.com/kubernetes/ingress-nginx/tree/master/charts/ingress-nginx) that will expose a Public IP for our cluster and handle routing.
-1. Run the following commands:
-   ```
-   helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-   helm repo add stable https://kubernetes-charts.storage.googleapis.com/
-   helm repo update
-   helm install nginx ingress-nginx/ingress-nginx
+1. **Terraform Workspace**: It is recommended that you create another Azure deployment in a new Terraform workspace, so you can have a dev backend and a prod backend. i.e. `iac/terraform/plan.sh prod`, where `prod` is the name of the workspace and the name of the env file, i.e. `env.prod`.
 
-   # If you already have installed or get this error: Error: cannot re-use a name that is still in use
+   > The `{basename}` value is pulled from your .env file: `TF_VAR_basename`.
 
-   helm upgrade --install nginx ingress-nginx/ingress-nginx
-   ```
-1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`.
-1. Login to your container registry. `docker login` or `az acr login`.
-1. Search the entire project for image names that start with `jongio/` and replace with the name of your container registry.
-   > Note: This experience will be improved with Helm or Kustomize soon.
-1. Run `docker-compose build` to build your containers locally.
-1. Run `docker-compose push` to push the containers to your container registry of choice. 
-1. Run `az network public-ip list -g azsdkdemo100aksnodes --query '[0].ipAddress' --output tsv` to find the AKS cluster's public IP address.
-   > Note: Change the resource group to your `node_resource_group` name, this command is also outputted by the Terraform commands.
-1. Open `/pac/net/k8s/aks/web-configmap.yaml` and change the `API_ENDPOINT` value to the Public IP address.
-1. Make sure you are in the right Kubernetes context by running `kubectl config get-contexts` and use `kubectl config use-context` to set it.
-1. CD to `/pac/net/k8s/aks` and run `kubectl apply -f .`
+1. **AKS Credentials**: Run the following command to get the AKS cluster credentials locally:
+   
+   `az aks get-credentials --resource-group {basename}rg --name {basename}aks`
+
+   > Replace `{basename}` with the basename you used when you created your Azure resources.
+1. **K8S Context**: Make sure the `K8S_CONTEXT` setting in your .env file is set to the desired value, which will be `{basename}aks`.
+1. **Nginx Ingress Controller Install**
+   1. Install [Helm](https://helm.sh/) - This will be used for an [nginx ingress controller](https://github.com/kubernetes/ingress-nginx/tree/master/charts/ingress-nginx) that will expose a Public IP for our cluster and handle routing.
+   1. Run `./scripts/nginx.sh` to install the nginx-ingress controller to your AKS cluster.
+1. **AKS Cluster IP Address**: Run `az network public-ip list -g memealyzerdevaksnodes --query '[0].ipAddress' --output tsv` to find the AKS cluster's public IP address.
+1. **Update .env File**: Open `./.env` and change.  (Use `./.env.prod` for production environment)
+    1. `API_ENDPOINT` value to the Public IP address URI, i.e., `https://52.250.2.137`
+    1. `FUNCTIONS_ENDPOINT` to the URI of your functions endpoint, i.e. `https://memealyzerdevfunction.azurewebsites.net` - this was outputted by your Terraform run and can be found in your `.env` file.
+1. **Deploy**: CD to `/pac/net/k8s/aks` and run `./deploy.sh` - this will build containers, push them to ACR, apply K8S files, and deploy the Azure Function.
 1. Open a browser and go to the AKS cluster's Public IP.
 

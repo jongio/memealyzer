@@ -2,32 +2,49 @@
 version: "3.7"
 
 services:
-  azsdkdemonetwebapp:
-    image: jongio/azsdkdemonetwebapp
+  memealyzernetwebapp:
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetwebapp:${CONTAINER_TAG}
     build:
       context: .
       dockerfile: WebApp/Dockerfile
     depends_on:
-      - azsdkdemonetapi
+      - memealyzernetapi
     ports:
       - 1080:80
       - 1443:443
-  azsdkdemonetapi:
-    image: jongio/azsdkdemonetapi
-    env_file: ../../.env
+  memealyzernetapi:
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetapi:${CONTAINER_TAG}
+    env_file: ../../${DOTENV_FILENAME}
     volumes: 
-        - "${HOME}/.azure:/root/.azure"
+        - "~/.azure:/root/.azure"
     build:
       context: .
       dockerfile: Api/Dockerfile
     ports:
       - 2080:80
       - 2443:443
-  azsdkdemonetqueueservice:
-    image: jongio/azsdkdemonetqueueservice
-    env_file: ../../.env
+  memealyzernetqueueservice:
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetqueueservice:${CONTAINER_TAG}
+    env_file: ../../${DOTENV_FILENAME}
     volumes: 
-        - "${HOME}/.azure:/root/.azure"
+        - "~/.azure:/root/.azure"
     build:
       context: .
       dockerfile: Services/QueueService/Dockerfile
+  # memealyzernetfunctions:
+  #   image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetfunctions:${CONTAINER_TAG}
+  #   env_file: ../../${DOTENV_FILENAME}
+  #   volumes: 
+  #       - "~/.azure:/root/.azure"
+  #   build:
+  #     context: .
+  #     dockerfile: Services/Functions/Dockerfile
+  #   ports:
+  #     - 3080:80
+  #     - 3443:443
+  azurite:
+    container_name: azurite
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - 10000:10000
+      - 10001:10001

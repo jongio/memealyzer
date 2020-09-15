@@ -1,0 +1,10 @@
+kind: ConfigMap
+metadata:
+  name: websettings
+apiVersion: v1
+data:
+  appsettings.json: |-
+    {
+        "API_ENDPOINT": "${API_ENDPOINT}",
+        "FUNCTIONS_ENDPOINT": "${FUNCTIONS_ENDPOINT}"
+    }

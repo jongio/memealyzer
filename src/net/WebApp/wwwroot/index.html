@@ -1,24 +1,52 @@
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Memealyzer</title>
     <base href="/" />
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
-</head>
+    <link rel="apple-touch-icon" sizes="57x57" href="imgs/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="imgs/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="imgs/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="imgs/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="imgs/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="imgs/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="imgs/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="imgs/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="imgs/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="imgs/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="imgs/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="imgs/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="imgs/favicon-16x16.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="imgs/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+  </head>
 
-<body>
-    <app>Loading...</app>
+  <body>
+    <app>
+        <div class="main">
+            <div class="content px-4">
+                <div class="container">
+                    <div class="row text-center">
+                        <div class="col-md-12">
+                            <img src=imgs/logo.png height="94" width="773" alt="Memealyzer" class="img-fluid" />
+                        </div>
+                        <div class="col-md-12">
+                            <div class="spinner-grow" role="status">
+                                <span class="sr-only">Loading memes...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </app>
 
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div>
+    <div id="blazor-error-ui"> An unhandled error has occurred. <a href="" class="reload">Reload</a><a class="dismiss">🗙</a>    </div>
     <script src="_framework/blazor.webassembly.js"></script>
-</body>
-
+  </body>
 </html>

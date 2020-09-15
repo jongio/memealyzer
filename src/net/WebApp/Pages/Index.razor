@@ -1,25 +1,44 @@
 ﻿@page "/"
-@inject HttpClient Http
+@inject ApiServiceClient ApiServiceClient;
+@inject FunctionsServiceClient FunctionsServiceClient;
 @using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager NavigationManager
 @implements IDisposable
 
-<h1>Memealyzer</h1>
-
-<EditForm OnValidSubmit="HandleFormSubmit" Model="@image">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    <InputText id="url" @bind-Value="image.Url" size="100"/>
-
-    <button type="submit" value="submit" @onclick="@(()=> image.Type = ImageType.New)" disabled="@(!IsConnected)">Submit</button>
-    <button type="submit" value="random" @onclick="@(()=> image.Type = ImageType.Meme)" disabled="@(!IsConnected)">Add Random Meme</button>
-    <label>@image.Status</label>
-</EditForm>
+<div class="container" style="margin-bottom:10px">
+    <div class="row text-center">
+        <div class="col-12">
+            <img src=imgs/logo.png height="94" width="773" alt="Memealyzer" style="margin-bottom: 10px;" class="img-fluid" />
+        </div>
+        <div class="col-12">
+            <EditForm OnValidSubmit="HandleAddFormSubmit" Model="@image">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="form-row">
+                    <div class="col col-11">
+                        <InputText id="url" @bind-Value="image.Url" class="form-control"/>
+                    </div>
+                    <div class="col col-1">
+                        <button type="submit" value="submit" disabled="@(!IsConnected)" class="btn"><span class="oi oi-plus" title="Add Meme" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
 
 @if (images == null)
 {
-    <p><em>Loading...</em></p>
+    <div class="container">
+    <div class="row text-center">
+        <div class="col-md-12">
+            <div class="spinner-grow" role="status">
+                <span class="sr-only">Loading memes...</span>
+            </div>
+            <p>Loading memes...</p>
+        </div>
+    </div>
+</div>
 }
 else
 {
@@ -28,10 +47,14 @@ else
             @foreach (var image in images)
             {
                 <div class="col-md-4">
-                   <div class="card" style="width: 100%;">
+                   <div class="card" style="width: 100%;margin-bottom:5px;">
                         <img class="card-img-top border border-8 border-@image.Color img-thumbnail" style="border-style: @borderStyle !important" src="@image.BlobUri" alt="">
                         <div class="card-body">
                             <p class="card-text">@image.Text</p>
+                            <p class="card-text">@image.Status</p>
+                            <div class="text-right">
+                                <button type="submit" value="submit" disabled="@(String.IsNullOrEmpty(image.Sentiment))" class="btn" @onclick="@(async () => await DeleteImage(image.Id))"><span style="font-size: 12px" class="oi oi-trash" title="Delete Meme" aria-hidden="true"></span></button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -44,22 +67,18 @@ else
     private List<Image> images;
     private Image image = new Image();
     private HubConnection hubConnection;
-    private string borderStyle = "solid";
-
+    private string borderStyle;
 
     protected override async Task OnInitializedAsync()
     {
-        await GetBorderStyle();
+        borderStyle = await ApiServiceClient.GetBorderStyle();
+        images = await ApiServiceClient.GetImages();
 
-        images = await Http.GetFromJsonAsync<List<Image>>("/images");
-
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(Http.BaseAddress + "imagehub")
-            .Build();
+        hubConnection = FunctionsServiceClient.GetHubConnection();
 
         hubConnection.On<Image>("ReceiveImage", (image) =>
         {
-            int index = images.FindIndex(0, 1, f => f.Id == image.Id);
+            int index = FindImageById(image.Id);
             if (index >= 0)
             {
                 images[index] = image;
@@ -75,49 +94,35 @@ else
         await hubConnection.StartAsync();
     }
 
-    public async Task GetBorderStyle()
+    private int FindImageById(string id)
     {
-        try
-        {
-            var borderStyleSetting = await Http.GetFromJsonAsync<ConfigurationSetting>("/config?name=borderStyle");
-            borderStyle = borderStyleSetting.Value;
-        }
-        catch { }
+        return images.FindIndex(0, f => string.Compare(f.Id, id, true) == 0);
     }
 
-    public async Task<Image> GetImageAsync(string id)
+    private async Task HandleAddFormSubmit()
     {
-        try
-        {
-            return await Http.GetFromJsonAsync<Image>($"/image/{id}");
-        }
-        catch
-        {
-            return null;
-        }
-    }
+        var type = image.Type;
+        var url = !String.IsNullOrEmpty(image.Url) ? String.Copy(image.Url) : "";
 
-    private async Task HandleFormSubmit()
-    {
-        if (image.Type == ImageType.Meme)
-        {
-            image.Url = "";
-        }
-        image.Status = "Uploading...";
-        var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, IgnoreNullValues = true };
-        var response = await Http.PostAsJsonAsync("/image", image, options);
-        image = await response.Content.ReadFromJsonAsync<Image>(options);
-        image.Status = response.StatusCode.ToString().ToLower() == "ok" ? "Processing..." : "Upload failed, try again.";
-        image.Sentiment = "loading";
-        image.Text = "Loading...";
-        images.Insert(0, image);
-
-        StateHasChanged();
-
-        var imageId = image.Id;
         image = new Image();
 
-        await hubConnection.SendAsync("StartPoll", imageId);
+        //TODO : Figure out why this renders the previous image and not the new image for a split second.
+        Image postedImage = new Image { Id = Guid.NewGuid().ToString(), Type = type, Url = url };
+        postedImage = await ApiServiceClient.PostImage(postedImage);
+        images.Insert(0, postedImage);
+        StateHasChanged();
+    }
+
+    public async Task DeleteImage(string id)
+    {
+        int index = FindImageById(id);
+        Console.WriteLine(index);
+        if (index >= 0)
+        {
+            images.RemoveAt(index);
+        }
+        StateHasChanged();
+        var deletedImage = await ApiServiceClient.DeleteImage(id);
     }
 
     public bool IsConnected =>

@@ -20,13 +20,13 @@ namespace Api.Controllers
         {
             this.logger = logger;
             this.clients = clients;
-
         }
 
         [HttpGet]
         [Route("/config")]
         public async Task<ConfigurationSetting> Get([FromQuery] string name)
         {
+            //TODO: Move try/catch to here?
             return await clients.ConfigurationClient.GetConfigurationSettingAsync(name);
         }
     }

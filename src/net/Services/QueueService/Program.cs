@@ -12,7 +12,7 @@ namespace QueueService
     {
         static async Task Main(string[] args)
         {
-            Env.Load("../../../../.env");
+            Envs.Load();
 
             //using var listener = AzureEventSourceListener.CreateConsoleLogger();
 
@@ -28,49 +28,82 @@ namespace QueueService
 
                 foreach (var message in messages.Value)
                 {
-                    Console.WriteLine(message.MessageText);
-
-
-                    // Deserialize Message
-                    var image = clients.DataProvider.DeserializeImage(message.MessageText);
-
-                    // Extract Text from Image
-                    var recognizeContentOperation = await clients.FormRecognizerClient.StartRecognizeContentFromUriAsync(new Uri(image.BlobUri));
-                    var recognizeContentCompletion = await recognizeContentOperation.WaitForCompletionAsync();
-                    var content = recognizeContentCompletion.Value;
-                    var text = content.SelectMany(page => page.Lines).Aggregate(new StringBuilder(), (a, b) =>
+                    try
                     {
-                        a.Append($"{b.Text} ");
-                        return a;
-                    });
+                        Console.WriteLine(message.MessageText);
 
-                    image.Text = text.ToString();
+                        // Deserialize Message
+                        var image = clients.DataProvider.DeserializeImage(message.MessageText);
 
-                    if (!string.IsNullOrEmpty(image.Text))
-                    {
-                        Console.WriteLine($"Image Text: {image.Text}");
+                        // Extract Text from Image
+                        try
+                        {
+                            var recognizeContentOperation = await clients.FormRecognizerClient.StartRecognizeContentFromUriAsync(new Uri(image.BlobUri));
+                            var recognizeContentCompletion = await recognizeContentOperation.WaitForCompletionAsync();
+                            var content = recognizeContentCompletion.Value;
+                            var text = content.SelectMany(page => page.Lines).Aggregate(new StringBuilder(), (a, b) =>
+                            {
+                                a.Append($"{b.Text} ");
+                                return a;
+                            });
 
-                        // Analyize Text Sentiment
-                        var documentSentiment = await clients.TextAnalyticsClient.AnalyzeSentimentAsync(image.Text);
-                        image.Sentiment = documentSentiment.Value.Sentiment.ToString();
+                            image.Text = text.ToString();
+                        }
+                        catch (Exception ex)
+                        {
+                            image.Error = ex.Message.ToString();
+                            Console.WriteLine(ex.ToString());
+                        }
 
-                        Console.WriteLine($"Image Sentiment: {image.Sentiment}");
+
+                        if (!string.IsNullOrEmpty(image.Text))
+                        {
+                            try
+                            {
+                                Console.WriteLine($"Image Text: {image.Text}");
+
+                                // Analyize Text Sentiment
+                                var documentSentiment = await clients.TextAnalyticsClient.AnalyzeSentimentAsync(image.Text);
+                                image.Sentiment = documentSentiment.Value.Sentiment.ToString();
+
+                                Console.WriteLine($"Image Sentiment: {image.Sentiment}");
+                            }
+                            catch (Exception ex)
+                            {
+                                image.Error = ex.Message.ToString();
+                                Console.WriteLine(ex.ToString());
+                            }
+                        }
+                        else
+                        {
+                            image.Text = "No Text Extracted from Image.";
+                            Console.WriteLine(image.Text);
+                        }
+
+                        image.Status = "Completed";
+                        
+                        // Save Document
+                        image = await clients.DataProvider.UpsertImageAsync(image);
+
+                        Console.WriteLine($"Document Saved: {image.Id}");
+
+                        // Delete Queue Message
+                        var deleteResponse = await clients.QueueClient.DeleteMessageAsync(message.MessageId, message.PopReceipt);
+
+                        Console.WriteLine($"Queue Message Deleted: {message.MessageId}");
+
+                        // Enqueue message to Client Sync Queue
+                        var sendReceipt = await clients.ClientSyncQueueClient.SendMessageAsync(
+                            Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize<IImage>(image,
+                                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
+                            )));
+
+                        Console.WriteLine($"Added to Client Sync Queue: {sendReceipt.Value.MessageId}");
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        Console.WriteLine("No Text Extracted from Image.");
+                        Console.WriteLine(ex.ToString());
                     }
-
-                    // Save Document
-                    image = await clients.DataProvider.UpsertImageAsync(image);
-
-                    Console.WriteLine($"Document Saved: {image.Id}");
-
-                    // Delete Queue Message
-                    var deleteResponse = await clients.QueueClient.DeleteMessageAsync(message.MessageId, message.PopReceipt);
-
-                    Console.WriteLine($"Queue Message Deleted: {message.MessageId}");
-
                 }
                 await Task.Delay(TimeSpan.FromSeconds(Env.GetInt("AZURE_STORAGE_QUEUE_RECEIVE_SLEEP", 1)));
             }

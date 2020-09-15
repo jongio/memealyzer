@@ -28,7 +28,7 @@ namespace Lib.Data
         {
             // KeyVault
             SecretClient = new SecretClient(new Uri(Env.GetString("AZURE_KEYVAULT_ENDPOINT")), credential);
-            var cosmosKey = await SecretClient.GetSecretAsync(Env.GetString("AZURE_COSMOS_KEY_NAME", "cosmoskey"));
+            var cosmosKey = await SecretClient.GetSecretAsync(Env.GetString("AZURE_COSMOS_KEY_SECRET_NAME", "CosmosKey"));
 
             // Cosmos
             CosmosClient = new CosmosClient(
@@ -40,7 +40,7 @@ namespace Lib.Data
                     ConsistencyLevel = ConsistencyLevel.Session
                 });
 
-            CosmosContainer = CosmosClient.GetDatabase(Env.GetString("AZURE_COSMOS_DB")).GetContainer(Env.GetString("AZURE_COSMOS_CONTAINER"));
+            CosmosContainer = CosmosClient.GetDatabase(Env.GetString("AZURE_COSMOS_DB")).GetContainer(Env.GetString("AZURE_COSMOS_COLLECTION"));
         }
 
         public async Task<Image> GetImageAsync(string id)
@@ -52,6 +52,15 @@ namespace Lib.Data
                 return item;
             }
             return null;
+        }
+
+        public async Task<Image> DeleteImageAsync(string id)
+        {
+            var partitionKey = new PartitionKey(id);
+            var response = await CosmosContainer.DeleteItemAsync<Image>(id, partitionKey);
+            return response.Value;
+
+            //TODO : Bubble up errors through the stack
         }
 
         public async IAsyncEnumerable<Image> GetImagesAsync()

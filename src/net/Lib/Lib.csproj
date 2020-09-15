@@ -12,13 +12,13 @@
     <PackageReference Include="Azure.Storage.Blobs" Version="12.5.1" />
     <PackageReference Include="Azure.Storage.Queues" Version="12.4.1" />
     <PackageReference Include="Azure.Cosmos" Version="4.0.0-preview3" />
-    <PackageReference Include="Azure.Data.Tables" Version="3.0.0-dev.20200831.1" />
+    <PackageReference Include="Azure.Data.Tables" Version="3.0.0-beta.1" />
     <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.1.0" />
     <PackageReference Include="Azure.AI.FormRecognizer" Version="3.0.0" />
     <PackageReference Include="Azure.AI.TextAnalytics" Version="5.0.0" />
 
   </ItemGroup>
-  <PropertyGroup>
+  <!-- <PropertyGroup>
     <RestoreSources>https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json;https://api.nuget.org/v3/index.json</RestoreSources>
-  </PropertyGroup>
+  </PropertyGroup> -->
 </Project>

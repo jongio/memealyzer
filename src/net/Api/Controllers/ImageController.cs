@@ -48,5 +48,13 @@ namespace Api.Controllers
             }
             return Ok(image);
         }
+
+        [HttpDelete]
+        [Route("/image/{id}")]
+        public async Task<IActionResult> DeleteById(string id)
+        {
+            var image = await clients.DataProvider.DeleteImageAsync(id);
+            return Ok(image);
+        }
     }
 }

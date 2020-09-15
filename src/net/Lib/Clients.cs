@@ -26,6 +26,7 @@ namespace Lib
         public BlobContainerClient ContainerClient;
         public QueueServiceClient QueueServiceClient;
         public QueueClient QueueClient;
+        public QueueClient ClientSyncQueueClient;
         public TextAnalyticsClient TextAnalyticsClient;
         public FormRecognizerClient FormRecognizerClient;
         public ConfigurationClient ConfigurationClient;
@@ -44,7 +45,7 @@ namespace Lib
 
             // App Config
             ConfigurationClient = new ConfigurationClient(new Uri(Env.GetString("AZURE_APP_CONFIG_ENDPOINT")), credential);
-
+            
             // Blob
             BlobServiceClient = new BlobServiceClient(new Uri(Env.GetString("AZURE_STORAGE_BLOB_ENDPOINT")), credential);
             ContainerClient = BlobServiceClient.GetBlobContainerClient(Env.GetString("AZURE_STORAGE_BLOB_CONTAINER_NAME"));
@@ -54,6 +55,10 @@ namespace Lib
             QueueServiceClient = new QueueServiceClient(new Uri(Env.GetString("AZURE_STORAGE_QUEUE_ENDPOINT")), credential);
             QueueClient = QueueServiceClient.GetQueueClient(Env.GetString("AZURE_STORAGE_QUEUE_NAME"));
             await QueueClient.CreateIfNotExistsAsync();
+
+            // Client Sync Queue
+            ClientSyncQueueClient = QueueServiceClient.GetQueueClient(Env.GetString("AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME"));
+            await ClientSyncQueueClient.CreateIfNotExistsAsync();
 
             // FormRecognizerClient
             FormRecognizerClient = new FormRecognizerClient(

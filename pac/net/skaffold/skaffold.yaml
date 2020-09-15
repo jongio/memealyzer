@@ -2,18 +2,18 @@
 apiVersion: skaffold/v2beta4
 kind: Config
 metadata:
-  name: azsdkdemo
+  name: memealyzer
 build:
   artifacts:
-  - image: jongio/azsdkdemonetwebapp
+  - image: jongio/memealyzernetwebapp
     context: ../../src/net
     docker:
       dockerfile: WebApp/Dockerfile
-  - image: jongio/azsdkdemonetapi
+  - image: jongio/memealyzernetapi
     context: ../../src/net
     docker:
       dockerfile: Api/Dockerfile
-  - image: jongio/azsdkdemonetqueueservice
+  - image: jongio/memealyzernetqueueservice
     context: ../../src/net
     docker:
       dockerfile: Services/QueueService/Dockerfile

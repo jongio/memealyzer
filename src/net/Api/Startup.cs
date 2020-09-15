@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using DotNetEnv;
-using Api.Hubs;
 using Microsoft.AspNetCore.ResponseCompression;
 using Lib;
 using Api.Services;
@@ -32,7 +31,7 @@ namespace Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            Env.Load("../../../.env");
+            Envs.Load();
             
             services.AddSingleton(typeof(Clients));
             services.AddHostedService<DataHostedService>();
@@ -74,7 +73,6 @@ namespace Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<ImageHub>("/imagehub");
             });
         }
     }

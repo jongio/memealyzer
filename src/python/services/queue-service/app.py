@@ -4,10 +4,8 @@ import time
 import json
 
 from azure.identity import (
-    AzureCliCredential,
-    ChainedTokenCredential,
     ManagedIdentityCredential,
-    EnvironmentCredential,
+    AzureCliCredential
 )
 from azure.storage.queue import QueueServiceClient
 from azure.ai.formrecognizer import FormRecognizerClient
@@ -24,7 +22,7 @@ load_dotenv(find_dotenv())
 sleep = getenv("AZURE_STORAGE_QUEUE_RECEIVE_SLEEP", type=bool, default=1)
 
 credential = ChainedTokenCredential(
-    AzureCliCredential(), EnvironmentCredential(), ManagedIdentityCredential()
+    ManagedIdentityCredential(), AzureCliCredential()
 )
 
 queue_service_client = QueueServiceClient(
@@ -33,6 +31,10 @@ queue_service_client = QueueServiceClient(
 
 queue_client = queue_service_client.get_queue_client(
     queue=getenv("AZURE_STORAGE_QUEUE_NAME", default="messages")
+)
+
+client_sync_queue_client = queue_service_client.get_queue_client(
+    queue=getenv("AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME", default="sync")
 )
 
 fr_client = FormRecognizerClient(
@@ -47,18 +49,18 @@ secret_client = SecretClient(
     vault_url=getenv("AZURE_KEYVAULT_ENDPOINT"), credential=credential
 )
 
-secret = secret_client.get_secret(getenv("AZURE_COSMOS_KEY_NAME"))
+secret = secret_client.get_secret(getenv("AZURE_COSMOS_KEY_SECRET_NAME"))
 
 cosmos_client = CosmosClient(
     url=getenv("AZURE_COSMOS_ENDPOINT"), credential=secret.value
 )
 
 cosmos_database_client = cosmos_client.get_database_client(
-    getenv("AZURE_COSMOS_DB", default="azimageai")
+    getenv("AZURE_COSMOS_DB", default="memealyzer")
 )
 
 cosmos_container_client = cosmos_database_client.get_container_client(
-    getenv("AZURE_COSMOS_CONTAINER", default="images")
+    getenv("AZURE_COSMOS_COLLECTION", default="images")
 )
 
 while True:
@@ -96,8 +98,12 @@ while True:
             print("Saving document")
             cosmos_container_client.upsert_item(message_json.toDict())
 
+            
             print("Deleting message from queue")    
             queue_client.delete_message(message)
+
+            print("Send message to client sync queue")    
+            client_sync_queue_client.send_message(message)
 
             print(message_json)
 

@@ -62,6 +62,9 @@ namespace Lib
         [JsonPropertyName("status")]
         public string Status { get; set; }
 
+        [JsonPropertyName("error")]
+        public string Error { get; set; }
+
         [JsonPropertyName("createdDate")]
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
@@ -82,7 +85,7 @@ namespace Lib
                         color = "danger";
                         break;
                     case "neutral":
-                        color = "dark";
+                        color = "warning";
                         break;
                     case "mixed":
                         color = "warning";

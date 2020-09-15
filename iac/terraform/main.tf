@@ -57,14 +57,26 @@ resource "azurerm_key_vault" "key_vault" {
 }
 
 resource "azurerm_key_vault_secret" "cosmos_key_secret" {
-  name         = "cosmoskey"
+  name         = "CosmosKey"
   value        = azurerm_cosmosdb_account.cosmos_account.primary_master_key
   key_vault_id = azurerm_key_vault.key_vault.id
 }
 
 resource "azurerm_key_vault_secret" "storage_key_secret" {
-  name         = "storagekey"
+  name         = "StorageKey"
   value        = azurerm_storage_account.storage.primary_access_key
+  key_vault_id = azurerm_key_vault.key_vault.id
+}
+
+resource "azurerm_key_vault_secret" "signalr_connection_string_secret" {
+  name         = "SignalRConnectionString"
+  value        = azurerm_signalr_service.signalr.primary_connection_string
+  key_vault_id = azurerm_key_vault.key_vault.id
+}
+
+resource "azurerm_key_vault_secret" "storage_connection_string_secret" {
+  name         = "StorageConnectionString"
+  value        = azurerm_storage_account.storage.primary_connection_string
   key_vault_id = azurerm_key_vault.key_vault.id
 }
 
@@ -94,7 +106,7 @@ resource "azurerm_cosmosdb_account" "cosmos_account" {
 }
 
 resource "azurerm_cosmosdb_sql_database" "cosmos_sqldb" {
-  name                = "azimageai"
+  name                = "memealyzer"
   resource_group_name = azurerm_resource_group.rg.name
   account_name        = azurerm_cosmosdb_account.cosmos_account.name
   throughput          = 400
@@ -149,6 +161,84 @@ resource "azurerm_app_configuration" "appconfig" {
   sku                 = "standard"
 }
 
+# SIGNALR SERVICE
+
+resource "azurerm_signalr_service" "signalr" {
+  name                = "${var.basename}signalr"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  sku {
+    name     = "Standard_S1"
+    capacity = 1
+  }
+
+  cors {
+    allowed_origins = ["*"]
+  }
+
+  features {
+    flag  = "ServiceMode"
+    value = "Serverless"
+  }
+}
+
+# APP SERVICE PLAN
+
+resource "azurerm_app_service_plan" "plan" {
+  name                = "${var.basename}plan"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  sku {
+    tier = "Standard"
+    size = "S1"
+  }
+}
+
+# FUNCTION
+resource "azurerm_function_app" "function" {
+  name                = "${var.basename}function"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+  app_service_plan_id        = azurerm_app_service_plan.plan.id
+  storage_account_name       = azurerm_storage_account.storage.name
+  storage_account_access_key = azurerm_storage_account.storage.primary_access_key
+  os_type                    = "linux"
+  app_settings = {
+    "AzureWebJobsStorage" = azurerm_storage_account.storage.primary_connection_string,
+    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.logging.instrumentation_key,
+    "WEBSITES_ENABLE_APP_SERVICE_STORAGE" = false,
+    "AZURE_KEYVAULT_ENDPOINT" = azurerm_key_vault.key_vault.vault_uri, 
+    "AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME" = "sync",
+    "AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME" = "StorageConnectionString",
+    "AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME" = "SignalRConnectionString",
+    "WEBSITE_RUN_FROM_PACKAGE" = "", 
+    "FUNCTIONS_WORKER_RUNTIME" = "dotnet"
+  }
+  identity {
+    type = "SystemAssigned"
+  }
+  site_config {
+    cors {
+      allowed_origins = ["*"]
+      support_credentials = false
+    }
+    always_on = true
+  }
+}
+
+# ACR
+resource "azurerm_container_registry" "acr" {
+  name                = "${var.basename}acr"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                      = "Standard"
+  admin_enabled            = true
+}
+
+# Azure CLI Script to fill in Terraform gaps.
+
 module "script" {
   source = "./modules/script"
   script = "./tweaks.sh"
@@ -156,8 +246,9 @@ module "script" {
     TEXT_ANALYTICS_NAME  = azurerm_cognitive_account.text_analytics.name,
     FORM_RECOGNIZER_NAME = azurerm_cognitive_account.form_recognizer.name,
     RESOURCE_GROUP_NAME  = azurerm_resource_group.rg.name,
-    APP_CONFIG_NAME  = azurerm_app_configuration.appconfig.name
-
+    APP_CONFIG_NAME  = azurerm_app_configuration.appconfig.name,
+    KEY_VAULT_NAME = azurerm_key_vault.key_vault.name,
+    FUNCTION_MI_ID = azurerm_function_app.function.identity.0.principal_id
   }
 }
 
@@ -204,6 +295,83 @@ resource "azurerm_role_assignment" "mi_appconfig" {
   skip_service_principal_aad_check = true
 }
 
+# ACR ROLES
+
+resource "azurerm_role_assignment" "mi_acrpush" {
+  scope                            = data.azurerm_subscription.sub.id
+  role_definition_name             = "AcrPush"
+  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
+  skip_service_principal_aad_check = true
+}
+
+resource "azurerm_role_assignment" "mi_acrpull" {
+  scope                            = data.azurerm_subscription.sub.id
+  role_definition_name             = "AcrPull"
+  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
+  skip_service_principal_aad_check = true
+}
+
+#### AZURE FUNCTION ROLES
+
+# BLOB STORAGE ROLES
+resource "azurerm_role_assignment" "fn_mi_blob_storage" {
+  scope                            = azurerm_storage_account.storage.id
+  role_definition_name             = "Storage Blob Data Contributor"
+  principal_id                     = azurerm_function_app.function.identity.0.principal_id
+  skip_service_principal_aad_check = true
+}
+
+# QUEUE STORAGE ROLES
+resource "azurerm_role_assignment" "fn_mi_queue_storage" {
+  scope                            = azurerm_storage_account.storage.id
+  role_definition_name             = "Storage Queue Data Contributor"
+  principal_id                     = azurerm_function_app.function.identity.0.principal_id
+  skip_service_principal_aad_check = true
+}
+
+# QUEUE MSG STORAGE ROLES
+
+resource "azurerm_role_assignment" "fn_mi_queue_msg_storage" {
+  scope                            = azurerm_storage_account.storage.id
+  role_definition_name             = "Storage Queue Data Message Processor"
+  principal_id                     = azurerm_function_app.function.identity.0.principal_id
+  skip_service_principal_aad_check = true
+}
+
+# COG SERV ROLES
+
+resource "azurerm_role_assignment" "fn_mi_cogserv" {
+  scope                            = data.azurerm_subscription.sub.id
+  role_definition_name             = "Cognitive Services User"
+  principal_id                     = azurerm_function_app.function.identity.0.principal_id
+  skip_service_principal_aad_check = true
+}
+
+# APP CONFIG ROLES
+
+resource "azurerm_role_assignment" "fn_mi_appconfig" {
+  scope                            = data.azurerm_subscription.sub.id
+  role_definition_name             = "App Configuration Data Owner"
+  principal_id                     = azurerm_function_app.function.identity.0.principal_id
+  skip_service_principal_aad_check = true
+}
+
+# ACR ROLES
+
+resource "azurerm_role_assignment" "fn_mi_acrpush" {
+  scope                            = data.azurerm_subscription.sub.id
+  role_definition_name             = "AcrPush"
+  principal_id                     = azurerm_function_app.function.identity.0.principal_id
+  skip_service_principal_aad_check = true
+}
+
+resource "azurerm_role_assignment" "fn_mi_acrpull" {
+  scope                            = data.azurerm_subscription.sub.id
+  role_definition_name             = "AcrPull"
+  principal_id                     = azurerm_function_app.function.identity.0.principal_id
+  skip_service_principal_aad_check = true
+}
+
 output "AZURE_STORAGE_BLOB_ENDPOINT" {
   value = azurerm_storage_account.storage.primary_blob_endpoint
 }
@@ -246,4 +414,24 @@ output "AKS_CREDENTIALS" {
 
 output "AZURE_APP_CONFIG_ENDPOINT" {
   value = azurerm_app_configuration.appconfig.endpoint
+}
+
+output "FUNCTIONS_ENDPOINT" {
+  value = "http://${azurerm_function_app.function.default_hostname}"
+}
+
+output "AZURE_CONTAINER_REGISTRY_SERVER" {
+  value = azurerm_container_registry.acr.login_server
+}
+
+output "K8S_CONTEXT" {
+  value = azurerm_kubernetes_cluster.aks.name
+}
+
+output "AZURE_FUNCTION_APP_NAME" {
+  value = azurerm_function_app.function.name
+}
+
+output "AZURE_AKS_CLUSTER_NAME" {
+  value = azurerm_kubernetes_cluster.aks.name
 }
