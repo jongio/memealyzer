@@ -56,7 +56,7 @@ cosmos_client = CosmosClient(
 )
 
 cosmos_database_client = cosmos_client.get_database_client(
-    getenv("AZURE_COSMOS_DB", default="azimageai")
+    getenv("AZURE_COSMOS_DB", default="memealyzer")
 )
 
 cosmos_container_client = cosmos_database_client.get_container_client(

@@ -2,19 +2,19 @@
 version: "3.7"
 
 services:
-  azsdkdemonetwebapp:
-    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetwebapp:${CONTAINER_TAG}
+  memealyzernetwebapp:
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetwebapp:${CONTAINER_TAG}
     build:
       context: .
       dockerfile: WebApp/Dockerfile
     depends_on:
-      - azsdkdemonetapi
+      - memealyzernetapi
     ports:
       - 1080:80
       - 1443:443
-  azsdkdemonetapi:
-    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetapi:${CONTAINER_TAG}
-    env_file: ../../.env
+  memealyzernetapi:
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetapi:${CONTAINER_TAG}
+    env_file: ../../${DOTENV_FILENAME}
     volumes: 
         - "~/.azure:/root/.azure"
     build:
@@ -23,17 +23,17 @@ services:
     ports:
       - 2080:80
       - 2443:443
-  azsdkdemonetqueueservice:
-    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetqueueservice:${CONTAINER_TAG}
-    env_file: ../../.env
+  memealyzernetqueueservice:
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetqueueservice:${CONTAINER_TAG}
+    env_file: ../../${DOTENV_FILENAME}
     volumes: 
         - "~/.azure:/root/.azure"
     build:
       context: .
       dockerfile: Services/QueueService/Dockerfile
-  # azsdkdemonetfunctions:
-  #   image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetfunctions:${CONTAINER_TAG}
-  #   env_file: ../../.env
+  # memealyzernetfunctions:
+  #   image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetfunctions:${CONTAINER_TAG}
+  #   env_file: ../../${DOTENV_FILENAME}
   #   volumes: 
   #       - "~/.azure:/root/.azure"
   #   build:

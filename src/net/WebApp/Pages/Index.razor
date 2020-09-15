@@ -7,18 +7,18 @@
 
 <div class="container" style="margin-bottom:10px">
     <div class="row text-center">
-        <div class="col-md-12">
-            <img src=imgs/logo.png height="94" width="773" alt="Memealyzer" style="margin-bottom: 10px;" />
+        <div class="col-12">
+            <img src=imgs/logo.png height="94" width="773" alt="Memealyzer" style="margin-bottom: 10px;" class="img-fluid" />
         </div>
-        <div class="col-md-12">
+        <div class="col-12">
             <EditForm OnValidSubmit="HandleAddFormSubmit" Model="@image">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
                 <div class="form-row">
-                    <div class="col col-md-11">
+                    <div class="col col-11">
                         <InputText id="url" @bind-Value="image.Url" class="form-control"/>
                     </div>
-                    <div class="col col-md-1">
+                    <div class="col col-1">
                         <button type="submit" value="submit" disabled="@(!IsConnected)" class="btn"><span class="oi oi-plus" title="Add Meme" aria-hidden="true"></span></button>
                     </div>
                 </div>
@@ -53,7 +53,7 @@ else
                             <p class="card-text">@image.Text</p>
                             <p class="card-text">@image.Status</p>
                             <div class="text-right">
-                                <button type="submit" value="submit" disabled="@(!IsConnected)" class="btn" @onclick="@(async () => await DeleteImage(image.Id))"><span style="font-size: 12px" class="oi oi-trash" title="Delete Meme" aria-hidden="true"></span></button>
+                                <button type="submit" value="submit" disabled="@(String.IsNullOrEmpty(image.Sentiment))" class="btn" @onclick="@(async () => await DeleteImage(image.Id))"><span style="font-size: 12px" class="oi oi-trash" title="Delete Meme" aria-hidden="true"></span></button>
                             </div>
                         </div>
                     </div>

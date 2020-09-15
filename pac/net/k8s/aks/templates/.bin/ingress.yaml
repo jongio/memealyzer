@@ -10,21 +10,21 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: azsdkdemonetwebapp
+          serviceName: memealyzernetwebapp
           servicePort: 1080
       - path: /images
         backend:
-          serviceName: azsdkdemonetapi
+          serviceName: memealyzernetapi
           servicePort: 2080
       - path: /image
         backend:
-          serviceName: azsdkdemonetapi
+          serviceName: memealyzernetapi
           servicePort: 2080
       - path: /config
         backend:
-          serviceName: azsdkdemonetapi
+          serviceName: memealyzernetapi
           servicePort: 2080
       - path: /imagehub
         backend:
-          serviceName: azsdkdemonetapi
+          serviceName: memealyzernetapi
           servicePort: 2080

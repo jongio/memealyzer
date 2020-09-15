@@ -8,13 +8,13 @@ metadata:
     kompose.version: 1.21.0 (992df58d8)
   creationTimestamp: null
   labels:
-    io.kompose.service: azsdkdemonetapi
-  name: azsdkdemonetapi
+    io.kompose.service: memealyzernetqueueservice
+  name: memealyzernetqueueservice
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: azsdkdemonetapi
+      io.kompose.service: memealyzernetqueueservice
   strategy:
     type: Recreate
   template:
@@ -26,7 +26,7 @@ spec:
         kompose.version: 1.21.0 (992df58d8)
       creationTimestamp: null
       labels:
-        io.kompose.service: azsdkdemonetapi
+        io.kompose.service: memealyzernetqueueservice
     spec:
       containers:
         - env:
@@ -145,13 +145,18 @@ spec:
                 configMapKeyRef:
                   key: AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME
                   name: env
-          image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetapi:${CONTAINER_TAG}
-          imagePullPolicy: "Always"
-          name: azsdkdemonetapi
-          ports:
-            - containerPort: 80
-            - containerPort: 443
+          image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetqueueservice:${CONTAINER_TAG}
+          imagePullPolicy: "IfNotPresent"
+          name: memealyzernetqueueservice
           resources: {}
+          volumeMounts:
+            - mountPath: /root/.azure
+              name: memealyzernetqueueservice-hostpath0
       restartPolicy: Always
       serviceAccountName: ""
+      volumes:
+        - hostPath:
+            path: /run/desktop/mnt/host/wsl/.azure
+            type: Directory
+          name: memealyzernetqueueservice-hostpath0
 status: {}

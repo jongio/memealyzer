@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ -z "$1"]
+if [ -z "$1" ]
   then
-    echo "You need to run this script with the basename you used to created your resources. i.e., ./azcliuserperms.sh azsdkdemo01"
+    echo "You need to run this script with the basename you used to created your resources. i.e., ./azcliuserperms.sh memealyzer01"
     exit
 fi
 

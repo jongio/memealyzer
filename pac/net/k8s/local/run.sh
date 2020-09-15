@@ -1,7 +1,9 @@
 #!/bin/bash
 
+./mount.sh || true
 export ROOT=../../../..;source $ROOT/scripts/base.sh
-./push.sh
 source ../shared/genfiles.sh
+./build.sh
 ../shared/deploy.sh
-./func.sh
+
+($ROOT/scripts/azurite.sh & ./func.sh)

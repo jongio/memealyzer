@@ -7,17 +7,17 @@ metadata:
     kompose.version: 1.21.0 (992df58d8)
   creationTimestamp: null
   labels:
-    io.kompose.service: azsdkdemonetapi
-  name: azsdkdemonetapi
+    io.kompose.service: memealyzernetwebapp
+  name: memealyzernetwebapp
 spec:
   ports:
-  - name: "2080"
-    port: 2080
+  - name: "1080"
+    port: 1080
     targetPort: 80
-  - name: "2443"
-    port: 2443
+  - name: "1443"
+    port: 1443
     targetPort: 443
   selector:
-    io.kompose.service: azsdkdemonetapi
+    io.kompose.service: memealyzernetwebapp
 status:
   loadBalancer: {}

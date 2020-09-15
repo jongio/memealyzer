@@ -8,13 +8,13 @@ metadata:
     kompose.version: 1.21.0 (992df58d8)
   creationTimestamp: null
   labels:
-    io.kompose.service: azsdkdemonetqueueservice
-  name: azsdkdemonetqueueservice
+    io.kompose.service: memealyzernetapi
+  name: memealyzernetapi
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      io.kompose.service: azsdkdemonetqueueservice
+      io.kompose.service: memealyzernetapi
   strategy:
     type: Recreate
   template:
@@ -26,7 +26,8 @@ spec:
         kompose.version: 1.21.0 (992df58d8)
       creationTimestamp: null
       labels:
-        io.kompose.service: azsdkdemonetqueueservice
+        io.kompose.service: memealyzernetapi
+        checksum/config: ${CONTAINER_TAG}
     spec:
       containers:
         - env:
@@ -145,18 +146,13 @@ spec:
                 configMapKeyRef:
                   key: AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME
                   name: env
-          image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetqueueservice:${CONTAINER_TAG}
-          imagePullPolicy: "IfNotPresent"
-          name: azsdkdemonetqueueservice
+          image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetapi:${CONTAINER_TAG}
+          imagePullPolicy: "Always"
+          name: memealyzernetapi
+          ports:
+            - containerPort: 80
+            - containerPort: 443
           resources: {}
-          volumeMounts:
-            - mountPath: /root/.azure
-              name: azsdkdemonetqueueservice-hostpath0
       restartPolicy: Always
       serviceAccountName: ""
-      volumes:
-        - hostPath:
-            path: /run/desktop/mnt/host/wsl/.azure
-            type: Directory
-          name: azsdkdemonetqueueservice-hostpath0
 status: {}

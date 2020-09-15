@@ -7,13 +7,13 @@ metadata:
     kompose.version: 1.21.0 (992df58d8)
   creationTimestamp: null
   labels:
-    io.kompose.service: azsdkdemonetwebapp
-  name: azsdkdemonetwebapp
+    io.kompose.service: memealyzernetwebapp
+  name: memealyzernetwebapp
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: azsdkdemonetwebapp
+      io.kompose.service: memealyzernetwebapp
   strategy: {}
   template:
     metadata:
@@ -23,12 +23,12 @@ spec:
         kompose.version: 1.21.0 (992df58d8)
       creationTimestamp: null
       labels:
-        io.kompose.service: azsdkdemonetwebapp
+        io.kompose.service: memealyzernetwebapp
     spec:
       containers:
-      - image: azsdkdemojongdevacr.azurecr.io/azsdkdemonetwebapp:1.0.0
+      - image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetwebapp:${CONTAINER_TAG}
         imagePullPolicy: "IfNotPresent"
-        name: azsdkdemonetwebapp
+        name: memealyzernetwebapp
         ports:
         - containerPort: 80
         - containerPort: 443

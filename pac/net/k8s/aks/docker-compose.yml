@@ -2,20 +2,20 @@
 version: "3.7"
 
 services:
-  azsdkdemonetwebapp:
-    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetwebapp:${CONTAINER_TAG}
+  memealyzernetwebapp:
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetwebapp:${CONTAINER_TAG}
     build:
       context: ../../../../src/net
       dockerfile: WebApp/Dockerfile
     depends_on:
-      - azsdkdemonetapi
-  azsdkdemonetapi:
-    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetapi:${CONTAINER_TAG}
+      - memealyzernetapi
+  memealyzernetapi:
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetapi:${CONTAINER_TAG}
     build:
       context: ../../../../src/net
       dockerfile: Api/Dockerfile.prod
-  azsdkdemonetqueueservice:
-    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/azsdkdemonetqueueservice:${CONTAINER_TAG}
+  memealyzernetqueueservice:
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetqueueservice:${CONTAINER_TAG}
     build:
       context: ../../../../src/net
       dockerfile: Services/QueueService/Dockerfile.prod

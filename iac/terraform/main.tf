@@ -106,7 +106,7 @@ resource "azurerm_cosmosdb_account" "cosmos_account" {
 }
 
 resource "azurerm_cosmosdb_sql_database" "cosmos_sqldb" {
-  name                = "azimageai"
+  name                = "memealyzer"
   resource_group_name = azurerm_resource_group.rg.name
   account_name        = azurerm_cosmosdb_account.cosmos_account.name
   throughput          = 400
@@ -422,4 +422,16 @@ output "FUNCTIONS_ENDPOINT" {
 
 output "AZURE_CONTAINER_REGISTRY_SERVER" {
   value = azurerm_container_registry.acr.login_server
+}
+
+output "K8S_CONTEXT" {
+  value = azurerm_kubernetes_cluster.aks.name
+}
+
+output "AZURE_FUNCTION_APP_NAME" {
+  value = azurerm_function_app.function.name
+}
+
+output "AZURE_AKS_CLUSTER_NAME" {
+  value = azurerm_kubernetes_cluster.aks.name
 }

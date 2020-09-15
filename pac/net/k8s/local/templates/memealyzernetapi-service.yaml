@@ -7,8 +7,8 @@ metadata:
     kompose.version: 1.21.0 (992df58d8)
   creationTimestamp: null
   labels:
-    io.kompose.service: azsdkdemonetapi
-  name: azsdkdemonetapi
+    io.kompose.service: memealyzernetapi
+  name: memealyzernetapi
 spec:
   ports:
   - name: "2080"
@@ -18,6 +18,6 @@ spec:
     port: 2443
     targetPort: 443
   selector:
-    io.kompose.service: azsdkdemonetapi
+    io.kompose.service: memealyzernetapi
 status:
   loadBalancer: {}
