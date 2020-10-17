@@ -1,4 +1,6 @@
 #!/bin/bash
+set -euo pipefail
+
 echo "Loading Environment Variables"
 set -o allexport; source ../../.env; set +o allexport
 

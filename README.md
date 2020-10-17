@@ -147,5 +147,5 @@ After you change the setting, reload the WebApp to see the new style take effect
     1. `API_ENDPOINT` value to the Public IP address URI, i.e., `https://52.250.2.137`
     1. `FUNCTIONS_ENDPOINT` to the URI of your functions endpoint, i.e. `https://memealyzerdevfunction.azurewebsites.net` - this was outputted by your Terraform run and can be found in your `.env` file.
 1. **Deploy**: CD to `/pac/net/k8s/aks` and run `./deploy.sh` - this will build containers, push them to ACR, apply K8S files, and deploy the Azure Function.
-1. Open a browser and go to the AKS cluster's Public IP.
+1. **Run**: Open a browser and go to the AKS cluster's Public IP.
 

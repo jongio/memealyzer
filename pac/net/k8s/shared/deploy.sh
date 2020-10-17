@@ -1,4 +1,6 @@
 #!/bin/bash
+set -euo pipefail
+
 
 echo "Switching K8S Context"
 kubectl config use-context ${K8S_CONTEXT}
