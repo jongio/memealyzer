@@ -1,4 +1,6 @@
 #!/bin/bash
+set -euo pipefail
+
 
 ./mount.sh || true
 export ROOT=../../../..;source $ROOT/scripts/base.sh

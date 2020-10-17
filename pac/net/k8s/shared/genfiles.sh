@@ -1,3 +1,6 @@
+#!/bin/bash
+set -euo pipefail
+
 export BIN_FOLDER=templates/.bin
 
 mkdir -p ./$BIN_FOLDER
