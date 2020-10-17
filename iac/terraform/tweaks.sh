@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Custom Domain for Cognitive Services
 az cognitiveservices account update --name $FORM_RECOGNIZER_NAME -g $RESOURCE_GROUP_NAME --custom-domain $FORM_RECOGNIZER_NAME
