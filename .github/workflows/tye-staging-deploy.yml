@@ -9,7 +9,7 @@ on:
     branches:
       - tye
 env:
-  ROOT: '.'
+  ROOT: '../../../..'
   AZURE_FUNCTIONAPP_NAME: ${{ secrets.AZURE_FUNCTION_APP_NAME_STAGING }}  # set this to your application's name
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './src/net/Services/Functions'    # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '5.0.100-rc.2.20479.15'              # set this to the dotnet version to use
