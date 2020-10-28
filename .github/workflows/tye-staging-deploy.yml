@@ -57,10 +57,11 @@ jobs:
         username: ${{ env.REGISTRY_USERNAME }}
         password: ${{ env.REGISTRY_PASSWORD }}
     
-    - name: 'Gen files'
+    - name: 'Gen Kubernetes files'
       run: |
-        cd ./pac/net/tye/aks
+        pushd ${{ env.GITHUB_WORKSPACE }}/pac/net/tye/aks
         sh ../shared/genfiles.sh
+        popd
   
     - name: 'Set AKS Cluster'
       uses: Azure/aks-set-context@v1
@@ -71,7 +72,7 @@ jobs:
 
     - name: 'tye deploy'
       run: |
-        tye deploy ./.bin/tye.yaml -v Debug --tags ${{ env.WORKSPACE }}
+        tye deploy ${{ env.GITHUB_WORKSPACE }}/pac/net/tye/aks/.bin/tye.yaml -v Debug --tags ${{ env.WORKSPACE }}
 
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
