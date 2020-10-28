@@ -62,6 +62,8 @@ jobs:
       run: |
         pushd $GITHUB_WORKSPACE/pac/net/tye/aks
         ls -a
+        FILE=~/work/memealyzer/memealyzer/src/net/WebApp/wwwroot/appsettings.json.temp
+        test -f $FILE && echo "$FILE exists."
         sh ../shared/genfiles.sh
         popd
   
