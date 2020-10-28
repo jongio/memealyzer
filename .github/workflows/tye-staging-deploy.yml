@@ -71,7 +71,7 @@ jobs:
 
     - name: 'tye deploy'
       run: |
-        tye deploy ./bin/tye.yaml -v Debug --tags $WORKSPACE
+        tye deploy ./bin/tye.yaml -v Debug --tags ${{ env.WORKSPACE }}
 
     - name: 'Login via Azure CLI'
       uses: azure/login@v1
