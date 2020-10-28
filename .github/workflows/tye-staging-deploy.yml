@@ -61,6 +61,7 @@ jobs:
     - name: 'Gen Kubernetes files'
       run: |
         pushd $GITHUB_WORKSPACE/pac/net/tye/aks
+        ls -a
         sh ../shared/genfiles.sh
         popd
   
