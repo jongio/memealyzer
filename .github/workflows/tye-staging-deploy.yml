@@ -9,8 +9,8 @@ on:
     branches:
       - tye
 env:
-  ROOT: "~/work/memealyzer/memealyzer"
-  TYE_ROOT: "~/work/memealyzer/memealyzer"
+  ROOT: "/home/runner/work/memealyzer/memealyzer"
+  TYE_ROOT: "/home/runner/work/memealyzer/memealyzer"
   WORKSPACE: 'staging'
   AZURE_FUNCTIONAPP_NAME: ${{ secrets.AZURE_FUNCTION_APP_NAME_STAGING }}  # set this to your application's name
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './src/net/Services/Functions'    # set this to the path to your web app project, defaults to the repository root
