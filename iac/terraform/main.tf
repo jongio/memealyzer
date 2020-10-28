@@ -13,7 +13,7 @@ resource "azurerm_storage_account" "storage" {
 }
 
 resource "azurerm_cognitive_account" "form_recognizer" {
-  name                = "${var.basename}formrecognizer"
+  name                = "${var.basename}fr"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   kind                = "FormRecognizer"
@@ -22,7 +22,7 @@ resource "azurerm_cognitive_account" "form_recognizer" {
 }
 
 resource "azurerm_cognitive_account" "text_analytics" {
-  name                = "${var.basename}textanalytics"
+  name                = "${var.basename}ta"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   kind                = "TextAnalytics"
@@ -31,7 +31,7 @@ resource "azurerm_cognitive_account" "text_analytics" {
 }
 
 resource "azurerm_key_vault" "key_vault" {
-  name                = "${var.basename}keyvault"
+  name                = "${var.basename}kv"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
@@ -131,7 +131,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   dns_prefix          = "${var.basename}aks"
-  kubernetes_version  = "1.17.7"
+  kubernetes_version  = "1.19.0"
   node_resource_group = "${var.basename}aksnodes"
 
   default_node_pool {

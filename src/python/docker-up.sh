@@ -1,10 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "Loading Environment Variables"
+echo "LOADING ENV VARS"
 set -o allexport; source ../../.env; set +o allexport
 
-echo "Running Docker Compose Up"
+echo "RUNNING DOCKER COMPOSE UP"
 docker-compose up
 #docker-compose up --build
 #docker-compose up --build memealyzernetwebapp memealyzernetapi memealyzernetqueueservice azurite

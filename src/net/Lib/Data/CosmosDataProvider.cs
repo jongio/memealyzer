@@ -4,8 +4,10 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Azure.Core;
 using Azure.Cosmos;
+using Azure.Cosmos.Serialization;
 using Azure.Security.KeyVault.Secrets;
 using DotNetEnv;
+using Lib.Model;
 
 namespace Lib.Data
 {
@@ -30,15 +32,24 @@ namespace Lib.Data
             SecretClient = new SecretClient(new Uri(Env.GetString("AZURE_KEYVAULT_ENDPOINT")), credential);
             var cosmosKey = await SecretClient.GetSecretAsync(Env.GetString("AZURE_COSMOS_KEY_SECRET_NAME", "CosmosKey"));
 
+            CosmosClientOptions options = new CosmosClientOptions
+            {
+                ConnectionMode = ConnectionMode.Direct,
+                ConsistencyLevel = ConsistencyLevel.Session,
+                Diagnostics = {
+                    IsLoggingEnabled = false
+                },
+                SerializerOptions = new CosmosSerializationOptions { PropertyNamingPolicy = CosmosPropertyNamingPolicy.Default }
+            };
+
+            var cosmosSerializerOptions = new CosmosSerializationOptions { PropertyNamingPolicy = CosmosPropertyNamingPolicy.Default };
+
+
             // Cosmos
             CosmosClient = new CosmosClient(
                 Env.GetString("AZURE_COSMOS_ENDPOINT"),
                 cosmosKey.Value.Value,
-                new CosmosClientOptions
-                {
-                    ConnectionMode = ConnectionMode.Direct,
-                    ConsistencyLevel = ConsistencyLevel.Session
-                });
+                options);
 
             CosmosContainer = CosmosClient.GetDatabase(Env.GetString("AZURE_COSMOS_DB")).GetContainer(Env.GetString("AZURE_COSMOS_COLLECTION"));
         }

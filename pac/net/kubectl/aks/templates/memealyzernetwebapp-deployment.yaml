@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --file ./src/net/docker-compose.yml -o ./pac/kubectl/net
+      --volumes hostPath
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: memealyzernetwebapp
+  name: memealyzernetwebapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      io.kompose.service: memealyzernetwebapp
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert --file ./src/net/docker-compose.yml -o ./pac/kubectl/net
+          --volumes hostPath
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: memealyzernetwebapp
+        checksum/config: ${CONTAINER_TAG}
+    spec:
+      containers:
+      - image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetwebapp:${CONTAINER_TAG}
+        imagePullPolicy: "Always"
+        name: memealyzernetwebapp
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        resources: {}
+        volumeMounts:
+        - name: web-config
+          mountPath: /var/www/web/appsettings.json
+          readOnly: true
+          subPath: appsettings.json
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+        - name: web-config
+          configMap:
+            name: websettings
+status: {}

@@ -1,0 +1,51 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+version: "3.7"
+
+services:
+  memealyzernetwebapp:
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetwebapp:${CONTAINER_TAG}
+    build:
+      context: ${ROOT}/src/net
+      dockerfile: WebApp/Dockerfile.dev
+    depends_on:
+      - memealyzernetapi
+    ports:
+      - 1080:80
+      - 1443:443
+  memealyzernetapi:
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetapi:${CONTAINER_TAG}
+    env_file: ${ROOT}/${DOTENV_FILENAME}
+    volumes: 
+        - "~/.azure:/root/.azure"
+    build:
+      context: ${ROOT}/src/net
+      dockerfile: Api/Dockerfile.dev
+    ports:
+      - 2080:80
+      - 2443:443
+  memealyzernetqueueservice:
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetqueueservice:${CONTAINER_TAG}
+    env_file: ${ROOT}/${DOTENV_FILENAME}
+    volumes: 
+        - "~/.azure:/root/.azure"
+    build:
+      context: ${ROOT}/src/net
+      dockerfile: Services/QueueService/Dockerfile.dev
+  # TODO: Figure out why AF in container doesn't work.
+  # memealyzernetfunctions:
+  #   image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetfunctions:${CONTAINER_TAG}
+  #   env_file: ${ROOT}/${DOTENV_FILENAME}
+  #   volumes: 
+  #       - "~/.azure:/root/.azure"
+  #   build:
+  #     context: ${ROOT}/src/net
+  #     dockerfile: Services/Functions/Dockerfile
+  #   ports:
+  #     - 3080:80
+  #     - 3443:443
+  azurite:
+    container_name: azurite
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - 10000:10000
+      - 10001:10001

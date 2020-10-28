@@ -15,6 +15,7 @@ using Azure.AI.TextAnalytics;
 using Azure.Data.AppConfiguration;
 using DotNetEnv;
 using Lib.Data;
+using Lib.Model;
 
 namespace Lib
 {

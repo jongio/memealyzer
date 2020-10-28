@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Azure.Security.KeyVault.Secrets;
 using DotNetEnv;
+using Azure.Core.Diagnostics;
 using Lib;
 using Microsoft.Azure.WebJobs;
 
@@ -37,6 +38,8 @@ namespace Memealyzer
 
         public override void Configure(IFunctionsHostBuilder builder)
         {
+            using var listener = AzureEventSourceListener.CreateConsoleLogger();
+
             //FunctionsHostBuilderContext context = builder.GetContext();
 
             Envs.Load();

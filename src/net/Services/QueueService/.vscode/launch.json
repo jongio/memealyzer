@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/bin/Debug/netcoreapp3.1/QueueService.dll",
+            "program": "${workspaceFolder}/bin/Debug/net5.0/QueueService.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",
@@ -20,6 +20,22 @@
             "type": "coreclr",
             "request": "attach",
             "processId": "${command:pickProcess}"
+        },
+        {
+            "name": ".NET Core Docker Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickRemoteProcess}",
+            "sourceFileMap": {
+                "/app": "${workspaceFolder}"
+            },
+            "pipeTransport": {
+                "pipeProgram": "docker",
+                "pipeArgs": [ "exec", "-i", "qs" ],
+                "debuggerPath": "/publish/vsdbg/vsdbg",
+                "pipeCwd": "${workspaceRoot}",
+                "quoteArgs": false
+            }
         }
     ]
 }

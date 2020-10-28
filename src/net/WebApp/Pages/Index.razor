@@ -102,8 +102,9 @@ else
     private async Task HandleAddFormSubmit()
     {
         var type = image.Type;
-        var url = !String.IsNullOrEmpty(image.Url) ? String.Copy(image.Url) : "";
+        var url = !String.IsNullOrEmpty(image.Url) ? image.Url : "";
 
+        // Clean out props b/c this is used for UI state as well
         image = new Image();
 
         //TODO : Figure out why this renders the previous image and not the new image for a split second.

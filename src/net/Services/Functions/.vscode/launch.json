@@ -6,7 +6,6 @@
             "type": "coreclr",
             "request": "attach",
             "processId": "${command:azureFunctions.pickProcess}"
-            
         }
     ]
 }

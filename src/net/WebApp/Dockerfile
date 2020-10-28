@@ -1,11 +1,10 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
-WORKDIR /app
-COPY . ./
-RUN dotnet publish "WebApp/WebApp.csproj" -c Release -o output
-
+# Issue: The container generated for Blazor projects does not work with tye deploy
+# I created this special nginx container with the exact name "Dockerfile" because tye uses that file if it exists
+# https://github.com/dotnet/tye/issues/720
 FROM nginx:alpine
 WORKDIR /var/www/web
-COPY --from=build /app/output/wwwroot .
-COPY WebApp/nginx.conf /etc/nginx/nginx.conf
+COPY ./wwwroot .
+COPY wwwroot/_framework/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80
 EXPOSE 443
+

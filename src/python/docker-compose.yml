@@ -1,6 +1,6 @@
 # Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
 
-# NOTE: The python version will use the .NET Api and WebApp projects until the python versions are done.
+# Issue: The python version will use the .NET Api and WebApp projects until the python versions are done.
 version: "3.8"
 
 services:

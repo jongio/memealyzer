@@ -1,0 +1,21 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+version: "3.7"
+
+services:
+  memealyzernetwebapp:
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetwebapp:${CONTAINER_TAG}
+    build:
+      context: ../../../../src/net
+      dockerfile: WebApp/Dockerfile.prod
+    depends_on:
+      - memealyzernetapi
+  memealyzernetapi:
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetapi:${CONTAINER_TAG}
+    build:
+      context: ../../../../src/net
+      dockerfile: Api/Dockerfile.prod
+  memealyzernetqueueservice:
+    image: ${AZURE_CONTAINER_REGISTRY_SERVER}/memealyzernetqueueservice:${CONTAINER_TAG}
+    build:
+      context: ../../../../src/net
+      dockerfile: Services/QueueService/Dockerfile.prod
