@@ -9,6 +9,7 @@ on:
     branches:
       - tye
 env:
+  ROOT: $GITHUB_WORKSPACE
   TYE_ROOT: $GITHUB_WORKSPACE
   WORKSPACE: 'staging'
   AZURE_FUNCTIONAPP_NAME: ${{ secrets.AZURE_FUNCTION_APP_NAME_STAGING }}  # set this to your application's name
