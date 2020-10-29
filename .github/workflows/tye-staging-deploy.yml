@@ -62,9 +62,6 @@ jobs:
     - name: 'Gen Kubernetes files'
       run: |
         pushd $GITHUB_WORKSPACE/pac/net/tye/aks
-        ls -a
-        FILE=~/work/memealyzer/memealyzer/src/net/WebApp/wwwroot/appsettings.json.temp
-        test -f $FILE && echo "$FILE exists."
         sh ../shared/genfiles.sh
         popd
   
@@ -77,7 +74,6 @@ jobs:
 
     - name: 'tye deploy'
       run: |
-        cat $GITHUB_WORKSPACE/pac/net/tye/aks/.bin/tye.yaml
         tye deploy $GITHUB_WORKSPACE/pac/net/tye/aks/.bin/tye.yaml -v Debug --tags ${{ env.WORKSPACE }}
 
     - name: 'Login via Azure CLI'
