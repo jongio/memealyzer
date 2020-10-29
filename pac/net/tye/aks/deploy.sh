@@ -23,3 +23,6 @@ ${ROOT}/pac/net/kubectl/aks/func.sh
 
 # Issue: Deploy will use Dockerfile if it's found without being told to use it.  So I had to rename all of my Dockerfiles to Dockerfile.{moniker}
 # https://github.com/dotnet/tye/issues/714
+
+# Issue: Tye doesn't support deployment labels (as far as I can tell), we use this to trigger a new container deployment.
+# https://github.com/dotnet/tye/issues/732
