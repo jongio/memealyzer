@@ -48,6 +48,11 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
+    - name: 'Setup DotNet 3.1.300 Environment'
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.300'
+
     - name: 'Install Tye tools'
       run: |
         dotnet tool install -g Microsoft.Tye --version "0.5.0-*" --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet5/nuget/v3/index.json
@@ -80,11 +85,6 @@ jobs:
       uses: azure/login@v1
       with:
         creds: ${{ env.AZURE_CREDENTIALS }}
-
-    - name: 'Setup DotNet 3.1.300 Environment'
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '3.1.300'
 
     - name: 'Resolve Project Dependencies Using Dotnet'
       shell: bash

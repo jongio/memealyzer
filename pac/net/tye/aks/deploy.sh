@@ -18,5 +18,8 @@ kubectl apply -f ./templates/.
 echo "DEPLOY FUNCTION"
 ${ROOT}/pac/net/kubectl/aks/func.sh
 
+# Issue: Tye doesn't currently support deploying a function to app service, so I need another script to do so.
+# https://github.com/dotnet/tye/issues/731
+
 # Issue: Deploy will use Dockerfile if it's found without being told to use it.  So I had to rename all of my Dockerfiles to Dockerfile.{moniker}
 # https://github.com/dotnet/tye/issues/714
