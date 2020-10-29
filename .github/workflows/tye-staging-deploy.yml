@@ -17,7 +17,7 @@ env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: './src/net/Services/Functions'    # set this to the path to your web app project, defaults to the repository root
   DOTNET_VERSION: '5.0.100-rc.2.20479.15'              # set this to the dotnet version to use
   #CONTAINER_TAG: ${{ github.sha }}
-  CONTAINER_TAG: ${{ github.run_number }}
+  CONTAINER_TAG: 1.0.${{ github.run_number }}
   # Issue: Because I cannot set image container tag with Tye, I need to do this type of workaround with a numberic container tag.
   AZURE_CONTAINER_REGISTRY_SERVER: ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER_STAGING }}
   API_ENDPOINT: ${{ secrets.API_ENDPOINT_STAGING }}
