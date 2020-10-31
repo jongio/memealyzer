@@ -16,10 +16,12 @@ services:
   - name: azurite
     image: mcr.microsoft.com/azure-storage/azurite
     bindings:
-      - port: 10000
-        name: blob
-      - port: 10001
-        name: queue
+      - name: blob
+        port: 10000
+        protocol: http
+      - name: queue
+        port: 10001
+        protocol: http
     tags:
       - dev
 
@@ -63,6 +65,7 @@ services:
     azureFunction: ${TYE_ROOT}/src/net/Services/Functions/
     bindings:
       - port: 3080
+        protocol: http
     tags:
       - dev
     
