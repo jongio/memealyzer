@@ -118,7 +118,7 @@ After you change the setting, reload the WebApp to see the new style take effect
 
 #### Project Tye
 1. CD to `/pac/net/tye/local` and run `./run.sh dev`
-1. Navigate to http://localhost:1080
+1. Navigate to http://localhost:5000
 
 #### Docker Compose
 1. CD to the `pac/{lang}/docker/local` folder for the language you would like to run, i.e. for .NET, cd to `pac/net/docker/local`.

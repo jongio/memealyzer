@@ -10,7 +10,6 @@ on:
       - tye
 env:
   ROOT: ${{ github.workspace }}
-  TYE_ROOT: ${{ github.workspace }}
   DOTENV_FILENAME: '.env.staging'
   WORKSPACE: 'staging'
   AZURE_FUNCTIONAPP_NAME: ${{ secrets.AZURE_FUNCTION_APP_NAME_STAGING }}  # set this to your application's name
@@ -71,8 +70,8 @@ jobs:
     
     - name: 'Gen Kubernetes files'
       run: |
-        pushd $GITHUB_WORKSPACE/pac/net/tye/aks
-        sh ../shared/genfiles.sh
+        pushd $GITHUB_WORKSPACE/pac/net/tye
+        sh ./genfiles.sh
         popd
   
     - name: 'Set AKS Cluster'
@@ -84,12 +83,7 @@ jobs:
 
     - name: 'tye deploy'
       run: |
-        tye deploy $GITHUB_WORKSPACE/pac/net/tye/aks/.bin/tye.yaml -v Debug --tags ${{ env.WORKSPACE }}
-
-    - name: 'Apply Kubernetes Tweaks'
-      run: |
-        kubectl apply -f $GITHUB_WORKSPACE/pac/net/tye/aks/templates/.
-      # Issue: We need to do this because Tye doesn't support targetPort and containerPort issue
+        tye deploy $GITHUB_WORKSPACE/pac/net/tye/tye.yaml -v Debug --tags ${{ env.WORKSPACE }}
 
     - name: 'Login via Azure CLI'
       uses: azure/login@v1

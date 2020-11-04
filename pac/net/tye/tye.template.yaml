@@ -13,45 +13,45 @@ services:
     tags:
       - dev
   - name: memealyzernetwebapp
-    project: ${TYE_ROOT}/src/net/WebApp/WebApp.csproj
+    project: ${ROOT}/src/net/WebApp/WebApp.csproj
     bindings:
       - port: 1080
         containerPort: 80
     env_file:
-      - ${TYE_ROOT}/${DOTENV_FILENAME}
+      - ${ROOT}/${DOTENV_FILENAME}
     tags:
       - dev
       - staging
       - prod
   - name: memealyzernetapi
-    project: ${TYE_ROOT}/src/net/Api/Api.csproj
+    project: ${ROOT}/src/net/Api/Api.csproj
     bindings:
       - port: 2080
         containerPort: 80
     env_file: 
-      - ${TYE_ROOT}/${DOTENV_FILENAME}
+      - ${ROOT}/${DOTENV_FILENAME}
     tags:
       - dev
       - staging
       - prod
   - name: memealyzernetfunction
-    azureFunction: ${TYE_ROOT}/src/net/Services/Functions/
+    azureFunction: ${ROOT}/src/net/Services/Functions/
     bindings:
       - port: 3080
         protocol: http
     tags:
       - dev
   - name: memealyzernetqueueservice
-    project: ${TYE_ROOT}/src/net/Services/QueueService/QueueService.csproj
+    project: ${ROOT}/src/net/Services/QueueService/QueueService.csproj
     env_file: 
-    - ${TYE_ROOT}/${DOTENV_FILENAME}
+    - ${ROOT}/${DOTENV_FILENAME}
     tags:
       - dev
       - staging
       - prod
 
 ingress:
-  - name: ingress
+  - name: ingressdev
     rules:
       - path: /
         service: memealyzernetwebapp
@@ -72,5 +72,22 @@ ingress:
         preservePath: true
     tags:
       - dev
+  - name: ingress
+    rules:
+      - path: /
+        service: memealyzernetwebapp
+      - path: /images
+        service: memealyzernetapi
+        preservePath: true
+      - path: /image
+        service: memealyzernetapi
+        preservePath: true
+      - path: /config
+        service: memealyzernetapi
+        preservePath: true
+      - path: /imagehub
+        service: memealyzernetapi
+        preservePath: true
+    tags:
       - staging
       - prod
