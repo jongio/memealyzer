@@ -1,17 +1,5 @@
-# Issue: We need two tye.yaml files because containerPort value is set to port value and tye.yaml doesn't support targetPort
-# https://github.com/dotnet/tye/issues/725 https://github.com/dotnet/tye/issues/724
-
-# Issue: We are unable to run this with docker-desktop because tye does not allow setting of imagePullPolicy and doesn't support imagePullSecrets
-# So, the local k8s cluster always tries to pull from ACR, but can't
-# https://github.com/dotnet/tye/issues/719 https://github.com/dotnet/tye/issues/508
-name: memealyzer # application name
-registry: ${AZURE_CONTAINER_REGISTRY_SERVER} # dockerhub username or container registry hostname
-
-# Issue: I need to be able to dynamically assign a generated container tag like docker-compose allows me to.  I had to hack the csproj file Version property to get this to work
-# https://github.com/dotnet/tye/issues/715
-
-# Issue: Before I implemented tags, I was getting a binding-production error on azurite below.  I'm not deploying that to aks now, so I don't get it, but this is the error I got when I did, and I didn't know why
-# https://github.com/dotnet/tye/issues/716
+name: memealyzer
+registry: ${AZURE_CONTAINER_REGISTRY_SERVER}
 services:
   - name: azurite
     image: mcr.microsoft.com/azure-storage/azurite
@@ -24,43 +12,28 @@ services:
         protocol: http
     tags:
       - dev
-
-# Issue: The tye run doesn't work with Blazor, only works when we have tye.yaml
-# https://github.com/dotnet/tye/issues/709
-
-# Issue: env_file is generated as spec:env items, not a configMap.  These values are repeated in my app, so to simplify, let's support configMap
-# https://github.com/dotnet/tye/issues/645
-
-# Issue: It's unclear if/how tye helps with Blazor WASM service discovery.  I have two endpoints that I need to configure, but they are requested client side
-# https://github.com/dotnet/tye/issues/582
   - name: memealyzernetwebapp
     project: ${TYE_ROOT}/src/net/WebApp/WebApp.csproj
     bindings:
       - port: 1080
+        containerPort: 80
     env_file:
       - ${TYE_ROOT}/${DOTENV_FILENAME}
     tags:
       - dev
       - staging
       - prod
-
   - name: memealyzernetapi
     project: ${TYE_ROOT}/src/net/Api/Api.csproj
     bindings:
       - port: 2080
+        containerPort: 80
     env_file: 
       - ${TYE_ROOT}/${DOTENV_FILENAME}
     tags:
       - dev
       - staging
       - prod
-
-# Issue: We feel that having a specific property called azureFunction is too specialized
-# We'd like to see it be "project" like normal projects
-# https://github.com/dotnet/tye/issues/723
-
-# Issue: The tye.yaml that is generated for AF doesn't use azureFunction
-# https://github.com/dotnet/tye/issues/710
   - name: memealyzernetfunction
     azureFunction: ${TYE_ROOT}/src/net/Services/Functions/
     bindings:
@@ -68,7 +41,6 @@ services:
         protocol: http
     tags:
       - dev
-    
   - name: memealyzernetqueueservice
     project: ${TYE_ROOT}/src/net/Services/QueueService/QueueService.csproj
     env_file: 
@@ -78,30 +50,27 @@ services:
       - staging
       - prod
 
-# Issue: Tye doesn't currently support https, which will be needed for SDK, Azurite, Storage Explorer, etc, so defaulting everything to http for now
-# https://github.com/dotnet/tye/issues/562
-# Issue: In order for tye to work with docker-desktop, I have to use specialized containers that load the Azure CLI
-# Tye doesn't use the containerFile specified, so I can't test locally with docker-desktop
-# https://github.com/dotnet/tye/issues/717
-
-# Issue: We commented this out because we cannot get ingress to work locally or in prod on AKS
-# https://github.com/dotnet/tye/issues/729 https://github.com/dotnet/tye/issues/728
-# ingress:
-#   - name: 1080
-#     bindings:
-#       - port: 1080
-#     rules:
-#       - path: /
-#         service: memealyzernetwebapp
-#   - name: 2080
-#     bindings: 
-#       - port: 2080
-#     rules:
-#       - path: /images
-#         service: memealyzernetapi
-#       - path: /image
-#         service: memealyzernetapi
-#       - path: /config
-#         service: memealyzernetapi
-#       - path: /imagehub
-#         service: memealyzernetapi
+ingress:
+  - name: ingress
+    rules:
+      - path: /
+        service: memealyzernetwebapp
+      - path: /images
+        service: memealyzernetapi
+        preservePath: true
+      - path: /image
+        service: memealyzernetapi
+        preservePath: true
+      - path: /config
+        service: memealyzernetapi
+        preservePath: true
+      - path: /imagehub
+        service: memealyzernetapi
+        preservePath: true
+      - path: /api/negotiate
+        service: memealyzernetfunction
+        preservePath: true
+    tags:
+      - dev
+      - staging
+      - prod

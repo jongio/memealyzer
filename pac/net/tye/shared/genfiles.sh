@@ -14,6 +14,7 @@ envsubst < tye.yaml > $TYE_FILE
 
 APPSETTINGS=${ROOT}/src/net/WebApp/wwwroot/appsettings.json
 envsubst < $APPSETTINGS.temp > $APPSETTINGS
+cat ${ROOT}/src/net/WebApp/wwwroot/appsettings.json
 
 # Issue: We need this file because tye and appsettings.json do not support env var replacements
 # https://github.com/dotnet/tye/issues/223

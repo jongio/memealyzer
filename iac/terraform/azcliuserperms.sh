@@ -1,7 +1,7 @@
 #!/bin/bash 
 set -euo pipefail
 
-if [ -z "$1" ]
+if [ $# -eq 0 ]
   then
     echo "You need to run this script with the basename you used to created your resources. i.e., ./azcliuserperms.sh memealyzer01"
     exit

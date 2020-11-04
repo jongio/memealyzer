@@ -12,35 +12,11 @@ using Microsoft.Azure.WebJobs;
 [assembly: FunctionsStartup(typeof(Memealyzer.Startup))]
 namespace Memealyzer
 {
-
     public class Startup : FunctionsStartup
     {
-        // public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
-        // {
-        //     FunctionsHostBuilderContext context = builder.GetContext();
-
-        //     Envs.Load();
-
-        //     // KeyVault
-        //     var secretClient = new SecretClient(new Uri(Env.GetString("AZURE_KEYVAULT_ENDPOINT")), Identity.GetCredentialChain());
-        //     var storageConnectionString = secretClient.GetSecret(Env.GetString("AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME"));
-        //     var signalRConnectionString = secretClient.GetSecret(Env.GetString("AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME"));
-
-        //     //Environment.SetEnvironmentVariable("Values:AzureWebJobsStorage", storageConnectionString.Value.Value);
-
-        //     builder.ConfigurationBuilder
-        //     .AddInMemoryCollection(new Dictionary<string, string> {
-        //         { "ClientSyncQueueConnectionString", storageConnectionString.Value.Value },
-        //         { "AzureSignalRConnectionString", signalRConnectionString.Value.Value }
-        //     })
-        //     .AddEnvironmentVariables();
-        // }
-
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            using var listener = AzureEventSourceListener.CreateConsoleLogger();
-
-            //FunctionsHostBuilderContext context = builder.GetContext();
+            //using var listener = AzureEventSourceListener.CreateConsoleLogger();
 
             Envs.Load();
 

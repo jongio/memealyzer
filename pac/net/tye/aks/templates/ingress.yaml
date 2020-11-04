@@ -1,7 +1,4 @@
-# Issue: This file is needed because we couldn't get tye:ingress to work
-# https://github.com/dotnet/tye/issues/729
-
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: ingress
@@ -12,37 +9,22 @@ spec:
   - http:
       paths:
       - path: /
-        pathType: Prefix
         backend:
-          service: 
-            name: memealyzernetwebapp
-            port:
-              number: 1080
+          serviceName: memealyzernetwebapp
+          servicePort: 1080
       - path: /images
-        pathType: Prefix
         backend:
-          service: 
-            name: memealyzernetapi
-            port:
-              number: 2080
+          serviceName: memealyzernetapi
+          servicePort: 2080
       - path: /image
-        pathType: Prefix
         backend:
-          service: 
-            name: memealyzernetapi
-            port:
-              number: 2080
+          serviceName: memealyzernetapi
+          servicePort: 2080
       - path: /config
-        pathType: Prefix
         backend:
-          service: 
-            name: memealyzernetapi
-            port:
-              number: 2080
+          serviceName: memealyzernetapi
+          servicePort: 2080
       - path: /imagehub
-        pathType: Prefix
         backend:
-          service: 
-            name: memealyzernetapi
-            port:
-              number: 2080
+          serviceName: memealyzernetapi
+          servicePort: 2080

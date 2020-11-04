@@ -1,77 +1,77 @@
-name: memealyzer # application name
-registry: ${AZURE_CONTAINER_REGISTRY_SERVER} # dockerhub username or container registry hostname
-
-# define multiple services here
+name: memealyzer
+registry: ${AZURE_CONTAINER_REGISTRY_SERVER}
 services:
-
-- name: azurite
-  image: mcr.microsoft.com/azure-storage/azurite
-  bindings:
-    - port: 10000
-      name: blob
-    - port: 10001
-      name: queue
-  tags:
-    - dev
-
-- name: memealyzernetwebapp
-  project: ${TYE_ROOT}/src/net/WebApp/WebApp.csproj
-  bindings:
-    - port: 80
-      protocol: tcp
-  env_file: 
+  - name: azurite
+    image: mcr.microsoft.com/azure-storage/azurite
+    bindings:
+      - name: blob
+        port: 10000
+        protocol: http
+      - name: queue
+        port: 10001
+        protocol: http
+    tags:
+      - dev
+  - name: memealyzernetwebapp
+    project: ${TYE_ROOT}/src/net/WebApp/WebApp.csproj
+    bindings:
+      - port: 1080
+        containerPort: 80
+    env_file:
+      - ${TYE_ROOT}/${DOTENV_FILENAME}
+    tags:
+      - dev
+      - staging
+      - prod
+  - name: memealyzernetapi
+    project: ${TYE_ROOT}/src/net/Api/Api.csproj
+    bindings:
+      - port: 2080
+        containerPort: 80
+    env_file: 
+      - ${TYE_ROOT}/${DOTENV_FILENAME}
+    tags:
+      - dev
+      - staging
+      - prod
+  - name: memealyzernetfunction
+    azureFunction: ${TYE_ROOT}/src/net/Services/Functions/
+    bindings:
+      - port: 3080
+        protocol: http
+    tags:
+      - dev
+  - name: memealyzernetqueueservice
+    project: ${TYE_ROOT}/src/net/Services/QueueService/QueueService.csproj
+    env_file: 
     - ${TYE_ROOT}/${DOTENV_FILENAME}
-  tags:
-    - dev
-    - staging
-    - prod
-
-- name: memealyzernetapi
-  project: ${TYE_ROOT}/src/net/Api/Api.csproj
-  bindings:
-    - port: 80
-      protocol: tcp
-  env_file: 
-    - ${TYE_ROOT}/${DOTENV_FILENAME}
-  tags:
-    - dev
-    - staging
-    - prod
-
-- name: memealyzernetfunction
-  azureFunction: ${TYE_ROOT}/src/net/Services/Functions/
-  bindings:
-    - port: 3080
-      protocol: http
-  tags:
-    - dev
-  
-- name: memealyzernetqueueservice
-  project: ${TYE_ROOT}/src/net/Services/QueueService/QueueService.csproj
-  env_file: 
-  - ${TYE_ROOT}/${DOTENV_FILENAME}
-  tags:
-    - dev
-    - staging
-    - prod
-
+    tags:
+      - dev
+      - staging
+      - prod
 
 # ingress:
-#   - name: 1080
-#     bindings:
-#       - port: 1080
+#   - name: ingress
 #     rules:
 #       - path: /
 #         service: memealyzernetwebapp
-#   - name: 2080
-#     bindings: 
-#       - port: 2080
-#     rules:
 #       - path: /images
 #         service: memealyzernetapi
+#         preservePath: true
 #       - path: /image
 #         service: memealyzernetapi
+#         preservePath: true
 #       - path: /config
 #         service: memealyzernetapi
+#         preservePath: true
 #       - path: /imagehub
 #         service: memealyzernetapi
+#         preservePath: true
+#       # - path: /api/negotiate
+#       #   service: memealyzernetfunction
+#       #   preservePath: true
+#     tags:
+#       - dev
+#       - staging
+#       - prod
+  
