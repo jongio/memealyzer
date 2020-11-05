@@ -122,6 +122,9 @@ After you change the setting, reload the WebApp to see the new style take effect
 
 #### Docker Compose
 1. CD to the `pac/{lang}/docker/local` folder for the language you would like to run, i.e. for .NET, cd to `pac/net/docker/local`.
+1. Open `.env` and set the following:
+   1. `API_ENDPOINT=http://localhost:2080`
+   1. `FUNCTIONS_ENDPOINT=http://localhost:3080`
 1. Run Docker Compose to start the API, WebApp, Service, and Azurite containers.
    - Run: `./run.sh`
 1. Start Azure Function
@@ -163,7 +166,6 @@ After you change the setting, reload the WebApp to see the new style take effect
    - Run `az network public-ip list -g memealyzerdevaksnodes --query '[0].ipAddress' --output tsv` to find the AKS cluster's public IP address.
 1. **Update .env File**
    - Open `./.env` and change.  (Use `./.env.prod` for production environment)
-    1. `API_ENDPOINT` value to the Public IP address URI, i.e., `https://52.250.2.137`
     1. `FUNCTIONS_ENDPOINT` to the URI of your functions endpoint, i.e. `https://memealyzerdevfunction.azurewebsites.net` - this was outputted by your Terraform run and can be found in your `.env` file.
 1. **Deploy**: 
    
@@ -172,7 +174,7 @@ After you change the setting, reload the WebApp to see the new style take effect
    - With **kubectl**
       - CD to `/pac/net/kubectl/aks`
    - With **Project Tye**
-      - CD to `/pac/net/tye/aks`
+      - CD to `/pac/net/tye`
 
    - Run `./deploy.sh {env}`, where env is the name of the environment you want to deploy to, this will match your .env file in the project root.  
    

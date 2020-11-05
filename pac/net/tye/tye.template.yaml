@@ -6,9 +6,11 @@ services:
     bindings:
       - name: blob
         port: 10000
+        containerPort: 10000
         protocol: http
       - name: queue
         port: 10001
+        containerPort: 10001
         protocol: http
     tags:
       - dev

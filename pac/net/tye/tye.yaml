@@ -1,14 +1,16 @@
 name: memealyzer
-registry: memealyzerstagingacr.azurecr.io
+registry: memealyzerdevacr.azurecr.io
 services:
   - name: azurite
     image: mcr.microsoft.com/azure-storage/azurite
     bindings:
       - name: blob
         port: 10000
+        containerPort: 10000
         protocol: http
       - name: queue
         port: 10001
+        containerPort: 10001
         protocol: http
     tags:
       - dev
@@ -18,7 +20,7 @@ services:
       - port: 1080
         containerPort: 80
     env_file:
-      - ../../../.env.staging
+      - ../../../.env
     tags:
       - dev
       - staging
@@ -29,7 +31,7 @@ services:
       - port: 2080
         containerPort: 80
     env_file: 
-      - ../../../.env.staging
+      - ../../../.env
     tags:
       - dev
       - staging
@@ -44,7 +46,7 @@ services:
   - name: memealyzernetqueueservice
     project: ../../../src/net/Services/QueueService/QueueService.csproj
     env_file: 
-    - ../../../.env.staging
+    - ../../../.env
     tags:
       - dev
       - staging

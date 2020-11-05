@@ -12,6 +12,7 @@ project.lock.json
 debug.log
 **/azurite/**
 .bin
+.tye
 
 # Visual Studio Code
 **/.vscode/settings.json
