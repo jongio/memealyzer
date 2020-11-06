@@ -68,12 +68,10 @@ jobs:
         username: ${{ env.REGISTRY_USERNAME }}
         password: ${{ env.REGISTRY_PASSWORD }}
     
-    - name: 'Gen Kubernetes files'
+    - name: 'Gen Files'
       run: |
-        pushd $GITHUB_WORKSPACE/pac/net/tye
-        sh ./genfiles.sh
-        popd
-  
+        sh $GITHUB_WORKSPACE/pac/net/tye/genfiles.sh
+        sh $GITHUB_WORKSPACE/scripts/genappsettings.sh
     - name: 'Set AKS Cluster'
       uses: Azure/aks-set-context@v1
       with:
