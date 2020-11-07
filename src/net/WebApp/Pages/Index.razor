@@ -27,15 +27,15 @@
 @if (images == null)
 {
     <div class="container">
-    <div class="row text-center">
-        <div class="col-md-12">
-            <div class="spinner-grow" role="status">
-                <span class="sr-only">Loading memes...</span>
+        <div class="row text-center">
+            <div class="col-md-12">
+                <div class="spinner-grow" role="status">
+                    <span class="sr-only">Loading memes...</span>
+                </div>
+                <p>Loading memes...</p>
             </div>
-            <p>Loading memes...</p>
         </div>
     </div>
-</div>
 }
 else
 {
@@ -43,21 +43,23 @@ else
         <div class="row text-center text-lg-left">
             @foreach (var image in images)
             {
-                <div class="col-md-4">
-                   <div class="card" style="width: 100%;margin-bottom:5px;">
+                <div class="col-md-4" @key="image">
+                    <div class="card" style="width: 100%;margin-bottom:5px;">
                         <img class="card-img-top border border-8 border-@image.Color img-thumbnail" style="border-style: @borderStyle !important" src="@image.BlobUri" alt="">
                         <div class="card-body">
                             <p class="card-text">@image.Text</p>
                             <p class="card-text">@image.Status</p>
                             <div class="text-right">
-                                <button type="submit" value="submit" disabled="@(String.IsNullOrEmpty(image.Sentiment))" class="btn" @onclick="@(async () => await DeleteImage(image.Id))"><span style="font-size: 12px" class="oi oi-trash" title="Delete Meme" aria-hidden="true"></span></button>
+                                <button type="submit" value="submit" disabled="@(String.IsNullOrEmpty(image.Sentiment))" class="btn"
+                                    @onclick="@(async () => await DeleteImage(image.Id))"><span style="font-size: 12px" class="oi oi-trash" title="Delete Meme"
+                                        aria-hidden="true"></span></button>
                             </div>
                         </div>
                     </div>
                 </div>
             }
+            </div>
         </div>
-    </div>
 }
 
 @code {
