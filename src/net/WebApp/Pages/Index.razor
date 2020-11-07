@@ -101,7 +101,6 @@ else
         Image postedImage = new Image { Id = Guid.NewGuid().ToString() };
         postedImage = await ApiServiceClient.PostImage(postedImage);
         images.Insert(0, postedImage);
-        StateHasChanged();
     }
 
     public async Task DeleteImage(string id)
