@@ -1,13 +1,13 @@
 on:
   workflow_dispatch:
     branches:
-      - tye
+      - staging
   push:
     branches:
-      - tye
+      - staging
   pull_request:
     branches:
-      - tye
+      - staging
 env:
   ROOT: ${{ github.workspace }}
   DOTENV_FILENAME: '.env.staging'
