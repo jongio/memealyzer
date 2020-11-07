@@ -10,7 +10,10 @@
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "browser": "edge",
-            "url": "http://localhost:1080"
+            "url": "http://localhost:1080",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
         }
     ]
 }

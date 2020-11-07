@@ -15,10 +15,7 @@
                 <DataAnnotationsValidator />
                 <ValidationSummary />
                 <div class="form-row">
-                    <div class="col col-11">
-                        <InputText id="url" @bind-Value="image.Url" class="form-control"/>
-                    </div>
-                    <div class="col col-1">
+                    <div class="col col-12">
                         <button type="submit" value="submit" disabled="@(!IsConnected)" class="btn"><span class="oi oi-plus" title="Add Meme" aria-hidden="true"></span></button>
                     </div>
                 </div>
@@ -101,16 +98,9 @@ else
 
     private async Task HandleAddFormSubmit()
     {
-        var type = image.Type;
-        var url = !String.IsNullOrEmpty(image.Url) ? String.Copy(image.Url) : "";
-
-        image = new Image();
-
-        //TODO : Figure out why this renders the previous image and not the new image for a split second.
-        Image postedImage = new Image { Id = Guid.NewGuid().ToString(), Type = type, Url = url };
+        Image postedImage = new Image { Id = Guid.NewGuid().ToString() };
         postedImage = await ApiServiceClient.PostImage(postedImage);
         images.Insert(0, postedImage);
-        StateHasChanged();
     }
 
     public async Task DeleteImage(string id)

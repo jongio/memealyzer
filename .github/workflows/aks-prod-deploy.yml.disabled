@@ -1,0 +1,104 @@
+on:
+  workflow_dispatch:
+    branches:
+      - prod
+  push:
+    branches:
+      - prod
+  pull_request:
+    branches:
+      - prod
+env:
+  AZURE_FUNCTIONAPP_NAME: ${{ secrets.AZURE_FUNCTION_APP_NAME_PROD }}  # set this to your application's name
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: './src/net/Services/Functions'    # set this to the path to your web app project, defaults to the repository root
+  DOTNET_VERSION: '3.1.401'              # set this to the dotnet version to use
+  CONTAINER_TAG: ${{ github.sha }}
+  AZURE_CONTAINER_REGISTRY_SERVER: ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER_PROD }}
+  API_ENDPOINT: ${{ secrets.API_ENDPOINT_PROD }}
+  FUNCTIONS_ENDPOINT: ${{ secrets.FUNCTIONS_ENDPOINT_PROD }}
+  REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME_PROD }}
+  REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD_PROD }}
+  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+  AZURE_AKS_CLUSTER_NAME: ${{ secrets.AZURE_AKS_CLUSTER_NAME_PROD }}
+  AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP_PROD }}
+  AZURE_COSMOS_ENDPOINT: ${{ secrets.AZURE_COSMOS_ENDPOINT_PROD }}
+  AZURE_FORM_RECOGNIZER_ENDPOINT: ${{ secrets.AZURE_FORM_RECOGNIZER_ENDPOINT_PROD }}
+  AZURE_KEYVAULT_ENDPOINT: ${{ secrets.AZURE_KEYVAULT_ENDPOINT_PROD }}
+  AZURE_STORAGE_BLOB_ENDPOINT: ${{ secrets.AZURE_STORAGE_BLOB_ENDPOINT_PROD }}
+  AZURE_STORAGE_QUEUE_ENDPOINT: ${{ secrets.AZURE_STORAGE_QUEUE_ENDPOINT_PROD }}
+  AZURE_TEXT_ANALYTICS_ENDPOINT: ${{ secrets.AZURE_TEXT_ANALYTICS_ENDPOINT_PROD }}
+  AZURE_STORAGE_TABLE_ENDPOINT: ${{ secrets.AZURE_STORAGE_TABLE_ENDPOINT_PROD }}
+  AZURE_APP_CONFIG_ENDPOINT: ${{ secrets.AZURE_APP_CONFIG_ENDPOINT_PROD }}
+  AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME_PROD }}
+  AZURE_STORAGE_TYPE: ${{ secrets.AZURE_STORAGE_TYPE_PROD }} 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:   
+
+    - uses: actions/checkout@v2 
+
+    - uses: Azure/docker-login@v1
+      with:
+        login-server: ${{ env.AZURE_CONTAINER_REGISTRY_SERVER }}
+        username: ${{ env.REGISTRY_USERNAME }}
+        password: ${{ env.REGISTRY_PASSWORD }}
+
+    - run: |
+        docker build -f ./src/net/Api/Dockerfile.prod -t ${{ env.AZURE_CONTAINER_REGISTRY_SERVER }}/memealyzernetapi:${{ env.CONTAINER_TAG }} ./src/net
+        docker build -f ./src/net/Services/QueueService/Dockerfile.prod -t ${{ env.AZURE_CONTAINER_REGISTRY_SERVER }}/memealyzernetqueueservice:${{ env.CONTAINER_TAG }} ./src/net
+        docker build -f ./src/net/WebApp/Dockerfile -t ${{ env.AZURE_CONTAINER_REGISTRY_SERVER }}/memealyzernetwebapp:${{ env.CONTAINER_TAG }} ./src/net
+        docker push ${{ env.AZURE_CONTAINER_REGISTRY_SERVER }}/memealyzernetapi:${{ env.CONTAINER_TAG }}
+        docker push ${{ env.AZURE_CONTAINER_REGISTRY_SERVER }}/memealyzernetqueueservice:${{ env.CONTAINER_TAG }}
+        docker push ${{ env.AZURE_CONTAINER_REGISTRY_SERVER }}/memealyzernetwebapp:${{ env.CONTAINER_TAG }}
+       
+    - name: Gen files
+      run: |
+        cd ./pac/net/kubectl/aks
+        sh ../shared/genfiles.sh
+    
+    # Set the target AKS cluster.
+    - uses: Azure/aks-set-context@v1
+      with:
+        creds: '${{ env.AZURE_CREDENTIALS }}'
+        cluster-name: ${{ env.AZURE_AKS_CLUSTER_NAME }}
+        resource-group: ${{ env.AZURE_RESOURCE_GROUP }}
+    - uses: Azure/k8s-deploy@v1
+      with:
+        manifests: |
+          pac/net/kubectl/aks/templates/.bin/memealyzernetapi-deployment.yaml
+          pac/net/kubectl/aks/templates/.bin/memealyzernetapi-service.yaml
+          pac/net/kubectl/aks/templates/.bin/memealyzernetqueueservice-deployment.yaml
+          pac/net/kubectl/aks/templates/.bin/memealyzernetwebapp-deployment.yaml
+          pac/net/kubectl/aks/templates/.bin/memealyzernetwebapp-service.yaml
+          pac/net/kubectl/aks/templates/.bin/env-configmap.yaml
+          pac/net/kubectl/aks/templates/.bin/ingress.yaml
+          pac/net/kubectl/aks/templates/.bin/web-configmap.yaml
+        images: |
+          ${{ env.AZURE_CONTAINER_REGISTRY_SERVER }}/memealyzernetapi:${{ env.CONTAINER_TAG }}
+          ${{ env.AZURE_CONTAINER_REGISTRY_SERVER }}/memealyzernetqueueservice:${{ env.CONTAINER_TAG }}
+          ${{ env.AZURE_CONTAINER_REGISTRY_SERVER }}/memealyzernetwebapp:${{ env.CONTAINER_TAG }}
+
+    - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ env.AZURE_CREDENTIALS }}
+
+    - name: 'Resolve Project Dependencies Using Dotnet'
+      shell: bash
+      run: |
+        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+        dotnet build --configuration Release --output ./output
+        popd
+
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1
+      id: fa
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'

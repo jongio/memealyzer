@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Lib;
+using Lib.Model;
 using System.Net.Http.Json;
 using Azure.Data.AppConfiguration;
 using System.Text.Json;

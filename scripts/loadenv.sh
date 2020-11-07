@@ -1,5 +1,5 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "Loading Env Vars from ${DOTENV}"
+echo "LOADING ENV VARS FROM: ${DOTENV}"
 set -o allexport; source $DOTENV; set +o allexport

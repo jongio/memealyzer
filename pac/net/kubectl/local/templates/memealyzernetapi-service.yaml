@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --file ./src/net/docker-compose.yml -o ./pac/kubectl/net
+      --volumes hostPath
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: memealyzernetapi
+  name: memealyzernetapi
+spec:
+  ports:
+  - name: "2080"
+    port: 2080
+    targetPort: 80
+  - name: "2443"
+    port: 2443
+    targetPort: 443
+  selector:
+    io.kompose.service: memealyzernetapi
+status:
+  loadBalancer: {}

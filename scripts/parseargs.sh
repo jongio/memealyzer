@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-if [ $# -eq 0 ]
+if [ $# -eq 0 ] || [ "$1" == "dev" ]
   then
     export DOTENV_FILENAME=.env
     export WORKSPACE=dev

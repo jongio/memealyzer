@@ -1,0 +1,103 @@
+on:
+  workflow_dispatch:
+    branches:
+      - tye
+  push:
+    branches:
+      - tye
+  pull_request:
+    branches:
+      - tye
+env:
+  ROOT: ${{ github.workspace }}
+  DOTENV_FILENAME: '.env.staging'
+  WORKSPACE: 'staging'
+  AZURE_FUNCTIONAPP_NAME: ${{ secrets.AZURE_FUNCTION_APP_NAME_STAGING }}  # set this to your application's name
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: './src/net/Services/Functions'    # set this to the path to your web app project, defaults to the repository root
+  DOTNET_VERSION: '5.0.100-rc.2.20479.15'              # set this to the dotnet version to use
+  #CONTAINER_TAG: ${{ github.sha }}
+  CONTAINER_TAG: 1.0.${{ github.run_number }}
+  # Issue: Because I cannot set image container tag with Tye, I need to do this type of workaround with a numberic container tag.
+  AZURE_CONTAINER_REGISTRY_SERVER: ${{ secrets.AZURE_CONTAINER_REGISTRY_SERVER_STAGING }}
+  API_ENDPOINT: ${{ secrets.API_ENDPOINT_STAGING }}
+  FUNCTIONS_ENDPOINT: ${{ secrets.FUNCTIONS_ENDPOINT_STAGING }}
+  REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME_STAGING }}
+  REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD_STAGING }}
+  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+  AZURE_AKS_CLUSTER_NAME: ${{ secrets.AZURE_AKS_CLUSTER_NAME_STAGING }}
+  AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP_STAGING }}
+  AZURE_COSMOS_ENDPOINT: ${{ secrets.AZURE_COSMOS_ENDPOINT_STAGING }}
+  AZURE_FORM_RECOGNIZER_ENDPOINT: ${{ secrets.AZURE_FORM_RECOGNIZER_ENDPOINT_STAGING }}
+  AZURE_KEYVAULT_ENDPOINT: ${{ secrets.AZURE_KEYVAULT_ENDPOINT_STAGING }}
+  AZURE_STORAGE_BLOB_ENDPOINT: ${{ secrets.AZURE_STORAGE_BLOB_ENDPOINT_STAGING }}
+  AZURE_STORAGE_QUEUE_ENDPOINT: ${{ secrets.AZURE_STORAGE_QUEUE_ENDPOINT_STAGING }}
+  AZURE_TEXT_ANALYTICS_ENDPOINT: ${{ secrets.AZURE_TEXT_ANALYTICS_ENDPOINT_STAGING }}
+  AZURE_STORAGE_TABLE_ENDPOINT: ${{ secrets.AZURE_STORAGE_TABLE_ENDPOINT_STAGING }}
+  AZURE_APP_CONFIG_ENDPOINT: ${{ secrets.AZURE_APP_CONFIG_ENDPOINT_STAGING }}
+  AZURE_STORAGE_ACCOUNT_NAME: ${{ secrets.AZURE_STORAGE_ACCOUNT_NAME_STAGING }}
+  AZURE_STORAGE_TYPE: ${{ secrets.AZURE_STORAGE_TYPE_STAGING }} 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:   
+
+    - name: 'Checkout'
+      uses: actions/checkout@v2 
+
+    - name: 'Setup DotNet ${{ env.DOTNET_VERSION }} Environment'
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: 'Setup DotNet 3.1.300 Environment'
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.300'
+
+      # Issue: We need 3.1.300 b/c tye is compiled against it. Will be resolved soon.
+      # https://github.com/dotnet/tye/issues/733
+      
+    - name: 'Install Tye tools'
+      run: |
+        dotnet tool install -g Microsoft.Tye --version "0.5.0-*" --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet5/nuget/v3/index.json
+    
+    - name: 'Login to ACR'
+      uses: Azure/docker-login@v1
+      with:
+        login-server: ${{ env.AZURE_CONTAINER_REGISTRY_SERVER }}
+        username: ${{ env.REGISTRY_USERNAME }}
+        password: ${{ env.REGISTRY_PASSWORD }}
+    
+    - name: 'Gen Files'
+      run: |
+        sh $GITHUB_WORKSPACE/pac/net/tye/genfiles.sh
+        sh $GITHUB_WORKSPACE/scripts/genappsettings.sh
+    - name: 'Set AKS Cluster'
+      uses: Azure/aks-set-context@v1
+      with:
+        creds: '${{ env.AZURE_CREDENTIALS }}'
+        cluster-name: ${{ env.AZURE_AKS_CLUSTER_NAME }}
+        resource-group: ${{ env.AZURE_RESOURCE_GROUP }} 
+
+    - name: 'tye deploy'
+      run: |
+        tye deploy $GITHUB_WORKSPACE/pac/net/tye/tye.yaml -v Debug --tags ${{ env.WORKSPACE }}
+
+    - name: 'Login via Azure CLI'
+      uses: azure/login@v1
+      with:
+        creds: ${{ env.AZURE_CREDENTIALS }}
+
+    - name: 'Resolve Project Dependencies Using Dotnet'
+      shell: bash
+      run: |
+        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+        dotnet build --configuration Release --output ./output
+        popd
+
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1
+      id: fa
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'

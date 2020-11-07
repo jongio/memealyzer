@@ -1,7 +1,7 @@
 #!/bin/bash 
 set -euo pipefail
 
-if [ -z "$1" ]
+if [ $# -eq 0 ]
   then
     echo "You need to run this script with the basename you used to created your resources. i.e., ./azcliuserperms.sh memealyzer01"
     exit
@@ -22,6 +22,6 @@ az role assignment create --assignee-object-id $principalId --role "AcrPull"
 
 echo "Setting KeyVault Policy for Azure CLI User"
 basename=$1
-az keyvault set-policy -g "${basename}"rg -n "${basename}"keyvault --object-id $principalId --secret-permissions get set list delete
+az keyvault set-policy -g "${basename}"rg -n "${basename}"kv --object-id $principalId --secret-permissions get set list delete
 
 echo "Done"

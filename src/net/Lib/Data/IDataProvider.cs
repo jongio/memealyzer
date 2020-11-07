@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Azure.Core;
-using Lib;
+using Lib.Model;
 
 namespace Lib.Data
 {

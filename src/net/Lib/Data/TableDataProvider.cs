@@ -6,6 +6,7 @@ using DotNetEnv;
 using Azure.Data.Tables;
 using Azure.Core;
 using System.Text.Json;
+using Lib.Model;
 
 namespace Lib.Data
 {

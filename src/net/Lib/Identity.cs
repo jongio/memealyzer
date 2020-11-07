@@ -6,7 +6,10 @@ namespace Lib
     {
         public static ChainedTokenCredential GetCredentialChain()
         {
-            return new ChainedTokenCredential(new ManagedIdentityCredential(), new AzureCliCredential());
+            return new ChainedTokenCredential(
+                new ManagedIdentityCredential(),
+                new AzureCliCredential()
+            );
         }
     }
 }

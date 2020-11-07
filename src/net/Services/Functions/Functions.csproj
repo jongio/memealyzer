@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Lib\Lib.csproj" />
+    <ProjectReference Include="..\..\Lib.Model\Lib.Model.csproj" />
   </ItemGroup>
 
   <!-- <PropertyGroup>

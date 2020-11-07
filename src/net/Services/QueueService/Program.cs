@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Azure.Core.Diagnostics;
 using DotNetEnv;
 using Lib;
+using Lib.Model;
 
 namespace QueueService
 {

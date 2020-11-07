@@ -61,9 +61,14 @@ The following Azure resources will be deployed with the Terraform script.
    1. CD to `iac/terraform`
    1. Terraform init: `terraform init`
    1. Terraform plan: 
-      1. For dev: `./plan.sh`
-      1. For prod: `./plan.sh prod` - You can pass any value as the first parameter. You just need a matching `.env.{workspace}` file in the root of the repo. 
-   1. Terraform apply: `./apply.sh` - This will deploy the above resources to Azure.
+
+      This will create a new Terraform workspace, activate it, and create a new plan file called `tf.plan`.
+
+      1. For local dev: `./plan.sh`
+      1. For staging: `./plan.sh staging`
+      1. For prod: `./plan.sh prod`
+      > You can pass any value as the first parameter. You just need a matching `.env.{workspace}` file in the root of the repo. 
+   1. Terraform apply: `./apply.sh` - This will deploy the above resources to Azure.  It will use the `tf.plan` that was generated from the previous step.
 
    > If you get this error: `Error validating token: IDX10223`, then run `az logout`, `az login`, and then run `./plan.sh` and `./apply.sh` again.
 1. Update `.env` file
@@ -109,10 +114,19 @@ After you change the setting, reload the WebApp to see the new style take effect
 
 ## Run Application
 
-### Local Docker Compose
-1. CD to the `src` folder for the language you would like to run, i.e. for .NET, cd to `src/net` for Python, cd to `src/python`
+### Local
+
+#### Project Tye
+1. CD to `/pac/net/tye/local` and run `./run.sh dev`
+1. Navigate to http://localhost:5000
+
+#### Docker Compose
+1. CD to the `pac/{lang}/docker/local` folder for the language you would like to run, i.e. for .NET, cd to `pac/net/docker/local`.
+1. Open `.env` and set the following:
+   1. `API_ENDPOINT=http://localhost:2080`
+   1. `FUNCTIONS_ENDPOINT=http://localhost:3080`
 1. Run Docker Compose to start the API, WebApp, Service, and Azurite containers.
-   1. Linux: `./run.sh`
+   - Run: `./run.sh`
 1. Start Azure Function
    - Run `./func.sh`
 1. Navigate to http://localhost:1080
@@ -121,31 +135,49 @@ After you change the setting, reload the WebApp to see the new style take effect
    1. Or to enter a random meme, just click "+".
    1. The image will be added to the grid. Wait for the service to pick it up. You will eventually see the text and the image border color will change indicating the image text sentiment.
 
-### Local Kubernetes
+#### Local Kubernetes
 1. In Docker Desktop settings, Enable Kubernetes and setup to use WSL 2 as backend. [Docker Desktop WSL 2 backend](https://docs.docker.com/docker-for-windows/wsl/)
-1. CD to `pac/net/k8s/local`.
+1. CD to `pac/net/kubectl/local`.
 1. Run `./run.sh`
 1. Navigate to http://localhost:31389
 
-### Azure Kubernetes Service
+### Azure Kubernetes Service (AKS)
 
-1. **Terraform Workspace**: It is recommended that you create another Azure deployment in a new Terraform workspace, so you can have a dev backend and a prod backend. i.e. `iac/terraform/plan.sh prod`, where `prod` is the name of the workspace and the name of the env file, i.e. `env.prod`.
+1. **Terraform Workspace**
+   - It is recommended that you create another Azure deployment in a new Terraform workspace, so you can have a dev backend and a prod backend. i.e. `iac/terraform/plan.sh prod`, where `prod` is the name of the workspace and the name of the env file, i.e. `env.prod`.
+
+   > See the "Azure Setup" steps above for full Terraform deployment steps.
 
    > The `{basename}` value is pulled from your .env file: `TF_VAR_basename`.
 
-1. **AKS Credentials**: Run the following command to get the AKS cluster credentials locally:
+1. **AKS Credentials**
+   - Run the following command to get the AKS cluster credentials locally:
    
    `az aks get-credentials --resource-group {basename}rg --name {basename}aks`
 
    > Replace `{basename}` with the basename you used when you created your Azure resources.
-1. **K8S Context**: Make sure the `K8S_CONTEXT` setting in your .env file is set to the desired value, which will be `{basename}aks`.
+1. **Kubernetes Context**
+   - Make sure the `K8S_CONTEXT` setting in your .env file is set to the desired value, which will be `{basename}aks`.
 1. **Nginx Ingress Controller Install**
    1. Install [Helm](https://helm.sh/) - This will be used for an [nginx ingress controller](https://github.com/kubernetes/ingress-nginx/tree/master/charts/ingress-nginx) that will expose a Public IP for our cluster and handle routing.
+   1. Set your kubectl context with: `kubectl config use-context {basename}aks`
    1. Run `./scripts/nginx.sh` to install the nginx-ingress controller to your AKS cluster.
-1. **AKS Cluster IP Address**: Run `az network public-ip list -g memealyzerdevaksnodes --query '[0].ipAddress' --output tsv` to find the AKS cluster's public IP address.
-1. **Update .env File**: Open `./.env` and change.  (Use `./.env.prod` for production environment)
-    1. `API_ENDPOINT` value to the Public IP address URI, i.e., `https://52.250.2.137`
+1. **AKS Cluster IP Address**
+   - Run `az network public-ip list -g memealyzerdevaksnodes --query '[0].ipAddress' --output tsv` to find the AKS cluster's public IP address.
+1. **Update .env File**
+   - Open `./.env` and change.  (Use `./.env.prod` for production environment)
     1. `FUNCTIONS_ENDPOINT` to the URI of your functions endpoint, i.e. `https://memealyzerdevfunction.azurewebsites.net` - this was outputted by your Terraform run and can be found in your `.env` file.
-1. **Deploy**: CD to `/pac/net/k8s/aks` and run `./deploy.sh` - this will build containers, push them to ACR, apply K8S files, and deploy the Azure Function.
-1. **Run**: Open a browser and go to the AKS cluster's Public IP.
+1. **Deploy**: 
+   
+   You can choose to either deploy with kubectl or [**Project Tye**](https://github.com/dotnet/tye).
 
+   - With **kubectl**
+      - CD to `/pac/net/kubectl/aks`
+   - With **Project Tye**
+      - CD to `/pac/net/tye`
+
+   - Run `./deploy.sh {env}`, where env is the name of the environment you want to deploy to, this will match your .env file in the project root.  
+   
+   - This will build containers, push them to ACR, apply Kubernetes files, and deploy the Azure Function.
+1. **Run**
+   - Open a browser and go to the AKS cluster's Public IP.

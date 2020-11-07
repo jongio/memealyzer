@@ -12,11 +12,15 @@
     <PackageReference Include="Azure.Storage.Blobs" Version="12.5.1" />
     <PackageReference Include="Azure.Storage.Queues" Version="12.4.1" />
     <PackageReference Include="Azure.Cosmos" Version="4.0.0-preview3" />
-    <PackageReference Include="Azure.Data.Tables" Version="3.0.0-beta.1" />
+    <PackageReference Include="Azure.Data.Tables" Version="3.0.0-beta.2" />
     <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.1.0" />
     <PackageReference Include="Azure.AI.FormRecognizer" Version="3.0.0" />
     <PackageReference Include="Azure.AI.TextAnalytics" Version="5.0.0" />
-
+    <!-- Needed due to this issue: https://github.com/dotnet/roslyn/issues/47304 -->
+    <PackageReference Include="Microsoft.Azure.Cosmos.Direct" Version="3.4.1.0" />
+  </ItemGroup>
+   <ItemGroup>
+    <ProjectReference Include="..\Lib.Model\Lib.Model.csproj" />
   </ItemGroup>
   <!-- <PropertyGroup>
     <RestoreSources>https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json;https://api.nuget.org/v3/index.json</RestoreSources>
