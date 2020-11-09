@@ -47,7 +47,7 @@ namespace Lib.Data
 
             // Cosmos
             CosmosClient = new CosmosClient(
-                Env.GetString("AZURE_COSMOS_ENDPOINT"),
+                Config.CosmosEndpoint,
                 cosmosKey.Value.Value,
                 options);
 
