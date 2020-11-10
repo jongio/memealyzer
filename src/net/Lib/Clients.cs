@@ -40,43 +40,39 @@ namespace Lib
 
         public async Task InitializeAsync()
         {
-
-            DataProvider = new DataProviderFactory().GetDataProvider(Env.GetString("AZURE_STORAGE_TYPE"));
+            // Data Provider            
+            DataProvider = new DataProviderFactory().GetDataProvider(Config.StorageType);
             await DataProvider.InitializeAsync(credential);
 
             // App Config
-            ConfigurationClient = new ConfigurationClient(new Uri(Env.GetString("AZURE_APP_CONFIG_ENDPOINT")), credential);
-            
+            ConfigurationClient = new ConfigurationClient(Config.AppConfigEndpoint, credential);
+
             // Blob
-            BlobServiceClient = new BlobServiceClient(new Uri(Env.GetString("AZURE_STORAGE_BLOB_ENDPOINT")), credential);
-            ContainerClient = BlobServiceClient.GetBlobContainerClient(Env.GetString("AZURE_STORAGE_BLOB_CONTAINER_NAME"));
+            BlobServiceClient = new BlobServiceClient(Config.StorageBlobEndpoint, credential);
+            ContainerClient = BlobServiceClient.GetBlobContainerClient(Config.StorageBlobContainerName);
             await ContainerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
 
             // Queue
-            QueueServiceClient = new QueueServiceClient(new Uri(Env.GetString("AZURE_STORAGE_QUEUE_ENDPOINT")), credential);
-            QueueClient = QueueServiceClient.GetQueueClient(Env.GetString("AZURE_STORAGE_QUEUE_NAME"));
+            QueueServiceClient = new QueueServiceClient(Config.StorageQueueEndpoint, credential);
+            QueueClient = QueueServiceClient.GetQueueClient(Config.StorageQueueName);
             await QueueClient.CreateIfNotExistsAsync();
 
             // Client Sync Queue
-            ClientSyncQueueClient = QueueServiceClient.GetQueueClient(Env.GetString("AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME"));
+            ClientSyncQueueClient = QueueServiceClient.GetQueueClient(Config.StorageClientSyncQueueName);
             await ClientSyncQueueClient.CreateIfNotExistsAsync();
 
             // FormRecognizerClient
-            FormRecognizerClient = new FormRecognizerClient(
-                new Uri(Env.GetString("AZURE_FORM_RECOGNIZER_ENDPOINT")),
-                credential);
+            FormRecognizerClient = new FormRecognizerClient(Config.FormRecognizerEndpoint, credential);
 
             // TextAnalyticsClient
-            TextAnalyticsClient = new TextAnalyticsClient(
-                new Uri(Env.GetString("AZURE_TEXT_ANALYTICS_ENDPOINT")),
-                credential);
+            TextAnalyticsClient = new TextAnalyticsClient(Config.TextAnalyticsEndpoint, credential);
         }
 
         public async Task<Image> EnqueueImageAsync(Image image = null)
         {
             if (image?.Url is null || string.IsNullOrEmpty(image.Url))
             {
-                var memeImage = await httpClient.GetFromJsonAsync<Image>(Env.GetString("MEME_ENDPOINT"));
+                var memeImage = await httpClient.GetFromJsonAsync<Image>(Config.MemeEndpoint);
                 image.Url = memeImage.Url;
             }
 

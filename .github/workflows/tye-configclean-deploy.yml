@@ -4,7 +4,7 @@ on:
       - staging
   push:
     branches:
-      - staging
+      - configclean
   pull_request:
     branches:
       - staging
@@ -16,14 +16,14 @@ env:
   ROOT: ${{ github.workspace }}
   DOTENV_FILENAME: .env.staging
   WORKSPACE: staging
-  AZURE_FUNCTIONAPP_NAME: memealyzerstagingfunction
-  DOTNET_VERSION: '5.0.100-rc.2.20479.15'
-  CONTAINER_TAG: 1.0.${{ github.run_number }}
   AZURE_CONTAINER_REGISTRY_SERVER: memealyzerstagingacr.azurecr.io
   FUNCTIONS_ENDPOINT: http://memealyzerstagingfunction.azurewebsites.net
   REGISTRY_USERNAME: memealyzerstagingacr
   AZURE_AKS_CLUSTER_NAME: memealyzerstagingaks
   AZURE_RESOURCE_GROUP: memealyzerstagingrg
+  AZURE_FUNCTIONAPP_NAME: memealyzerstagingfunction
+  DOTNET_VERSION: '5.0.100-rc.2.20479.15'
+  CONTAINER_TAG: 1.0.${{ github.run_number }}
 
 jobs:
   build:

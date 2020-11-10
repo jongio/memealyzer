@@ -1,3 +1,5 @@
+resource "random_uuid" "uuid" {}
+
 resource "azurerm_resource_group" "rg" {
   name     = "${var.basename}rg"
   location = var.location
@@ -198,30 +200,30 @@ resource "azurerm_app_service_plan" "plan" {
 
 # FUNCTION
 resource "azurerm_function_app" "function" {
-  name                = "${var.basename}function"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.rg.name
+  name                       = "${var.basename}function"
+  location                   = var.location
+  resource_group_name        = azurerm_resource_group.rg.name
   app_service_plan_id        = azurerm_app_service_plan.plan.id
   storage_account_name       = azurerm_storage_account.storage.name
   storage_account_access_key = azurerm_storage_account.storage.primary_access_key
   os_type                    = "linux"
   app_settings = {
-    "AzureWebJobsStorage" = azurerm_storage_account.storage.primary_connection_string,
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.logging.instrumentation_key,
-    "WEBSITES_ENABLE_APP_SERVICE_STORAGE" = false,
-    "AZURE_KEYVAULT_ENDPOINT" = azurerm_key_vault.key_vault.vault_uri, 
-    "AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME" = "sync",
+    "AzureWebJobsStorage"                         = azurerm_storage_account.storage.primary_connection_string,
+    "APPINSIGHTS_INSTRUMENTATIONKEY"              = azurerm_application_insights.logging.instrumentation_key,
+    "WEBSITES_ENABLE_APP_SERVICE_STORAGE"         = false,
+    "AZURE_KEYVAULT_ENDPOINT"                     = azurerm_key_vault.key_vault.vault_uri,
+    "AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME"        = "sync",
     "AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME" = "StorageConnectionString",
     "AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME" = "SignalRConnectionString",
-    "WEBSITE_RUN_FROM_PACKAGE" = "", 
-    "FUNCTIONS_WORKER_RUNTIME" = "dotnet"
+    "WEBSITE_RUN_FROM_PACKAGE"                    = "",
+    "FUNCTIONS_WORKER_RUNTIME"                    = "dotnet"
   }
   identity {
     type = "SystemAssigned"
   }
   site_config {
     cors {
-      allowed_origins = ["*"]
+      allowed_origins     = ["*"]
       support_credentials = false
     }
     always_on = true
@@ -233,8 +235,8 @@ resource "azurerm_container_registry" "acr" {
   name                = "${var.basename}acr"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
-  sku                      = "Standard"
-  admin_enabled            = true
+  sku                 = "Standard"
+  admin_enabled       = true
 }
 
 # Azure CLI Script to fill in Terraform gaps.
@@ -246,9 +248,9 @@ module "script" {
     TEXT_ANALYTICS_NAME  = azurerm_cognitive_account.text_analytics.name,
     FORM_RECOGNIZER_NAME = azurerm_cognitive_account.form_recognizer.name,
     RESOURCE_GROUP_NAME  = azurerm_resource_group.rg.name,
-    APP_CONFIG_NAME  = azurerm_app_configuration.appconfig.name,
-    KEY_VAULT_NAME = azurerm_key_vault.key_vault.name,
-    FUNCTION_MI_ID = azurerm_function_app.function.identity.0.principal_id
+    APP_CONFIG_NAME      = azurerm_app_configuration.appconfig.name,
+    KEY_VAULT_NAME       = azurerm_key_vault.key_vault.name,
+    FUNCTION_MI_ID       = azurerm_function_app.function.identity.0.principal_id
   }
 }
 
@@ -258,6 +260,7 @@ resource "azurerm_role_assignment" "mi_blob_storage" {
   role_definition_name             = "Storage Blob Data Contributor"
   principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
   skip_service_principal_aad_check = true
+  name                             = random_uuid.uuid.result
 }
 
 # QUEUE STORAGE ROLES
@@ -266,6 +269,7 @@ resource "azurerm_role_assignment" "mi_queue_storage" {
   role_definition_name             = "Storage Queue Data Contributor"
   principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
   skip_service_principal_aad_check = true
+  name                             = random_uuid.uuid.result
 }
 
 # QUEUE MSG STORAGE ROLES
@@ -275,6 +279,7 @@ resource "azurerm_role_assignment" "mi_queue_msg_storage" {
   role_definition_name             = "Storage Queue Data Message Processor"
   principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
   skip_service_principal_aad_check = true
+  name                             = random_uuid.uuid.result
 }
 
 # COG SERV ROLES
@@ -284,6 +289,7 @@ resource "azurerm_role_assignment" "mi_cogserv" {
   role_definition_name             = "Cognitive Services User"
   principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
   skip_service_principal_aad_check = true
+  name                             = random_uuid.uuid.result
 }
 
 # APP CONFIG ROLES
@@ -293,6 +299,7 @@ resource "azurerm_role_assignment" "mi_appconfig" {
   role_definition_name             = "App Configuration Data Owner"
   principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
   skip_service_principal_aad_check = true
+  name                             = random_uuid.uuid.result
 }
 
 # ACR ROLES
@@ -302,6 +309,7 @@ resource "azurerm_role_assignment" "mi_acrpush" {
   role_definition_name             = "AcrPush"
   principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
   skip_service_principal_aad_check = true
+  name                             = random_uuid.uuid.result
 }
 
 resource "azurerm_role_assignment" "mi_acrpull" {
@@ -309,6 +317,7 @@ resource "azurerm_role_assignment" "mi_acrpull" {
   role_definition_name             = "AcrPull"
   principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
   skip_service_principal_aad_check = true
+  name                             = random_uuid.uuid.result
 }
 
 #### AZURE FUNCTION ROLES
@@ -319,6 +328,7 @@ resource "azurerm_role_assignment" "fn_mi_blob_storage" {
   role_definition_name             = "Storage Blob Data Contributor"
   principal_id                     = azurerm_function_app.function.identity.0.principal_id
   skip_service_principal_aad_check = true
+  name                             = random_uuid.uuid.result
 }
 
 # QUEUE STORAGE ROLES
@@ -327,6 +337,7 @@ resource "azurerm_role_assignment" "fn_mi_queue_storage" {
   role_definition_name             = "Storage Queue Data Contributor"
   principal_id                     = azurerm_function_app.function.identity.0.principal_id
   skip_service_principal_aad_check = true
+  name                             = random_uuid.uuid.result
 }
 
 # QUEUE MSG STORAGE ROLES
@@ -336,6 +347,7 @@ resource "azurerm_role_assignment" "fn_mi_queue_msg_storage" {
   role_definition_name             = "Storage Queue Data Message Processor"
   principal_id                     = azurerm_function_app.function.identity.0.principal_id
   skip_service_principal_aad_check = true
+  name                             = random_uuid.uuid.result
 }
 
 # COG SERV ROLES
@@ -345,6 +357,7 @@ resource "azurerm_role_assignment" "fn_mi_cogserv" {
   role_definition_name             = "Cognitive Services User"
   principal_id                     = azurerm_function_app.function.identity.0.principal_id
   skip_service_principal_aad_check = true
+  name                             = random_uuid.uuid.result
 }
 
 # APP CONFIG ROLES
@@ -354,6 +367,7 @@ resource "azurerm_role_assignment" "fn_mi_appconfig" {
   role_definition_name             = "App Configuration Data Owner"
   principal_id                     = azurerm_function_app.function.identity.0.principal_id
   skip_service_principal_aad_check = true
+  name                             = random_uuid.uuid.result
 }
 
 # ACR ROLES
@@ -363,6 +377,7 @@ resource "azurerm_role_assignment" "fn_mi_acrpush" {
   role_definition_name             = "AcrPush"
   principal_id                     = azurerm_function_app.function.identity.0.principal_id
   skip_service_principal_aad_check = true
+  name                             = random_uuid.uuid.result
 }
 
 resource "azurerm_role_assignment" "fn_mi_acrpull" {
@@ -370,6 +385,7 @@ resource "azurerm_role_assignment" "fn_mi_acrpull" {
   role_definition_name             = "AcrPull"
   principal_id                     = azurerm_function_app.function.identity.0.principal_id
   skip_service_principal_aad_check = true
+  name                             = random_uuid.uuid.result
 }
 
 output "AZURE_STORAGE_BLOB_ENDPOINT" {
