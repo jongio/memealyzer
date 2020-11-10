@@ -24,6 +24,7 @@ env:
   AZURE_FUNCTIONAPP_NAME: memealyzerstagingfunction
   DOTNET_VERSION: '5.0.100'
   CONTAINER_TAG: 1.0.${{ github.run_number }}
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: './src/net/Services/Functions'    # set this to the path to your web app project, defaults to the repository root
 
 jobs:
   build:
@@ -80,8 +81,8 @@ jobs:
     - name: 'Resolve Project Dependencies Using Dotnet'
       shell: bash
       run: |
-        pushd $GITHUB_WORKSPACE/src/net/Services/Functions
-        dotnet build --configuration Release --output output
+        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+        dotnet build --configuration Release --output ./output
         popd
 
     - name: 'Run Azure Functions Action'
@@ -89,4 +90,5 @@ jobs:
       id: fa
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-        package: $GITHUB_WORKSPACE/src/net/Services/Functions/output
+        package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+
