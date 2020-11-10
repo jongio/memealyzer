@@ -14,6 +14,8 @@ debug.log
 .bin
 .tye
 
+pac/net/tye/.env*
+
 # Visual Studio Code
 **/.vscode/settings.json
 

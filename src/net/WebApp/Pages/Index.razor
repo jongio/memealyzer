@@ -78,7 +78,6 @@ else
         hubConnection.On<Image>("ReceiveImage", (image) =>
         {
             int index = FindImageById(image.Id);
-            Console.WriteLine(index);
             if (index >= 0)
             {
                 images[index] = image;

@@ -6,14 +6,14 @@ namespace Lib
     public static class Config
     {
         public static readonly string BaseName = Env.GetString("BASENAME");
-        public static readonly Uri CosmosEndpoint = new Uri(String.Format(Env.GetString("AZURE_COSMOS_ENDPOINT", "https://{0}cosmosaccount.documents.azure.com:443/"), BaseName));
-        public static readonly Uri FormRecognizerEndpoint = new Uri(String.Format(Env.GetString("AZURE_FORM_RECOGNIZER_ENDPOINT", "https://{0}formrecognizer.cognitiveservices.azure.com/"), BaseName));
+        public static readonly string CosmosEndpoint = String.Format(Env.GetString("AZURE_COSMOS_ENDPOINT", "https://{0}cosmosaccount.documents.azure.com:443"), BaseName);
+        public static readonly Uri FormRecognizerEndpoint = new Uri(String.Format(Env.GetString("AZURE_FORM_RECOGNIZER_ENDPOINT", "https://{0}fr.cognitiveservices.azure.com/"), BaseName));
         public static readonly Uri KeyVaultEndpoint = new Uri(String.Format(Env.GetString("AZURE_KEYVAULT_ENDPOINT", "https://{0}kv.vault.azure.net/"), BaseName));
         public static readonly string StorageAccountName = String.Format(Env.GetString("AZURE_STORAGE_ACCOUNT_NAME", "{0}storage"), BaseName);
         public static readonly Uri StorageBlobEndpoint = new Uri(String.Format(Env.GetString("AZURE_STORAGE_BLOB_ENDPOINT", "https://{0}storage.blob.core.windows.net/"), BaseName));
         public static readonly Uri StorageQueueEndpoint = new Uri(String.Format(Env.GetString("AZURE_STORAGE_QUEUE_ENDPOINT", "https://{0}storage.queue.core.windows.net/"), BaseName));
         public static readonly Uri StorageTableEndpoint = new Uri(String.Format(Env.GetString("AZURE_STORAGE_TABLE_ENDPOINT", "https://{0}storage.table.core.windows.net/"), BaseName));
-        public static readonly Uri TextAnalyticsEndpoint = new Uri(String.Format(Env.GetString("AZURE_TEXT_ANALYTICS_ENDPOINT", "https://{0}textanalytics.cognitiveservices.azure.com/"), BaseName));
+        public static readonly Uri TextAnalyticsEndpoint = new Uri(String.Format(Env.GetString("AZURE_TEXT_ANALYTICS_ENDPOINT", "https://{0}ta.cognitiveservices.azure.com/"), BaseName));
         public static readonly Uri AppConfigEndpoint = new Uri(String.Format(Env.GetString("AZURE_APP_CONFIG_ENDPOINT", "https://{0}appconfig.azconfig.io"), BaseName));
         public static readonly string ContainerRegistryServer = String.Format(Env.GetString("AZURE_CONTAINER_REGISTRY_SERVER", "{0}acr.azurecr.io"), BaseName);
         public static readonly string StorageBlobContainerName = Env.GetString("AZURE_STORAGE_BLOB_CONTAINER_NAME", "blobs");

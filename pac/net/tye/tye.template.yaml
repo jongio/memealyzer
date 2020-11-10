@@ -14,24 +14,24 @@ services:
         protocol: http
     tags:
       - dev
-  # - name: memealyzernetwebapp
-  #   project: ${ROOT}/src/net/WebApp/WebApp.csproj
-  #   bindings:
-  #     - port: 1080
-  #       containerPort: 80
-  #   env_file:
-  #     - ${ROOT}/${DOTENV_FILENAME}
-  #   tags:
-  #     - dev
-  #     - staging
-  #     - prod
+  - name: memealyzernetwebapp
+    project: ${ROOT}/src/net/WebApp/WebApp.csproj
+    bindings:
+      - port: 1080
+        containerPort: 80
+    env_file:
+      - ${DOTENV_FILENAME}
+    tags:
+      - dev
+      - staging
+      - prod
   - name: memealyzernetapi
     project: ${ROOT}/src/net/Api/Api.csproj
     bindings:
       - port: 2080
         containerPort: 80
     env_file: 
-      - ${ROOT}/${DOTENV_FILENAME}
+      - ${DOTENV_FILENAME}
     tags:
       - dev
       - staging
@@ -46,7 +46,7 @@ services:
   - name: memealyzernetqueueservice
     project: ${ROOT}/src/net/Services/QueueService/QueueService.csproj
     env_file: 
-    - ${ROOT}/${DOTENV_FILENAME}
+    - ${DOTENV_FILENAME}
     tags:
       - dev
       - staging
@@ -55,8 +55,8 @@ services:
 ingress:
   - name: ingressdev
     rules:
-      # - path: /
-      #   service: memealyzernetwebapp
+      - path: /
+        service: memealyzernetwebapp
       - path: /images
         service: memealyzernetapi
         preservePath: true
@@ -76,8 +76,8 @@ ingress:
       - dev
   - name: ingress
     rules:
-      # - path: /
-      #   service: memealyzernetwebapp
+      - path: /
+        service: memealyzernetwebapp
       - path: /images
         service: memealyzernetapi
         preservePath: true

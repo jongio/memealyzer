@@ -22,24 +22,12 @@ namespace Memealyzer.Functions
 
         [FunctionName("QueueTrigger")]
         public static async Task Run(
-            [QueueTrigger(
-                "%AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME%",
-                Connection = "ClientSyncQueueConnectionString")]
-                string queueMessage,
-            [SignalR(
-                HubName = "imagehub")]
-                IAsyncCollector<SignalRMessage> signalRMessages,
+            [QueueTrigger("%AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME%", Connection = "ClientSyncQueueConnectionString")] string queueMessage,
+            [SignalR(HubName = "imagehub")] IAsyncCollector<SignalRMessage> signalRMessages,
             ILogger log)
         {
-            var image = JsonSerializer.Deserialize<Image>(queueMessage,
-                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-
-            await signalRMessages.AddAsync(
-                new SignalRMessage
-                {
-                    Target = "ReceiveImage",
-                    Arguments = new[] { image }
-                });
+            var image = JsonSerializer.Deserialize<Image>(queueMessage, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            await signalRMessages.AddAsync(new SignalRMessage { Target = "ReceiveImage", Arguments = new[] { image } });
         }
     }
 }

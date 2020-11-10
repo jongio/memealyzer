@@ -34,7 +34,7 @@ namespace Lib.Data
 
             CosmosClientOptions options = new CosmosClientOptions
             {
-                ConnectionMode = ConnectionMode.Direct,
+                ConnectionMode = ConnectionMode.Gateway,
                 ConsistencyLevel = ConsistencyLevel.Session,
                 Diagnostics = {
                     IsLoggingEnabled = false
@@ -47,7 +47,7 @@ namespace Lib.Data
 
             // Cosmos
             CosmosClient = new CosmosClient(
-                Config.CosmosEndpoint.ToString(),
+                Config.CosmosEndpoint,
                 cosmosKey.Value.Value,
                 options);
 

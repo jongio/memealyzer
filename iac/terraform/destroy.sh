@@ -6,4 +6,4 @@ export ROOT=../..;source $ROOT/scripts/base.sh
 terraform workspace select $WORKSPACE || terraform workspace new $WORKSPACE
 terraform workspace select $WORKSPACE
 
-terraform apply tf.plan
+terraform destroy

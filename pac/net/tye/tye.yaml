@@ -1,5 +1,5 @@
 name: memealyzer
-registry: 
+registry: memealyzerstagingacr.azurecr.io
 services:
   - name: azurite
     image: mcr.microsoft.com/azure-storage/azurite
@@ -14,24 +14,24 @@ services:
         protocol: http
     tags:
       - dev
-  # - name: memealyzernetwebapp
-  #   project: ../../../src/net/WebApp/WebApp.csproj
-  #   bindings:
-  #     - port: 1080
-  #       containerPort: 80
-  #   env_file:
-  #     - ../../../.env
-  #   tags:
-  #     - dev
-  #     - staging
-  #     - prod
+  - name: memealyzernetwebapp
+    project: ../../../src/net/WebApp/WebApp.csproj
+    bindings:
+      - port: 1080
+        containerPort: 80
+    env_file:
+      - .env.staging
+    tags:
+      - dev
+      - staging
+      - prod
   - name: memealyzernetapi
     project: ../../../src/net/Api/Api.csproj
     bindings:
       - port: 2080
         containerPort: 80
     env_file: 
-      - ../../../.env
+      - .env.staging
     tags:
       - dev
       - staging
@@ -46,7 +46,7 @@ services:
   - name: memealyzernetqueueservice
     project: ../../../src/net/Services/QueueService/QueueService.csproj
     env_file: 
-    - ../../../.env
+    - .env.staging
     tags:
       - dev
       - staging
@@ -55,8 +55,8 @@ services:
 ingress:
   - name: ingressdev
     rules:
-      # - path: /
-      #   service: memealyzernetwebapp
+      - path: /
+        service: memealyzernetwebapp
       - path: /images
         service: memealyzernetapi
         preservePath: true
@@ -76,8 +76,8 @@ ingress:
       - dev
   - name: ingress
     rules:
-      # - path: /
-      #   service: memealyzernetwebapp
+      - path: /
+        service: memealyzernetwebapp
       - path: /images
         service: memealyzernetapi
         preservePath: true
