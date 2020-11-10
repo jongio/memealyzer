@@ -22,7 +22,7 @@ env:
   AZURE_AKS_CLUSTER_NAME: memealyzerstagingaks
   AZURE_RESOURCE_GROUP: memealyzerstagingrg
   AZURE_FUNCTIONAPP_NAME: memealyzerstagingfunction
-  DOTNET_VERSION: '5.0.100-rc.2.20479.15'
+  DOTNET_VERSION: '5.0.100'
   CONTAINER_TAG: 1.0.${{ github.run_number }}
 
 jobs:
@@ -81,7 +81,7 @@ jobs:
       shell: bash
       run: |
         pushd $GITHUB_WORKSPACE/src/net/Services/Functions
-        dotnet build --configuration Release --output ./output
+        dotnet build --configuration Release --output output
         popd
 
     - name: 'Run Azure Functions Action'
