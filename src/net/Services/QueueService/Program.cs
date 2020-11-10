@@ -27,7 +27,7 @@ namespace QueueService
                 Console.WriteLine("Receiving Messages...");
 
                 // Get Messages
-                var messages = await clients.QueueClient.ReceiveMessagesAsync(maxMessages: Env.GetInt("AZURE_STORAGE_QUEUE_MSG_COUNT", 10));
+                var messages = await clients.QueueClient.ReceiveMessagesAsync(maxMessages: Config.StorageQueueMessageCount);
 
                 foreach (var message in messages.Value)
                 {
@@ -108,7 +108,7 @@ namespace QueueService
                         Console.WriteLine(ex.ToString());
                     }
                 }
-                await Task.Delay(TimeSpan.FromSeconds(Env.GetInt("AZURE_STORAGE_QUEUE_RECEIVE_SLEEP", 1)));
+                await Task.Delay(TimeSpan.FromSeconds(Config.StorageQueueReceiveSleep));
             }
         }
     }

@@ -1,0 +1,265 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: memealyzernetwebapp
+  labels:
+    app.kubernetes.io/name: 'memealyzernetwebapp'
+    app.kubernetes.io/part-of: 'memealyzer'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: memealyzernetwebapp
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: 'memealyzernetwebapp'
+        app.kubernetes.io/part-of: 'memealyzer'
+    spec:
+      containers:
+      - name: memealyzernetwebapp
+        image: memealyzernetwebapp:1.0.9
+        imagePullPolicy: Always
+        env:
+        - name: BASENAME
+          value: 'memealyzerstaging'
+        - name: TF_VAR_basename
+          value: 'memealyzerstaging'
+        - name: TF_VAR_location
+          value: 'westus2'
+        - name: TF_VAR_failover_location
+          value: 'eastus2'
+        - name: AZURE_AKS_CLUSTER_NAME
+          value: 'memealyzerstagingaks'
+        - name: AZURE_FUNCTION_APP_NAME
+          value: 'memealyzerstagingfunction'
+        - name: K8S_CONTEXT
+          value: 'memealyzerstagingaks'
+        - name: CONTAINER_TAG
+          value: '1.0.9'
+        - name: AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME
+          value: 'sync'
+        - name: FUNCTIONS_ENDPOINT
+          value: 'http://memealyzerstagingfunction.azurewebsites.net'
+        - name: MEME_ENDPOINT
+          value: 'https://meme-api.herokuapp.com/gimme/wholesomememes'
+        - name: DOTNET_LOGGING__CONSOLE__DISABLECOLORS
+          value: 'true'
+        - name: ASPNETCORE_URLS
+          value: 'http://*'
+        - name: PORT
+          value: '80'
+        - name: SERVICE__MEMEALYZERNETWEBAPP__PROTOCOL
+          value: 'http'
+        - name: SERVICE__MEMEALYZERNETWEBAPP__PORT
+          value: '1080'
+        - name: SERVICE__MEMEALYZERNETWEBAPP__HOST
+          value: 'memealyzernetwebapp'
+        - name: SERVICE__MEMEALYZERNETAPI__PROTOCOL
+          value: 'http'
+        - name: SERVICE__MEMEALYZERNETAPI__PORT
+          value: '2080'
+        - name: SERVICE__MEMEALYZERNETAPI__HOST
+          value: 'memealyzernetapi'
+        ports:
+        - containerPort: 80
+...
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: memealyzernetwebapp
+  labels:
+    app.kubernetes.io/name: 'memealyzernetwebapp'
+    app.kubernetes.io/part-of: 'memealyzer'
+spec:
+  selector:
+    app.kubernetes.io/name: memealyzernetwebapp
+  type: ClusterIP
+  ports:
+  - name: http
+    protocol: TCP
+    port: 1080
+    targetPort: 80
+...
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: memealyzernetapi
+  labels:
+    app.kubernetes.io/name: 'memealyzernetapi'
+    app.kubernetes.io/part-of: 'memealyzer'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: memealyzernetapi
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: 'memealyzernetapi'
+        app.kubernetes.io/part-of: 'memealyzer'
+    spec:
+      containers:
+      - name: memealyzernetapi
+        image: memealyzernetapi:1.0.9
+        imagePullPolicy: Always
+        env:
+        - name: BASENAME
+          value: 'memealyzerstaging'
+        - name: TF_VAR_basename
+          value: 'memealyzerstaging'
+        - name: TF_VAR_location
+          value: 'westus2'
+        - name: TF_VAR_failover_location
+          value: 'eastus2'
+        - name: AZURE_AKS_CLUSTER_NAME
+          value: 'memealyzerstagingaks'
+        - name: AZURE_FUNCTION_APP_NAME
+          value: 'memealyzerstagingfunction'
+        - name: K8S_CONTEXT
+          value: 'memealyzerstagingaks'
+        - name: CONTAINER_TAG
+          value: '1.0.9'
+        - name: AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME
+          value: 'sync'
+        - name: FUNCTIONS_ENDPOINT
+          value: 'http://memealyzerstagingfunction.azurewebsites.net'
+        - name: MEME_ENDPOINT
+          value: 'https://meme-api.herokuapp.com/gimme/wholesomememes'
+        - name: DOTNET_LOGGING__CONSOLE__DISABLECOLORS
+          value: 'true'
+        - name: ASPNETCORE_URLS
+          value: 'http://*'
+        - name: PORT
+          value: '80'
+        - name: SERVICE__MEMEALYZERNETAPI__PROTOCOL
+          value: 'http'
+        - name: SERVICE__MEMEALYZERNETAPI__PORT
+          value: '2080'
+        - name: SERVICE__MEMEALYZERNETAPI__HOST
+          value: 'memealyzernetapi'
+        - name: SERVICE__MEMEALYZERNETWEBAPP__PROTOCOL
+          value: 'http'
+        - name: SERVICE__MEMEALYZERNETWEBAPP__PORT
+          value: '1080'
+        - name: SERVICE__MEMEALYZERNETWEBAPP__HOST
+          value: 'memealyzernetwebapp'
+        ports:
+        - containerPort: 80
+...
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: memealyzernetapi
+  labels:
+    app.kubernetes.io/name: 'memealyzernetapi'
+    app.kubernetes.io/part-of: 'memealyzer'
+spec:
+  selector:
+    app.kubernetes.io/name: memealyzernetapi
+  type: ClusterIP
+  ports:
+  - name: http
+    protocol: TCP
+    port: 2080
+    targetPort: 80
+...
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: memealyzernetqueueservice
+  labels:
+    app.kubernetes.io/name: 'memealyzernetqueueservice'
+    app.kubernetes.io/part-of: 'memealyzer'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: memealyzernetqueueservice
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: 'memealyzernetqueueservice'
+        app.kubernetes.io/part-of: 'memealyzer'
+    spec:
+      containers:
+      - name: memealyzernetqueueservice
+        image: memealyzernetqueueservice:1.0.9
+        imagePullPolicy: Always
+        env:
+        - name: BASENAME
+          value: 'memealyzerstaging'
+        - name: TF_VAR_basename
+          value: 'memealyzerstaging'
+        - name: TF_VAR_location
+          value: 'westus2'
+        - name: TF_VAR_failover_location
+          value: 'eastus2'
+        - name: AZURE_AKS_CLUSTER_NAME
+          value: 'memealyzerstagingaks'
+        - name: AZURE_FUNCTION_APP_NAME
+          value: 'memealyzerstagingfunction'
+        - name: K8S_CONTEXT
+          value: 'memealyzerstagingaks'
+        - name: CONTAINER_TAG
+          value: '1.0.9'
+        - name: AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME
+          value: 'sync'
+        - name: FUNCTIONS_ENDPOINT
+          value: 'http://memealyzerstagingfunction.azurewebsites.net'
+        - name: MEME_ENDPOINT
+          value: 'https://meme-api.herokuapp.com/gimme/wholesomememes'
+        - name: DOTNET_LOGGING__CONSOLE__DISABLECOLORS
+          value: 'true'
+        - name: SERVICE__MEMEALYZERNETWEBAPP__PROTOCOL
+          value: 'http'
+        - name: SERVICE__MEMEALYZERNETWEBAPP__PORT
+          value: '1080'
+        - name: SERVICE__MEMEALYZERNETWEBAPP__HOST
+          value: 'memealyzernetwebapp'
+        - name: SERVICE__MEMEALYZERNETAPI__PROTOCOL
+          value: 'http'
+        - name: SERVICE__MEMEALYZERNETAPI__PORT
+          value: '2080'
+        - name: SERVICE__MEMEALYZERNETAPI__HOST
+          value: 'memealyzernetapi'
+...
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: ingress
+  annotations:
+    kubernetes.io/ingress.class: 'nginx'
+    nginx.ingress.kubernetes.io/rewrite-target: '/$2'
+  labels:
+    app.kubernetes.io/part-of: 'memealyzer'
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: memealyzernetwebapp
+          servicePort: 1080
+        path: /()(.*)
+      - backend:
+          serviceName: memealyzernetapi
+          servicePort: 2080
+        path: /()(images.*)
+      - backend:
+          serviceName: memealyzernetapi
+          servicePort: 2080
+        path: /()(image.*)
+      - backend:
+          serviceName: memealyzernetapi
+          servicePort: 2080
+        path: /()(config.*)
+      - backend:
+          serviceName: memealyzernetapi
+          servicePort: 2080
+        path: /()(imagehub.*)
+...

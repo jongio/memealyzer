@@ -2,11 +2,11 @@
 
 Meme + Analyzer = Memealyzer
 
-The repo demonstrates Azure SDK usage via a complete application.  This application takes in an image, uploads it to Blog Storage and enqueues a message into a Queue.  A process receives that message and uses Form Recognizer to extract the text from the image, then uses Text Analytics to get the sentiment of the text, and then stores the results in Cosmos DB or Azure Table Storage.
+The repo demonstrates Azure SDK usage via a complete application. This application takes in an image, uploads it to Blog Storage and enqueues a message into a Queue. A process receives that message and uses Form Recognizer to extract the text from the image, then uses Text Analytics to get the sentiment of the text, and then stores the results in Cosmos DB or Azure Table Storage.
 
 If the text in the image is positive then the border color will change to green, if neutral then black, and if negative it will change to red.
 
-Download the [Azure SDK Releases](https://aka.ms/azsdk)
+Download the [Azure SDK](https://aka.ms/azsdk)
 
 ![](assets/hero.png)
 
@@ -45,7 +45,7 @@ The following Azure resources will be deployed with the Terraform script.
 
 ## Code Setup
 
-1. Open Git Bash or WSL - The same terminal you used to install the pre-reqs above.
+1. Open Terminal - The same terminal you used to install the pre-reqs above.
 1. Clone Repo
    `git clone https://github.com/jongio/memealyzer`
 
@@ -56,7 +56,7 @@ The following Azure resources will be deployed with the Terraform script.
 1. Select Azure Subscription - If you have more than one subscription, make sure you have the right one selected.
    `az account set -s {SUBSCRIPTION_NAME}`
 1. Set Terraform Variables
-   1. Open `.env` file in the root of this project. Set the `TF_VAR_basename` setting to something unique
+   1. Open `.env` file in the root of this project. Set the `BASENAME` setting to something unique
 1. Create Azure Resources with Terraform
    1. CD to `iac/terraform`
    1. Terraform init: `terraform init`
@@ -68,49 +68,23 @@ The following Azure resources will be deployed with the Terraform script.
       1. For staging: `./plan.sh staging`
       1. For prod: `./plan.sh prod`
       > You can pass any value as the first parameter. You just need a matching `.env.{workspace}` file in the root of the repo. 
-   1. Terraform apply: `./apply.sh` - This will deploy the above resources to Azure.  It will use the `tf.plan` that was generated from the previous step.
+   1. Terraform apply: `./apply.sh` - This will deploy the above resources to Azure. It will use the `tf.plan` that was generated from the previous step.
 
    > If you get this error: `Error validating token: IDX10223`, then run `az logout`, `az login`, and then run `./plan.sh` and `./apply.sh` again.
-1. Update `.env` file
-   1. Copy and paste the Terraform output values to the `.env` file in the root of this repo.
-      > NOTE: .env files do not allow spaces around the `=`, so please remove any spaces after you copy and paste.
+
 
 ## Permissions Setup
-This app uses the Azure CLI login to connect to Azure resources for local development. You need to run the following script to assign the appropriate roles to the Azure CLI user.
+This app uses the Azure CLI login to connect to Azure resources for local development. You need to run the following script to assign the appropriate roles to the Azure CLI user and the Managed Identity accounts for the Azure Kubernetes Service cluster and the Functions app.
 
 1. CD to `iac/terraform`
-1. Run `./azcliuserperms.sh {basename}`
-   > You need to replace `{basename}` with the basename you set in your `TF_VAR_basename` setting used above, such as `memealyzerdev` or `memealyzerprod`.
+1. Run `./perms.sh {basename}`
+   > You need to replace `{basename}` with the basename you set in your `BASENAME` setting used above, such as `memealyzerdev` or `memealyzerprod`.
 
 ## .NET Local Machine Setup
 
 If you are running the .NET versino of this project locally, then you will need to install the following tools.
-1. [.NET Core SDK](https://dotnet.microsoft.com/download) - v3.1.402 minimum
+1. [.NET Core SDK](https://dotnet.microsoft.com/download) - 5.0
 1. [Azure Functions Core Tools](https://docs.microsoft.com/azure/azure-functions/functions-run-local) - v3.0.2881 minimum
-
-## Configuration
-
-### Data Provider
-
-You can configure which store the app uses to store your image metadata, either Cosmos DB or Azure Table Storage.
-
-1. Open `.env` file
-1. Find the `AZURE_STORAGE_TYPE` setting
-1. Set it to one of the following values:
-   - `COSMOS_SQL` - This will instruct the app to use Cosmos DB.
-   - `STORAGE_TABLE` - This will instruct the app to use Azure Storage Tables.  As of 8/31/2020, this option uses a dev build of the Azure Tables client library, which will go to preview soon.
-
-### Border Style
-
-You can configure the image border style with the Azure App Configuration service.  It will default to `solid`, but you can change it to any valid [CSS border style](https://www.w3schools.com/css/css_border.asp).  You can either do this in the Azure Portal, or via the Azure CLI with this command:
-
-```bash
-az appconfig kv set -y -n {basename}appconfig --key borderStyle --value dashed
-```
-
-> Replace {basename} with the basename you used when you created your Azure resources above.
-
-After you change the setting, reload the WebApp to see the new style take effect.
 
 ## Run Application
 
@@ -121,7 +95,7 @@ After you change the setting, reload the WebApp to see the new style take effect
 1. Navigate to http://localhost:5000
 
 #### Docker Compose
-1. CD to the `pac/{lang}/docker/local` folder for the language you would like to run, i.e. for .NET, cd to `pac/net/docker/local`.
+1. CD to the `pac/{lang}/docker` folder for the language you would like to run, i.e. for .NET, cd to `pac/net/docker`.
 1. Open `.env` and set the following:
    1. `API_ENDPOINT=http://localhost:2080`
    1. `FUNCTIONS_ENDPOINT=http://localhost:3080`
@@ -130,10 +104,6 @@ After you change the setting, reload the WebApp to see the new style take effect
 1. Start Azure Function
    - Run `./func.sh`
 1. Navigate to http://localhost:1080
-1. Add a Meme
-   1. Enter meme url into the text box and click "+".
-   1. Or to enter a random meme, just click "+".
-   1. The image will be added to the grid. Wait for the service to pick it up. You will eventually see the text and the image border color will change indicating the image text sentiment.
 
 #### Local Kubernetes
 1. In Docker Desktop settings, Enable Kubernetes and setup to use WSL 2 as backend. [Docker Desktop WSL 2 backend](https://docs.docker.com/docker-for-windows/wsl/)
@@ -165,7 +135,7 @@ After you change the setting, reload the WebApp to see the new style take effect
 1. **AKS Cluster IP Address**
    - Run `az network public-ip list -g memealyzerdevaksnodes --query '[0].ipAddress' --output tsv` to find the AKS cluster's public IP address.
 1. **Update .env File**
-   - Open `./.env` and change.  (Use `./.env.prod` for production environment)
+   - Open `./.env` and change. (Use `./.env.prod` for production environment)
     1. `FUNCTIONS_ENDPOINT` to the URI of your functions endpoint, i.e. `https://memealyzerdevfunction.azurewebsites.net` - this was outputted by your Terraform run and can be found in your `.env` file.
 1. **Deploy**: 
    
@@ -176,8 +146,69 @@ After you change the setting, reload the WebApp to see the new style take effect
    - With **Project Tye**
       - CD to `/pac/net/tye`
 
-   - Run `./deploy.sh {env}`, where env is the name of the environment you want to deploy to, this will match your .env file in the project root.  
+   - Run `./deploy.sh {env}`, where env is the name of the environment you want to deploy to, this will match your .env file in the project root. 
    
    - This will build containers, push them to ACR, apply Kubernetes files, and deploy the Azure Function.
-1. **Run**
-   - Open a browser and go to the AKS cluster's Public IP.
+
+### Add a Meme
+
+1. Click on the "+" icon to add a random meme.
+1. Memealyzer will analyize the sentiment of that meme and change the border color to red (negative), yellow (neutral), or green (positive) depending on the sentiment.
+
+## Configuration
+
+### Data Provider
+
+You can configure which store the app uses to persist your image metadata, either Cosmos DB or Azure Table Storage.
+
+1. Open `.env` file
+1. Find the `AZURE_STORAGE_TYPE` setting
+1. Set it to one of the following values:
+   - `COSMOS_SQL` - This will instruct the app to use Cosmos DB.
+   - `STORAGE_TABLE` - This will instruct the app to use Azure Storage Tables.
+
+### Border Style
+
+You can configure the image border style with the Azure App Configuration service. It will default to `solid`, but you can change it to any valid [CSS border style](https://www.w3schools.com/css/css_border.asp). You can either do this in the Azure Portal, or via the Azure CLI with this command:
+
+```bash
+az appconfig kv set -y -n {basename}appconfig --key borderStyle --value dashed
+```
+
+> Replace {basename} with the basename you used when you created your Azure resources above.
+
+After you change the setting, reload the WebApp to see the new style take effect.
+
+### All Environment Variables
+
+You can add override any of the following environment variables to suit your needs. Memealyzer chooses smart defaults that match what is created when you deploy the app with Terraform.
+
+|Name |Default Value|
+|---|---|
+|BASENAME|This is the only variable that you are required to set.|
+|AZURE_COSMOS_ENDPOINT|https://${BASENAME}cosmosaccount.documents.azure.com:443|
+|AZURE_FORM_RECOGNIZER_ENDPOINT|https://${BASENAME}fr.cognitiveservices.azure.com/|
+|AZURE_KEYVAULT_ENDPOINT|https://${BASENAME}kv.vault.azure.net/|
+|AZURE_STORAGE_ACCOUNT_NAME|${BASENAME}storage|
+|AZURE_STORAGE_BLOB_ENDPOINT|https://${BASENAME}storage.blob.core.windows.net/|
+|AZURE_STORAGE_QUEUE_ENDPOINT|https://${BASENAME}storage.queue.core.windows.net/|
+|AZURE_STORAGE_TABLE_ENDPOINT|https://${BASENAME}storage.table.core.windows.net/|
+|AZURE_TEXT_ANALYTICS_ENDPOINT|https://${BASENAME}ta.cognitiveservices.azure.com/|
+|AZURE_APP_CONFIG_ENDPOINT|https://${BASENAME}appconfig.azconfig.io|
+|AZURE_CONTAINER_REGISTRY_SERVER|${BASENAME}acr.azurecr.io|
+|AZURE_STORAGE_BLOB_CONTAINER_NAME|blobs|
+|AZURE_STORAGE_QUEUE_NAME|messages|
+|AZURE_STORAGE_QUEUE_MSG_COUNT|10|
+|AZURE_STORAGE_QUEUE_RECEIVE_SLEEP|1 second|
+|AZURE_STORAGE_TABLE_NAME|images|
+|AZURE_COSMOS_DB|memealyzer|
+|AZURE_COSMOS_COLLECTION|images|
+|AZURE_COSMOS_KEY_SECRET_NAME|CosmosKey|
+|AZURE_STORAGE_TYPE|COSMOS_SQL|
+|AZURE_STORAGE_KEY_SECRET_NAME|StorageKey|
+|AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME|sync|
+|AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME|SignalRConnectionString|
+|AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME|StorageConnectionString|
+|MEME_ENDPOINT|https://meme-api.herokuapp.com/gimme/wholesomememes|
+|AZURITE_ACCOUNT_KEY|Default value in .env files|
+|AZURE_COSMOS_KEY|Default value in .env files|

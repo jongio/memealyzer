@@ -21,9 +21,9 @@ namespace Memealyzer
             Envs.Load();
 
             // KeyVault
-            var secretClient = new SecretClient(new Uri(Env.GetString("AZURE_KEYVAULT_ENDPOINT")), Identity.GetCredentialChain());
-            var storageConnectionString = secretClient.GetSecret(Env.GetString("AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME"));
-            var signalRConnectionString = secretClient.GetSecret(Env.GetString("AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME"));
+            var secretClient = new SecretClient(Config.KeyVaultEndpoint, Identity.GetCredentialChain());
+            var storageConnectionString = secretClient.GetSecret(Config.StorageConnectionStringSecretName);
+            var signalRConnectionString = secretClient.GetSecret(Config.SignalRConnectionStringSecretName);
 
             //Environment.SetEnvironmentVariable("Values:AzureWebJobsStorage", storageConnectionString.Value.Value);
             var config = new ConfigurationBuilder()

@@ -29,12 +29,12 @@ namespace Lib.Data
         public async Task InitializeAsync(TokenCredential credential)
         {
             // KeyVault
-            SecretClient = new SecretClient(new Uri(Env.GetString("AZURE_KEYVAULT_ENDPOINT")), credential);
-            var cosmosKey = await SecretClient.GetSecretAsync(Env.GetString("AZURE_COSMOS_KEY_SECRET_NAME", "CosmosKey"));
+            SecretClient = new SecretClient(Config.KeyVaultEndpoint, credential);
+            var cosmosKey = await SecretClient.GetSecretAsync(Config.CosmosKeySecretName);
 
             CosmosClientOptions options = new CosmosClientOptions
             {
-                ConnectionMode = ConnectionMode.Direct,
+                ConnectionMode = ConnectionMode.Gateway,
                 ConsistencyLevel = ConsistencyLevel.Session,
                 Diagnostics = {
                     IsLoggingEnabled = false
@@ -47,11 +47,11 @@ namespace Lib.Data
 
             // Cosmos
             CosmosClient = new CosmosClient(
-                Env.GetString("AZURE_COSMOS_ENDPOINT"),
+                Config.CosmosEndpoint,
                 cosmosKey.Value.Value,
                 options);
 
-            CosmosContainer = CosmosClient.GetDatabase(Env.GetString("AZURE_COSMOS_DB")).GetContainer(Env.GetString("AZURE_COSMOS_COLLECTION"));
+            CosmosContainer = CosmosClient.GetDatabase(Config.CosmosDB).GetContainer(Config.CosmosCollection);
         }
 
         public async Task<Image> GetImageAsync(string id)

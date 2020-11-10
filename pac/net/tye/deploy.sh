@@ -11,7 +11,7 @@ echo "ACR LOGIN"
 az acr login --name ${AZURE_CONTAINER_REGISTRY_SERVER}
 
 echo "TYE DEPLOY"
-tye deploy -v Debug --tags $WORKSPACE
+tye deploy -v Debug --tags $WORKSPACE --interactive
 
 echo "DEPLOY FUNCTION"
 ${ROOT}/pac/net/kubectl/aks/func.sh
