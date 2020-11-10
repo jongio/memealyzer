@@ -15,7 +15,6 @@ namespace Lib
         public static readonly Uri StorageTableEndpoint = new Uri(String.Format(Env.GetString("AZURE_STORAGE_TABLE_ENDPOINT", "https://{0}storage.table.core.windows.net/"), BaseName));
         public static readonly Uri TextAnalyticsEndpoint = new Uri(String.Format(Env.GetString("AZURE_TEXT_ANALYTICS_ENDPOINT", "https://{0}ta.cognitiveservices.azure.com/"), BaseName));
         public static readonly Uri AppConfigEndpoint = new Uri(String.Format(Env.GetString("AZURE_APP_CONFIG_ENDPOINT", "https://{0}appconfig.azconfig.io"), BaseName));
-        public static readonly string ContainerRegistryServer = String.Format(Env.GetString("AZURE_CONTAINER_REGISTRY_SERVER", "{0}acr.azurecr.io"), BaseName);
         public static readonly string StorageBlobContainerName = Env.GetString("AZURE_STORAGE_BLOB_CONTAINER_NAME", "blobs");
         public static readonly string StorageQueueName = Env.GetString("AZURE_STORAGE_QUEUE_NAME", "messages");
         public static readonly int StorageQueueMessageCount = Env.GetInt("AZURE_STORAGE_QUEUE_MSG_COUNT", 10);
