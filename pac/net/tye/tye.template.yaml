@@ -2,7 +2,7 @@ name: memealyzer
 registry: ${AZURE_CONTAINER_REGISTRY_SERVER}
 services:
   - name: azurite
-    image: mcr.microsoft.com/azure-storage/azurite:table-alpha.1
+    image: mcr.microsoft.com/azure-storage/azurite:alpha
     bindings:
       - name: blob
         port: 10000
