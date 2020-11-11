@@ -1,12 +1,8 @@
 name: memealyzer
 registry: memealyzerdevacr.azurecr.io
 services:
-  # - name: azurite
-  #   executable: azurite
-  #   tags:
-  #     - dev
   - name: azurite
-    image: mcr.microsoft.com/azure-storage/azurite
+    image: mcr.microsoft.com/azure-storage/azurite:table-alpha.1
     bindings:
       - name: blob
         port: 10000
@@ -15,6 +11,10 @@ services:
       - name: queue
         port: 10001
         containerPort: 10001
+        protocol: http
+      - name: table
+        port: 10002
+        containerPort: 10002
         protocol: http
     tags:
       - dev
