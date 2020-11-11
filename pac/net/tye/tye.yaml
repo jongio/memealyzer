@@ -1,6 +1,10 @@
 name: memealyzer
 registry: memealyzerdevacr.azurecr.io
 services:
+  # - name: azurite
+  #   executable: azurite
+  #   tags:
+  #     - dev
   - name: azurite
     image: mcr.microsoft.com/azure-storage/azurite
     bindings:
