@@ -3,7 +3,7 @@ set -euo pipefail
 
 if [ $# -eq 0 ]
   then
-    echo "You need to run this script with the basename you used to created your resources. i.e., ./azcliuserperms.sh memealyzer01"
+    echo "You need to run this script with the basename you used to created your resources. i.e., ./perms.sh memealyzer01"
     exit
 fi
 
