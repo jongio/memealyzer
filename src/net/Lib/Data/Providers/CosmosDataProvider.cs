@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -6,10 +5,9 @@ using Azure.Core;
 using Azure.Cosmos;
 using Azure.Cosmos.Serialization;
 using Azure.Security.KeyVault.Secrets;
-using DotNetEnv;
 using Lib.Model;
 
-namespace Lib.Data
+namespace Lib.Data.Providers
 {
     public class CosmosDataProvider : IDataProvider
     {

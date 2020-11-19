@@ -1,8 +1,10 @@
+using Lib.Data.Providers;
+
 namespace Lib.Data
 {
-    public class DataProviderFactory
+    public static class DataProviderFactory
     {
-        public IDataProvider GetDataProvider(string type)
+        public static IDataProvider Get(string type)
         {
             switch (type)
             {

@@ -1,14 +1,12 @@
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Azure.Security.KeyVault.Secrets;
-using DotNetEnv;
-using Azure.Data.Tables;
-using Azure.Core;
 using System.Text.Json;
+using System.Threading.Tasks;
+using Azure.Core;
+using Azure.Data.Tables;
+using Azure.Security.KeyVault.Secrets;
 using Lib.Model;
 
-namespace Lib.Data
+namespace Lib.Data.Providers
 {
     public class TableDataProvider : IDataProvider
     {

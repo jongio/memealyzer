@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Azure.Data.AppConfiguration" Version="1.0.1" />
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.0.0-preview.9" />
     <PackageReference Include="DotNetEnv" Version="1.4.0" />
     <PackageReference Include="System.Linq.Async" Version="4.1.1" />
     <PackageReference Include="System.Net.Http.Json" Version="3.2.0" />
