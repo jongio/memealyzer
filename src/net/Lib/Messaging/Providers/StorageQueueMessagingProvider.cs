@@ -10,11 +10,6 @@ namespace Lib.Messaging.Providers
         public IQueue ImageQueueClient { get; set; }
         public IQueue ClientSyncQueueClient { get; set; }
 
-
-        public StorageQueueMessagingProvider()
-        {
-        }
-
         public async Task InitializeAsync(TokenCredential credential, IDataProvider dataProvider)
         {
             // Queue
@@ -27,7 +22,6 @@ namespace Lib.Messaging.Providers
             // Client Sync Queue
             var clientSyncQueueClient = queueServiceClient.GetQueueClient(Config.StorageClientSyncQueueName);
             await clientSyncQueueClient.CreateIfNotExistsAsync();
-
 
             ClientSyncQueueClient = new StorageQueue(clientSyncQueueClient, dataProvider);
         }

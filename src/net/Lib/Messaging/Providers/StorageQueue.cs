@@ -7,7 +7,6 @@ using Azure.Storage.Queues;
 using Lib.Data;
 using Lib.Model;
 
-
 namespace Lib.Messaging.Providers
 {
     public class StorageQueue : IQueue

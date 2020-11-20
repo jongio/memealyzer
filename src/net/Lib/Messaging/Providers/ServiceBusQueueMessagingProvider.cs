@@ -11,10 +11,6 @@ namespace Lib.Messaging.Providers
         public IQueue ImageQueueClient { get; set; }
         public IQueue ClientSyncQueueClient { get; set; }
 
-        public ServiceBusQueueMessagingProvider()
-        {
-        }
-
         public async Task InitializeAsync(TokenCredential credential, IDataProvider dataProvider)
         {
             await Task.Run(() =>

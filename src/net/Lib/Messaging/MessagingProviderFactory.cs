@@ -1,3 +1,4 @@
+using System;
 using Azure.Storage.Queues.Models;
 using Lib.Messaging.Providers;
 
@@ -14,7 +15,7 @@ namespace Lib.Messaging
                 case "SERVICE_BUS_QUEUE":
                     return new ServiceBusQueueMessagingProvider();
                 default:
-                    return null;
+                    throw new Exception("MESSAGING_TYPE env var not set.");
             }
         }
     }

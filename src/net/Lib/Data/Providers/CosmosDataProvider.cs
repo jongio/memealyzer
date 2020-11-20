@@ -15,10 +15,6 @@ namespace Lib.Data.Providers
         public CosmosContainer CosmosContainer;
         public SecretClient SecretClient;
 
-        public CosmosDataProvider()
-        {
-        }
-
         public IImage DeserializeImage(string json)
         {
             return JsonSerializer.Deserialize<Image>(json, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });

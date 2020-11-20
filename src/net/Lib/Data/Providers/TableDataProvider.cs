@@ -14,10 +14,6 @@ namespace Lib.Data.Providers
         public TableClient TableClient;
         public SecretClient SecretClient;
 
-        public TableDataProvider()
-        {
-        }
-
         public IImage DeserializeImage(string json)
         {
             return JsonSerializer.Deserialize<ImageTableEntity>(json, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });

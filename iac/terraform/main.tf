@@ -80,6 +80,12 @@ resource "azurerm_key_vault_secret" "storage_connection_string_secret" {
   key_vault_id = azurerm_key_vault.key_vault.id
 }
 
+resource "azurerm_key_vault_secret" "service_bus_connection_string_secret" {
+  name         = "ServiceBusConnectionString"
+  value        = azurerm_servicebus_namespace.service_bus.default_primary_connection_string
+  key_vault_id = azurerm_key_vault.key_vault.id
+}
+
 resource "azurerm_cosmosdb_account" "cosmos_account" {
   name                = "${var.basename}cosmosaccount"
   location            = azurerm_resource_group.rg.location
@@ -124,7 +130,6 @@ resource "azurerm_cosmosdb_sql_container" "cosmos_sqldb_container" {
     paths = ["/uid"]
   }
 }
-
 
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = "${var.basename}aks"
@@ -237,6 +242,26 @@ resource "azurerm_container_registry" "acr" {
   admin_enabled       = true
 }
 
+# SERVICE BUS
+resource "azurerm_servicebus_namespace" "service_bus" {
+  name                = "${var.basename}sb"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku                 = "Basic"
+}
+
+resource "azurerm_servicebus_queue" "messages" {
+  name                = "messages"
+  resource_group_name = azurerm_resource_group.rg.name
+  namespace_name      = azurerm_servicebus_namespace.service_bus.name
+}
+
+resource "azurerm_servicebus_queue" "sync" {
+  name                = "sync"
+  resource_group_name = azurerm_resource_group.rg.name
+  namespace_name      = azurerm_servicebus_namespace.service_bus.name
+}
+
 # Azure CLI Script to fill in Terraform gaps.
 
 module "script" {
@@ -314,4 +339,8 @@ output "AZURE_FUNCTION_APP_NAME" {
 
 output "AZURE_AKS_CLUSTER_NAME" {
   value = azurerm_kubernetes_cluster.aks.name
+}
+
+output "AZURE_SERVICE_BUS_NAMESPACE" {
+  value = "${azurerm_servicebus_namespace.service_bus.name}.servicebus.windows.net"
 }
