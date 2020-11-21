@@ -15,6 +15,8 @@ function roles {
   az role assignment create --assignee-object-id $1 --role "Storage Blob Data Contributor" --assignee-principal-type $2 --scope $3
   az role assignment create --assignee-object-id $1 --role "Storage Queue Data Contributor" --assignee-principal-type $2 --scope $3
   az role assignment create --assignee-object-id $1 --role "Storage Queue Data Message Processor" --assignee-principal-type $2 --scope $3
+  az role assignment create --assignee-object-id $1 --role "Azure Service Bus Data Receiver" --assignee-principal-type $2 --scope $3
+  az role assignment create --assignee-object-id $1 --role "Azure Service Bus Data Sender" --assignee-principal-type $2 --scope $3
   az role assignment create --assignee-object-id $1 --role "Cognitive Services User" --assignee-principal-type $2 --scope $3
   az role assignment create --assignee-object-id $1 --role "App Configuration Data Owner" --assignee-principal-type $2 --scope $3
   az role assignment create --assignee-object-id $1 --role "AcrPush" --assignee-principal-type $2 --scope $3

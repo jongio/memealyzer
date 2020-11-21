@@ -1,29 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Azure.Security.KeyVault.Secrets;
-using DotNetEnv;
-using Azure.Data.Tables;
-using Azure.Core;
 using System.Text.Json;
+using System.Threading.Tasks;
+using Azure.Core;
+using Azure.Data.Tables;
+using Azure.Security.KeyVault.Secrets;
 using Lib.Model;
 
-namespace Lib.Data
+namespace Lib.Data.Providers
 {
-    public class TableDataProvider : IDataProvider
+    public class TableDataProvider : IDataProvider, IDisposable
     {
         public TableServiceClient TableServiceClient;
         public TableClient TableClient;
         public SecretClient SecretClient;
-
-        public TableDataProvider()
-        {
-        }
-
-        public IImage DeserializeImage(string json)
-        {
-            return JsonSerializer.Deserialize<ImageTableEntity>(json, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-        }
 
         public async Task InitializeAsync(TokenCredential credential)
         {
@@ -46,6 +36,10 @@ namespace Lib.Data
                 new TableSharedKeyCredential(Config.StorageAccountName, storageKeyValue));
 
             await TableClient.CreateIfNotExistsAsync();
+        }
+
+        public void Dispose()
+        {
         }
 
         public async Task<Image> GetImageAsync(string id)
@@ -80,6 +74,11 @@ namespace Lib.Data
         {
             var response = await TableClient.UpsertEntityAsync<ImageTableEntity>(image as ImageTableEntity);
             return image as ImageTableEntity;
+        }
+
+        public IImage DeserializeImage(string json)
+        {
+            return JsonSerializer.Deserialize<ImageTableEntity>(json, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
         }
     }
 }

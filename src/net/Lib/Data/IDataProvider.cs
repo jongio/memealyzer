@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Azure.Core;
@@ -5,7 +6,7 @@ using Lib.Model;
 
 namespace Lib.Data
 {
-    public interface IDataProvider
+    public interface IDataProvider : IDisposable
     {
         Task InitializeAsync(TokenCredential credential);
         IAsyncEnumerable<Image> GetImagesAsync();

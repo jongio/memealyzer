@@ -41,6 +41,7 @@ The following Azure resources will be deployed with the Terraform script.
 1. [Application Insights](https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview)
 1. [Azure SignalR Service](https://azure.microsoft.com/services/signalr-service/)
 1. [Azure Functions](https://azure.microsoft.com/services/functions/)
+1. [Azure Service Bus](https://azure.microsoft.com/services/service-bus/)
 
 
 ## Code Setup
@@ -162,10 +163,20 @@ If you are running the .NET versino of this project locally, then you will need 
 You can configure which store the app uses to persist your image metadata, either Cosmos DB or Azure Table Storage.
 
 1. Open `.env` file
-1. Find the `AZURE_STORAGE_TYPE` setting
+1. Find or add the `AZURE_STORAGE_TYPE` setting
 1. Set it to one of the following values:
    - `COSMOS_SQL` - This will instruct the app to use Cosmos DB.
    - `STORAGE_TABLE` - This will instruct the app to use Azure Storage Tables.
+
+### Messaging Provider
+
+You can configure which messaging service you want to use, either Service Bus Queue or Azure Storage Queue.
+
+1. Open `.env` file
+1. Find or add the `AZURE_MESSAGING_TYPE` setting
+1. Set it to one of the following values:
+   - `SERVICE_BUS_QUEUE` - This will instruct the app to use Service Bus Queue.
+   - `STORAGE_QUEUE` - This will instruct the app to use Azure Storage Queue.
 
 ### Border Style
 
@@ -183,32 +194,34 @@ After you change the setting, reload the WebApp to see the new style take effect
 
 You can add override any of the following environment variables to suit your needs. Memealyzer chooses smart defaults that match what is created when you deploy the app with Terraform.
 
-|Name |Default Value|
-|---|---|
-|BASENAME|This is the only variable that you are required to set.|
-|AZURE_COSMOS_ENDPOINT|https://${BASENAME}cosmosaccount.documents.azure.com:443|
-|AZURE_FORM_RECOGNIZER_ENDPOINT|https://${BASENAME}fr.cognitiveservices.azure.com/|
-|AZURE_KEYVAULT_ENDPOINT|https://${BASENAME}kv.vault.azure.net/|
-|AZURE_STORAGE_ACCOUNT_NAME|${BASENAME}storage|
-|AZURE_STORAGE_BLOB_ENDPOINT|https://${BASENAME}storage.blob.core.windows.net/|
-|AZURE_STORAGE_QUEUE_ENDPOINT|https://${BASENAME}storage.queue.core.windows.net/|
-|AZURE_STORAGE_TABLE_ENDPOINT|https://${BASENAME}storage.table.core.windows.net/|
-|AZURE_TEXT_ANALYTICS_ENDPOINT|https://${BASENAME}ta.cognitiveservices.azure.com/|
-|AZURE_APP_CONFIG_ENDPOINT|https://${BASENAME}appconfig.azconfig.io|
-|AZURE_CONTAINER_REGISTRY_SERVER|${BASENAME}acr.azurecr.io|
-|AZURE_STORAGE_BLOB_CONTAINER_NAME|blobs|
-|AZURE_STORAGE_QUEUE_NAME|messages|
-|AZURE_STORAGE_QUEUE_MSG_COUNT|10|
-|AZURE_STORAGE_QUEUE_RECEIVE_SLEEP|1 second|
-|AZURE_STORAGE_TABLE_NAME|images|
-|AZURE_COSMOS_DB|memealyzer|
-|AZURE_COSMOS_COLLECTION|images|
-|AZURE_COSMOS_KEY_SECRET_NAME|CosmosKey|
-|AZURE_STORAGE_TYPE|COSMOS_SQL|
-|AZURE_STORAGE_KEY_SECRET_NAME|StorageKey|
-|AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME|sync|
-|AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME|SignalRConnectionString|
-|AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME|StorageConnectionString|
-|MEME_ENDPOINT|https://meme-api.herokuapp.com/gimme/wholesomememes|
-|AZURITE_ACCOUNT_KEY|Default value in .env files|
-|AZURE_COSMOS_KEY|Default value in .env files|
+|Name |Default Value|Values|
+|---|---|---|
+|BASENAME|This is the only variable that you are required to set.||
+|AZURE_COSMOS_ENDPOINT|https://${BASENAME}cosmosaccount.documents.azure.com:443||
+|AZURE_FORM_RECOGNIZER_ENDPOINT|https://${BASENAME}fr.cognitiveservices.azure.com/||
+|AZURE_KEYVAULT_ENDPOINT|https://${BASENAME}kv.vault.azure.net/||
+|AZURE_STORAGE_ACCOUNT_NAME|${BASENAME}storage||
+|AZURE_STORAGE_BLOB_ENDPOINT|https://${BASENAME}storage.blob.core.windows.net/||
+|AZURE_STORAGE_QUEUE_ENDPOINT|https://${BASENAME}storage.queue.core.windows.net/||
+|AZURE_STORAGE_TABLE_ENDPOINT|https://${BASENAME}storage.table.core.windows.net/||
+|AZURE_TEXT_ANALYTICS_ENDPOINT|https://${BASENAME}ta.cognitiveservices.azure.com/||
+|AZURE_APP_CONFIG_ENDPOINT|https://${BASENAME}appconfig.azconfig.io||
+|AZURE_CONTAINER_REGISTRY_SERVER|${BASENAME}acr.azurecr.io||
+|AZURE_STORAGE_BLOB_CONTAINER_NAME|blobs||
+|AZURE_MESSAGES_QUEUE_NAME|messages||
+|AZURE_STORAGE_QUEUE_MSG_COUNT|10||
+|AZURE_STORAGE_QUEUE_RECEIVE_SLEEP|1 second||
+|AZURE_STORAGE_TABLE_NAME|images||
+|AZURE_COSMOS_DB|memealyzer||
+|AZURE_COSMOS_COLLECTION|images||
+|AZURE_COSMOS_KEY_SECRET_NAME|CosmosKey||
+|AZURE_STORAGE_TYPE|COSMOS_SQL|COSMOS_SQL, STORAGE_TABLE|
+|AZURE_MESSAGING_TYPE|SERVICE_BUS_QUEUE|SERVICE_BUS_QUEUE, STORAGE_QUEUE|
+|AZURE_STORAGE_KEY_SECRET_NAME|StorageKey||
+|AZURE_CLIENT_SYNC_QUEUE_NAME|sync||
+|AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME|SignalRConnectionString||
+|AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME|StorageConnectionString||
+|AZURE_SERVICE_BUS_CONNECTION_STRING_SECRET_NAME|ServiceBusConnectionString||
+|MEME_ENDPOINT|https://meme-api.herokuapp.com/gimme/wholesomememes||
+|AZURITE_ACCOUNT_KEY|Default value in .env files||
+|AZURE_COSMOS_KEY|Default value in .env files||

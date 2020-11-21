@@ -30,11 +30,11 @@ queue_service_client = QueueServiceClient(
 )
 
 queue_client = queue_service_client.get_queue_client(
-    queue=getenv("AZURE_STORAGE_QUEUE_NAME", default="messages")
+    queue=getenv("AZURE_MESSAGES_QUEUE_NAME", default="messages")
 )
 
 client_sync_queue_client = queue_service_client.get_queue_client(
-    queue=getenv("AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME", default="sync")
+    queue=getenv("AZURE_CLIENT_SYNC_QUEUE_NAME", default="sync")
 )
 
 fr_client = FormRecognizerClient(

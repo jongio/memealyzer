@@ -1,8 +1,11 @@
+using System;
+using Lib.Data.Providers;
+
 namespace Lib.Data
 {
-    public class DataProviderFactory
+    public static class DataProviderFactory
     {
-        public IDataProvider GetDataProvider(string type)
+        public static IDataProvider Get(string type)
         {
             switch (type)
             {
@@ -11,7 +14,7 @@ namespace Lib.Data
                 case "STORAGE_TABLE":
                     return new TableDataProvider();
                 default:
-                    return null;
+                    throw new Exception("STORAGE_TYPE env var not set.");
             }
         }
     }

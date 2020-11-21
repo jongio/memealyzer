@@ -6,25 +6,15 @@ using Azure.Core;
 using Azure.Cosmos;
 using Azure.Cosmos.Serialization;
 using Azure.Security.KeyVault.Secrets;
-using DotNetEnv;
 using Lib.Model;
 
-namespace Lib.Data
+namespace Lib.Data.Providers
 {
-    public class CosmosDataProvider : IDataProvider
+    public class CosmosDataProvider : IDataProvider, IDisposable
     {
         public CosmosClient CosmosClient;
         public CosmosContainer CosmosContainer;
         public SecretClient SecretClient;
-
-        public CosmosDataProvider()
-        {
-        }
-
-        public IImage DeserializeImage(string json)
-        {
-            return JsonSerializer.Deserialize<Image>(json, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-        }
 
         public async Task InitializeAsync(TokenCredential credential)
         {
@@ -52,6 +42,11 @@ namespace Lib.Data
                 options);
 
             CosmosContainer = CosmosClient.GetDatabase(Config.CosmosDB).GetContainer(Config.CosmosCollection);
+        }
+
+        public void Dispose()
+        {
+            CosmosClient.Dispose();
         }
 
         public async Task<Image> GetImageAsync(string id)
@@ -86,6 +81,11 @@ namespace Lib.Data
         {
             var response = await CosmosContainer.UpsertItemAsync(image as Image);
             return response.Value;
+        }
+
+        public IImage DeserializeImage(string json)
+        {
+            return JsonSerializer.Deserialize<Image>(json, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
         }
     }
 }

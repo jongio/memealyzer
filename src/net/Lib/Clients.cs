@@ -1,33 +1,27 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text.Json;
 using System.Threading.Tasks;
-using Azure.Identity;
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
-using Azure.Storage.Queues;
-using Azure.Security.KeyVault.Secrets;
 using Azure.AI.FormRecognizer;
 using Azure.AI.TextAnalytics;
 using Azure.Data.AppConfiguration;
-using DotNetEnv;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Lib.Data;
+using Lib.Messaging;
 using Lib.Model;
 
 namespace Lib
 {
-    public class Clients
+    public class Clients : IAsyncDisposable
     {
         public SecretClient SecretClient;
         public ChainedTokenCredential credential = Identity.GetCredentialChain();
         public BlobServiceClient BlobServiceClient;
         public BlobContainerClient ContainerClient;
-        public QueueServiceClient QueueServiceClient;
-        public QueueClient QueueClient;
-        public QueueClient ClientSyncQueueClient;
+        public IMessagingProvider MessagingProvider;
         public TextAnalyticsClient TextAnalyticsClient;
         public FormRecognizerClient FormRecognizerClient;
         public ConfigurationClient ConfigurationClient;
@@ -41,8 +35,12 @@ namespace Lib
         public async Task InitializeAsync()
         {
             // Data Provider            
-            DataProvider = new DataProviderFactory().GetDataProvider(Config.StorageType);
+            DataProvider = DataProviderFactory.Get(Config.StorageType);
             await DataProvider.InitializeAsync(credential);
+
+            // Messaging Provider            
+            MessagingProvider = MessagingProviderFactory.Get(Config.MessagingType);
+            await MessagingProvider.InitializeAsync(credential, DataProvider);
 
             // App Config
             ConfigurationClient = new ConfigurationClient(Config.AppConfigEndpoint, credential);
@@ -52,20 +50,18 @@ namespace Lib
             ContainerClient = BlobServiceClient.GetBlobContainerClient(Config.StorageBlobContainerName);
             await ContainerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
 
-            // Queue
-            QueueServiceClient = new QueueServiceClient(Config.StorageQueueEndpoint, credential);
-            QueueClient = QueueServiceClient.GetQueueClient(Config.StorageQueueName);
-            await QueueClient.CreateIfNotExistsAsync();
-
-            // Client Sync Queue
-            ClientSyncQueueClient = QueueServiceClient.GetQueueClient(Config.StorageClientSyncQueueName);
-            await ClientSyncQueueClient.CreateIfNotExistsAsync();
 
             // FormRecognizerClient
             FormRecognizerClient = new FormRecognizerClient(Config.FormRecognizerEndpoint, credential);
 
             // TextAnalyticsClient
             TextAnalyticsClient = new TextAnalyticsClient(Config.TextAnalyticsEndpoint, credential);
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            DataProvider.Dispose();
+            return MessagingProvider.DisposeAsync();
         }
 
         public async Task<Image> EnqueueImageAsync(Image image = null)
@@ -88,12 +84,9 @@ namespace Lib
             image.BlobUri = blobClient.Uri.ToString();
 
             // Send Queue Message
-            var sendReceipt = await QueueClient.SendMessageAsync(
-                JsonSerializer.Serialize<Image>(image,
-                    new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
-                );
+            var sendReceipt = await MessagingProvider.ImageQueueClient.SendMessageAsync(new ImageQueueMessage { Image = image });
 
-            Console.WriteLine($"Added to Queue: {sendReceipt.Value.MessageId}");
+            //Console.WriteLine($"Added to Queue: {sendReceipt.Message.Id}");
             return image;
         }
     }
