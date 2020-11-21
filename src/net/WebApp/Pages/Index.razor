@@ -16,12 +16,12 @@
                     <EditForm OnValidSubmit="HandleAddFormSubmit" Model="@image">
                         <DataAnnotationsValidator />
                         <ValidationSummary />
-                        <button type="submit" value="submit" disabled="@(!IsConnected)" class="btn shadow-none"><span style="font-size: 18px" class="oi oi-plus" title="Add Meme"
+                        <button type="submit" value="submit" disabled="@(!IsConnected)" class="btn shadow-none" style="cursor:pointer"><span style="font-size: 18px" class="oi oi-plus" title="Add Meme"
                                 aria-hidden="true"></span></button>
                     </EditForm>
                 </div>
                 <div class="col col-6">
-                    <button disabled="@(!IsConnected)" class="btn shadow-none btn-@streaming" @onclick="ToggleStream"><span style="font-size: 22px" class="oi oi-infinity" title="Meme Stream"
+                    <button disabled="@(!IsConnected)" class="btn shadow-none btn-@streaming" @onclick="ToggleStream" style="cursor:pointer"><span style="font-size: 22px" class="oi oi-infinity" title="Meme Stream"
                             aria-hidden="true"></span></button>
                 </div>
             </div>
