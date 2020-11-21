@@ -210,12 +210,13 @@ resource "azurerm_function_app" "function" {
   storage_account_name       = azurerm_storage_account.storage.name
   storage_account_access_key = azurerm_storage_account.storage.primary_access_key
   os_type                    = "linux"
+  version                    = "~3"
   app_settings = {
     "AzureWebJobsStorage"                         = azurerm_storage_account.storage.primary_connection_string,
     "APPINSIGHTS_INSTRUMENTATIONKEY"              = azurerm_application_insights.logging.instrumentation_key,
     "WEBSITES_ENABLE_APP_SERVICE_STORAGE"         = false,
     "AZURE_KEYVAULT_ENDPOINT"                     = azurerm_key_vault.key_vault.vault_uri,
-    "AZURE_CLIENT_SYNC_QUEUE_NAME"        = "sync",
+    "AZURE_CLIENT_SYNC_QUEUE_NAME"                = "sync",
     "AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME" = "StorageConnectionString",
     "AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME" = "SignalRConnectionString",
     "WEBSITE_RUN_FROM_PACKAGE"                    = "",
