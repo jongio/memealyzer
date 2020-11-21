@@ -1,0 +1,34 @@
+{
+	"folders": [
+		{
+			"path": "Api"
+		},
+		{
+			"path": "Lib"
+		},
+		{
+			"path": "Lib.Model"
+		},
+		{
+			"path": "Services\\Functions"
+		},
+		{
+			"path": "Services\\QueueService"
+		},
+		{
+			"path": "WebApp"
+		},
+		{
+			"path": "..\\.."
+		},
+		{
+			"path": "..\\..\\iac\\terraform"
+		},
+		{
+			"path": "..\\..\\pac\\net\\tye"
+		},
+		{
+			"path": "..\\..\\pac\\net\\docker"
+		}
+	]
+}
