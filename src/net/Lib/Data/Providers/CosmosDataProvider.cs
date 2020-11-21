@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -9,16 +10,11 @@ using Lib.Model;
 
 namespace Lib.Data.Providers
 {
-    public class CosmosDataProvider : IDataProvider
+    public class CosmosDataProvider : IDataProvider, IDisposable
     {
         public CosmosClient CosmosClient;
         public CosmosContainer CosmosContainer;
         public SecretClient SecretClient;
-
-        public IImage DeserializeImage(string json)
-        {
-            return JsonSerializer.Deserialize<Image>(json, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-        }
 
         public async Task InitializeAsync(TokenCredential credential)
         {
@@ -46,6 +42,11 @@ namespace Lib.Data.Providers
                 options);
 
             CosmosContainer = CosmosClient.GetDatabase(Config.CosmosDB).GetContainer(Config.CosmosCollection);
+        }
+
+        public void Dispose()
+        {
+            CosmosClient.Dispose();
         }
 
         public async Task<Image> GetImageAsync(string id)
@@ -80,6 +81,11 @@ namespace Lib.Data.Providers
         {
             var response = await CosmosContainer.UpsertItemAsync(image as Image);
             return response.Value;
+        }
+
+        public IImage DeserializeImage(string json)
+        {
+            return JsonSerializer.Deserialize<Image>(json, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
         }
     }
 }

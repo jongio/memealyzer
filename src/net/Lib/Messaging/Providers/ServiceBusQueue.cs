@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
@@ -8,7 +8,7 @@ using Lib.Model;
 
 namespace Lib.Messaging.Providers
 {
-    public class ServiceBusQueue : IQueue
+    public class ServiceBusQueue : IQueue, IAsyncDisposable
     {
         ServiceBusClient client;
         ServiceBusSender sender;
@@ -21,9 +21,20 @@ namespace Lib.Messaging.Providers
             this.client = client;
             this.queue = queue;
             this.dataProvider = dataProvider;
+        }
 
+        public Task InitializeAsync() => Task.Run(() =>
+        {
             this.sender = this.client.CreateSender(this.queue);
             this.receiver = this.client.CreateReceiver(this.queue);
+        });
+
+        public async ValueTask DisposeAsync()
+        {
+            await Task.WhenAll(
+                this.sender.DisposeAsync().AsTask(),
+                this.receiver.DisposeAsync().AsTask()
+            );
         }
 
         public async Task<List<ImageQueueMessage>> ReceiveMessagesAsync()
@@ -35,14 +46,8 @@ namespace Lib.Messaging.Providers
             {
                 imageQueueMessages.Add(new ImageQueueMessage
                 {
-                    Message = new Message
-                    {
-                        Id = message.MessageId,
-                        Receipt = message.LockToken,
-                        Text = message.Body.ToString()
-                    },
+                    Message = new ServiceBusQueueMessage(message),
                     Image = dataProvider.DeserializeImage(message.Body.ToString()),
-                    NativeMessage = message
                 });
             }
             return imageQueueMessages;
@@ -50,7 +55,7 @@ namespace Lib.Messaging.Providers
 
         public async Task<ImageQueueMessage> DeleteMessageAsync(ImageQueueMessage imageQueueMessage)
         {
-            await this.receiver.CompleteMessageAsync((ServiceBusReceivedMessage)imageQueueMessage.NativeMessage);
+            await this.receiver.CompleteMessageAsync(imageQueueMessage.Message.GetNativeMessage<ServiceBusReceivedMessage>());
             return imageQueueMessage;
         }
 

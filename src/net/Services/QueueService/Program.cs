@@ -16,7 +16,7 @@ namespace QueueService
 
             //using var listener = AzureEventSourceListener.CreateConsoleLogger();
 
-            var clients = new Clients();
+            await using var clients = new Clients();
             await clients.InitializeAsync();
 
             while (true)

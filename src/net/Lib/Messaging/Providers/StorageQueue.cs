@@ -6,18 +6,28 @@ using System.Threading.Tasks;
 using Azure.Storage.Queues;
 using Lib.Data;
 using Lib.Model;
+using Lib.Messaging;
 
 namespace Lib.Messaging.Providers
 {
     public class StorageQueue : IQueue
     {
+        QueueServiceClient queueServiceClient;
         QueueClient queueClient;
+        string queue;
         IDataProvider dataProvider;
 
-        public StorageQueue(QueueClient queueClient, IDataProvider dataProvider)
+        public StorageQueue(QueueServiceClient queueServiceClient, string queue, IDataProvider dataProvider)
         {
-            this.queueClient = queueClient;
+            this.queueServiceClient = queueServiceClient;
             this.dataProvider = dataProvider;
+            this.queue = queue;
+        }
+
+        public async Task InitializeAsync()
+        {
+            this.queueClient = queueServiceClient.GetQueueClient(this.queue);
+            await queueClient.CreateIfNotExistsAsync();
         }
 
         public async Task<List<ImageQueueMessage>> ReceiveMessagesAsync()
@@ -28,14 +38,8 @@ namespace Lib.Messaging.Providers
             {
                 imageQueueMessages.Add(new ImageQueueMessage
                 {
-                    Message = new Message
-                    {
-                        Id = message.MessageId,
-                        Receipt = message.PopReceipt,
-                        Text = message.MessageText,
-                    },
+                    Message = new StorageQueueMessage(message),
                     Image = dataProvider.DeserializeImage(message.MessageText),
-                    NativeMessage = message
                 });
             }
             return imageQueueMessages;

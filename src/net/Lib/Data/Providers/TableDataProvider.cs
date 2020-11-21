@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -8,16 +9,11 @@ using Lib.Model;
 
 namespace Lib.Data.Providers
 {
-    public class TableDataProvider : IDataProvider
+    public class TableDataProvider : IDataProvider, IDisposable
     {
         public TableServiceClient TableServiceClient;
         public TableClient TableClient;
         public SecretClient SecretClient;
-
-        public IImage DeserializeImage(string json)
-        {
-            return JsonSerializer.Deserialize<ImageTableEntity>(json, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-        }
 
         public async Task InitializeAsync(TokenCredential credential)
         {
@@ -40,6 +36,10 @@ namespace Lib.Data.Providers
                 new TableSharedKeyCredential(Config.StorageAccountName, storageKeyValue));
 
             await TableClient.CreateIfNotExistsAsync();
+        }
+
+        public void Dispose()
+        {
         }
 
         public async Task<Image> GetImageAsync(string id)
@@ -74,6 +74,11 @@ namespace Lib.Data.Providers
         {
             var response = await TableClient.UpsertEntityAsync<ImageTableEntity>(image as ImageTableEntity);
             return image as ImageTableEntity;
+        }
+
+        public IImage DeserializeImage(string json)
+        {
+            return JsonSerializer.Deserialize<ImageTableEntity>(json, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
         }
     }
 }

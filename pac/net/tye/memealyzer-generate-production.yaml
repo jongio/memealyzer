@@ -37,7 +37,7 @@ spec:
           value: 'memealyzerstagingaks'
         - name: CONTAINER_TAG
           value: '1.0.9'
-        - name: AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME
+        - name: AZURE_CLIENT_SYNC_QUEUE_NAME
           value: 'sync'
         - name: FUNCTIONS_ENDPOINT
           value: 'http://memealyzerstagingfunction.azurewebsites.net'
@@ -122,7 +122,7 @@ spec:
           value: 'memealyzerstagingaks'
         - name: CONTAINER_TAG
           value: '1.0.9'
-        - name: AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME
+        - name: AZURE_CLIENT_SYNC_QUEUE_NAME
           value: 'sync'
         - name: FUNCTIONS_ENDPOINT
           value: 'http://memealyzerstagingfunction.azurewebsites.net'
@@ -207,7 +207,7 @@ spec:
           value: 'memealyzerstagingaks'
         - name: CONTAINER_TAG
           value: '1.0.9'
-        - name: AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME
+        - name: AZURE_CLIENT_SYNC_QUEUE_NAME
           value: 'sync'
         - name: FUNCTIONS_ENDPOINT
           value: 'http://memealyzerstagingfunction.azurewebsites.net'

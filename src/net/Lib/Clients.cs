@@ -15,7 +15,7 @@ using Lib.Model;
 
 namespace Lib
 {
-    public class Clients
+    public class Clients : IAsyncDisposable
     {
         public SecretClient SecretClient;
         public ChainedTokenCredential credential = Identity.GetCredentialChain();
@@ -56,6 +56,12 @@ namespace Lib
 
             // TextAnalyticsClient
             TextAnalyticsClient = new TextAnalyticsClient(Config.TextAnalyticsEndpoint, credential);
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            DataProvider.Dispose();
+            return MessagingProvider.DisposeAsync();
         }
 
         public async Task<Image> EnqueueImageAsync(Image image = null)

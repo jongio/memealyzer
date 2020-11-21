@@ -215,7 +215,7 @@ resource "azurerm_function_app" "function" {
     "APPINSIGHTS_INSTRUMENTATIONKEY"              = azurerm_application_insights.logging.instrumentation_key,
     "WEBSITES_ENABLE_APP_SERVICE_STORAGE"         = false,
     "AZURE_KEYVAULT_ENDPOINT"                     = azurerm_key_vault.key_vault.vault_uri,
-    "AZURE_STORAGE_CLIENT_SYNC_QUEUE_NAME"        = "sync",
+    "AZURE_CLIENT_SYNC_QUEUE_NAME"        = "sync",
     "AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME" = "StorageConnectionString",
     "AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME" = "SignalRConnectionString",
     "WEBSITE_RUN_FROM_PACKAGE"                    = "",
