@@ -187,5 +187,13 @@ app {
 }
 
 .border-8 {
-    border-width:8px !important;
+  border-width: 8px !important;
+}
+
+.btn-True {
+  color: #28a745;
+}
+
+.btn-False {
+  color: #cccccc;
 }
