@@ -7,3 +7,5 @@ terraform workspace select $WORKSPACE || terraform workspace new $WORKSPACE
 terraform workspace select $WORKSPACE
 
 terraform apply tf.plan
+
+../scripts/perms.sh ${BASENAME}

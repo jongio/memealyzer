@@ -8,4 +8,4 @@ ${ROOT}/scripts/k8sctx.sh
 source ./genfiles.sh
 
 echo "UNDEPLOYING K8S"
-tye undeploy -v Debug --tags $WORKSPACE
+tye undeploy -v Debug --tags cloud

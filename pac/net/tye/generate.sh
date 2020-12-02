@@ -8,4 +8,4 @@ ${ROOT}/scripts/k8sctx.sh
 source ./genfiles.sh
 
 echo "GENERATING K8S MANIFEST FILES"
-tye generate -v Debug --tags $WORKSPACE 
+tye generate -v Debug --tags cloud 

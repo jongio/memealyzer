@@ -50,15 +50,29 @@ The following Azure resources will be deployed with the Terraform script.
 1. Clone Repo
    `git clone https://github.com/jongio/memealyzer`
 
-## Azure Setup
+## Azure Resources
 
 1. Azure CLI Login
    `az login`
 1. Select Azure Subscription - If you have more than one subscription, make sure you have the right one selected.
    `az account set -s {SUBSCRIPTION_NAME}`
-1. Set Terraform Variables
+1. Set BASENAME Variable
    1. Open `.env` file in the root of this project. Set the `BASENAME` setting to something unique
-1. Create Azure Resources with Terraform
+   1. You can also change your default `REGION` and `FAILOVER_REGION`.
+
+### Bicep
+
+Bicep is an Azure Resource Management (ARM) abstraction that allows you to compose JSON-like files, that get converted to ARM template files.
+
+   1. CD to `iac\bicep`
+   1. Run: `./deploy.sh {ENV}`, where {ENV} matches the .env file extension that you want to use. i.e. `./deploy.sh staging` to use the values found in the `.env.staging` file.
+
+   Optionally, if you want to see what resources would be created if you run deploy, then you can first run `./plan.sh`
+
+### Terraform
+
+Terraform is a system that abstracts Azure resource creation and uses the Azure SDK for Go to generate the resources instead of ARM templates.
+
    1. CD to `iac/terraform`
    1. Terraform init: `terraform init`
    1. Terraform plan: 
@@ -73,14 +87,6 @@ The following Azure resources will be deployed with the Terraform script.
 
    > If you get this error: `Error validating token: IDX10223`, then run `az logout`, `az login`, and then run `./plan.sh` and `./apply.sh` again.
 
-
-## Permissions Setup
-This app uses the Azure CLI login to connect to Azure resources for local development. You need to run the following script to assign the appropriate roles to the Azure CLI user and the Managed Identity accounts for the Azure Kubernetes Service cluster and the Functions app.
-
-1. CD to `iac/terraform`
-1. Run `./perms.sh {basename}`
-   > You need to replace `{basename}` with the basename you set in your `BASENAME` setting used above, such as `memealyzerdev` or `memealyzerprod`.
-
 ## .NET Local Machine Setup
 
 If you are running the .NET versino of this project locally, then you will need to install the following tools.
@@ -92,7 +98,7 @@ If you are running the .NET versino of this project locally, then you will need 
 ### Local
 
 #### Project Tye
-1. CD to `/pac/net/tye/local` and run `./run.sh dev`
+1. CD to `/pac/net/tye` and run `./run.sh`
 1. Navigate to http://localhost:5000
 
 #### Docker Compose

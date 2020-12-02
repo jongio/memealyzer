@@ -1,4 +1,4 @@
-BASENAME=memealyzerstaging
+BASENAME=memealyzerbicep
 REGION=westus2
 FAILOVER_REGION=eastus2
 

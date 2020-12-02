@@ -10,8 +10,16 @@ if [ $# -eq 0 ] || [ "$1" == "dev" ]
     export WORKSPACE=$1
 fi
 
+if [ $# -eq 2 ]
+  then
+    export LOCATION=$2
+  else
+    export LOCATION=local
+fi
+
 export DOTENV=$ROOT/$DOTENV_FILENAME
 [ -f $DOTENV ] && echo "$DOTENV exists." || echo "$DOTENV does not exist."
 
 echo "WORKSPACE=${WORKSPACE}"
 echo "DOTENV=${DOTENV}"
+echo "LOCATION=${LOCATION}"
