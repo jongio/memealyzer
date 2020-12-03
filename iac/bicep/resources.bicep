@@ -3,6 +3,13 @@ param location string = 'westus2'
 param failover_location string = 'eastus2'
 param cli_user_id string = ''
 
+var secrets = [
+  'get'
+  'set'
+  'list'
+  'delete'
+]
+
 resource storage 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: '${basename}storage'
   location: location
@@ -56,53 +63,31 @@ resource key_vault 'Microsoft.KeyVault/vaults@2019-09-01' = {
       {
         objectId: cli_user_id
         permissions: {
-          secrets: [
-            'get'
-            'set'
-            'list'
-            'delete'
-          ]
+          secrets: secrets
         }
         tenantId: subscription().tenantId
       }
       {
-        
         objectId: aks.properties.identityProfile.kubeletidentity.objectId
         permissions: {
-          secrets: [
-            'get'
-            'set'
-            'list'
-            'delete'
-          ]
+          secrets: secrets
         }
         tenantId: subscription().tenantId
       }
       {
         objectId: aks.identity.principalId
         permissions: {
-          secrets: [
-            'get'
-            'set'
-            'list'
-            'delete'
-          ]
+          secrets: secrets
         }
         tenantId: subscription().tenantId
       }
-      // Cannot have the below because of circular reference with function/kv
-      // {
-      //   objectId: function.identity.principalId
-      //   permissions: {
-      //     secrets: [
-      //       'get'
-      //       'set'
-      //       'list'
-      //       'delete'
-      //     ]
-      //   }
-      //   tenantId: subscription().tenantId
-      // }
+      {
+        objectId: function.identity.principalId
+        permissions: {
+          secrets: secrets
+        }
+        tenantId: subscription().tenantId
+      }
     ]
   }
 }
@@ -210,7 +195,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2020-09-01' = {
     type: 'SystemAssigned'
   }
   properties: {
-    kubernetesVersion: '1.19.0'
+    kubernetesVersion: '1.19.3'
     nodeResourceGroup: '${basename}aksnodes'
     dnsPrefix: '${basename}aks'
 
@@ -256,12 +241,10 @@ resource appconfig_borderstyle 'Microsoft.AppConfiguration/configurationStores/k
 resource signalr 'Microsoft.SignalRService/signalR@2020-07-01-preview' = {
   name: '${basename}signalr'
   location: location
-
   sku: {
     name: 'Standard_S1'
     capacity: 1
   }
-
   properties: {
     cors: {
       allowedOrigins: [
@@ -305,57 +288,23 @@ resource function 'Microsoft.Web/sites@2020-06-01' = {
         ]
         supportCredentials: false
       }
-      appSettings: [
-        {
-          name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storage.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storage.id, storage.apiVersion).keys[0].value}'
-        }
-        {
-          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storage.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storage.id, storage.apiVersion).keys[0].value}'
-        }
-        {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: logging.properties.InstrumentationKey
-        }
-        {
-          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-          value: 'InstrumentationKey=${logging.properties.InstrumentationKey}'
-        }
-        {
-          name: 'FUNCTIONS_WORKER_RUNTIME'
-          value: 'dotnet'
-        }
-        {
-          name: 'FUNCTIONS_EXTENSION_VERSION'
-          value: '~3'
-        }
-        {
-          name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
-          value: 'false'
-        }
-        {
-          name: 'AZURE_KEYVAULT_ENDPOINT'
-          value: key_vault.properties.vaultUri
-        }
-        {
-          name: 'AZURE_CLIENT_SYNC_QUEUE_NAME'
-          value: 'sync'
-        }
-        {
-          name: 'AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME'
-          value: 'StorageConnectionString'
-        }
-        {
-          name: 'AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME'
-          value: 'SignalRConnectionString'
-        }
-        {
-          name: 'WEBSITE_RUN_FROM_PACKAGE'
-          value: ''
-        }
-      ]
     }
+  }
+}
+
+resource function_app_settings 'Microsoft.Web/sites/config@2018-11-01' = {
+  name: '${basename}function/appsettings'
+  properties: {
+    'AZURE_KEYVAULT_ENDPOINT': key_vault.properties.vaultUri
+    'AzureWebJobsStorage': 'DefaultEndpointsProtocol=https;AccountName=${storage.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storage.id, storage.apiVersion).keys[0].value}'
+    'APPINSIGHTS_INSTRUMENTATIONKEY': logging.properties.InstrumentationKey
+    'FUNCTIONS_WORKER_RUNTIME': 'dotnet'
+    'FUNCTIONS_EXTENSION_VERSION': '~3'
+    'WEBSITES_ENABLE_APP_SERVICE_STORAGE': 'false'
+    'AZURE_CLIENT_SYNC_QUEUE_NAME': 'sync'
+    'AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME': 'StorageConnectionString'
+    'AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME': 'SignalRConnectionString'
+    'WEBSITE_RUN_FROM_PACKAGE': ''
   }
 }
 
@@ -392,32 +341,35 @@ resource sync 'Microsoft.ServiceBus/namespaces/queues@2017-04-01' = {
   }
 }
 
-// Not using due to permission update not allowed issue, resorting to perms.sh script
-// module cli_perms './perms.bicep' = {
-//   name: 'cli_perms'
-//   params: {
-//     principalId: cli_user_id
-//     principalType: 'User'
-//   }
-// }
+module cli_perms './roles.bicep' = {
+  name: 'cli_perms-${resourceGroup().name}'
+  params: {
+    principalId: cli_user_id
+    principalType: 'User'
+    rgName: resourceGroup().name
+  }
+}
 
-// module aks_cluster_perms './perms.bicep' = {
-//   name: 'aks_cluster_perms'
-//   params: {
-//     principalId: aks.identity.principalId
-//   }
-// }
+module function_perms './roles.bicep' = {
+  name: 'function_perms-${resourceGroup().name}'
+  params: {
+    principalId: function.identity.principalId
+    rgName: resourceGroup().name
+  }
+}
 
-// module aks_node_pool_perms './perms.bicep' = {
-//   name: 'aks_node_pool_perms'
-//   params: {
-//     principalId: reference(resourceId('${basename}aksnodes', 'Microsoft.ManagedIdentity/userAssignedIdentities', '${basename}aks-agentpool'), '2018-11-30').principalId
-//   }
-// }
+module aks_kubelet_perms './roles.bicep' = {
+  name: 'aks_kubelet_perms-${resourceGroup().name}'
+  params: {
+    principalId: aks.properties.identityProfile.kubeletidentity.objectId
+    rgName: resourceGroup().name
+  }
+}
 
-// module function_perms './perms.bicep' = {
-//   name: 'function_perms'
-//   params: {
-//     principalId: function.identity.principalId
-//   }
-// }
+module aks_cluster_perms './rolesacr.bicep' = {
+  name: 'aks_cluster_perms-${resourceGroup().name}'
+  params: {
+    principalId: aks.identity.principalId
+    rgName: resourceGroup().name
+  }
+}

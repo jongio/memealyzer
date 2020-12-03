@@ -20,6 +20,14 @@
     }
   },
   "functions": [],
+  "variables": {
+    "secrets": [
+      "get",
+      "set",
+      "list",
+      "delete"
+    ]
+  },
   "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
@@ -79,43 +87,36 @@
           {
             "objectId": "[parameters('cli_user_id')]",
             "permissions": {
-              "secrets": [
-                "get",
-                "set",
-                "list",
-                "delete"
-              ]
+              "secrets": "[variables('secrets')]"
             },
             "tenantId": "[subscription().tenantId]"
           },
           {
             "objectId": "[reference(resourceId('Microsoft.ContainerService/managedClusters', format('{0}aks', parameters('basename')))).identityProfile.kubeletidentity.objectId]",
             "permissions": {
-              "secrets": [
-                "get",
-                "set",
-                "list",
-                "delete"
-              ]
+              "secrets": "[variables('secrets')]"
             },
             "tenantId": "[subscription().tenantId]"
           },
           {
             "objectId": "[reference(resourceId('Microsoft.ContainerService/managedClusters', format('{0}aks', parameters('basename'))), '2020-09-01', 'full').identity.principalId]",
             "permissions": {
-              "secrets": [
-                "get",
-                "set",
-                "list",
-                "delete"
-              ]
+              "secrets": "[variables('secrets')]"
+            },
+            "tenantId": "[subscription().tenantId]"
+          },
+          {
+            "objectId": "[reference(resourceId('Microsoft.Web/sites', format('{0}function', parameters('basename'))), '2020-06-01', 'full').identity.principalId]",
+            "permissions": {
+              "secrets": "[variables('secrets')]"
             },
             "tenantId": "[subscription().tenantId]"
           }
         ]
       },
       "dependsOn": [
-        "[resourceId('Microsoft.ContainerService/managedClusters', format('{0}aks', parameters('basename')))]"
+        "[resourceId('Microsoft.ContainerService/managedClusters', format('{0}aks', parameters('basename')))]",
+        "[resourceId('Microsoft.Web/sites', format('{0}function', parameters('basename')))]"
       ]
     },
     {
@@ -388,10 +389,6 @@
               "value": "false"
             },
             {
-              "name": "AZURE_KEYVAULT_ENDPOINT",
-              "value": "[reference(resourceId('Microsoft.KeyVault/vaults', format('{0}kv', parameters('basename')))).vaultUri]"
-            },
-            {
               "name": "AZURE_CLIENT_SYNC_QUEUE_NAME",
               "value": "sync"
             },
@@ -411,10 +408,20 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.KeyVault/vaults', format('{0}kv', parameters('basename')))]",
         "[resourceId('Microsoft.Insights/components', format('{0}ai', parameters('basename')))]",
         "[resourceId('Microsoft.Web/serverfarms', format('{0}plan', parameters('basename')))]",
         "[resourceId('Microsoft.Storage/storageAccounts', format('{0}storage', parameters('basename')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Web/sites/config",
+      "apiVersion": "2018-11-01",
+      "name": "[format('{0}acrfunction_app_settings', parameters('basename'))]",
+      "properties": {
+        "AZURE_KEYVAULT_ENDPOINT": "[reference(resourceId('Microsoft.KeyVault/vaults', format('{0}kv', parameters('basename')))).vaultUri]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', format('{0}kv', parameters('basename')))]"
       ]
     },
     {
@@ -458,6 +465,1795 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.ServiceBus/namespaces', format('{0}sb', parameters('basename')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-10-01",
+      "name": "cli_perms",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "principalId": {
+            "value": "[parameters('cli_user_id')]"
+          },
+          "principalType": {
+            "value": "User"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "principalId": {
+              "type": "string",
+              "defaultValue": ""
+            },
+            "principalType": {
+              "type": "string",
+              "defaultValue": "ServicePrincipal"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "blob_contrib",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "queue_contrib",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "974c5e8b-45b9-4653-ba55-5f855dd0fb88"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "queue_msg",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "8a0f0c08-91a1-4084-bc3d-661d67233fed"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "sb_receiver",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "sb_sender",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "69a216fc-b8fb-44d8-bc22-1f3c2cd27a39"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "cog_user",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "a97b65f3-24c7-4388-baec-2e87135dc908"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "app_config",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "acr_perms",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Resources/deployments",
+                      "apiVersion": "2019-10-01",
+                      "name": "acr_push",
+                      "properties": {
+                        "expressionEvaluationOptions": {
+                          "scope": "inner"
+                        },
+                        "mode": "Incremental",
+                        "parameters": {
+                          "principalId": {
+                            "value": "[parameters('principalId')]"
+                          },
+                          "principalType": {
+                            "value": "[parameters('principalType')]"
+                          },
+                          "roleId": {
+                            "value": "8311e382-0749-4cb8-b61a-304f252e45ec"
+                          }
+                        },
+                        "template": {
+                          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                          "contentVersion": "1.0.0.0",
+                          "parameters": {
+                            "roleId": {
+                              "type": "string",
+                              "defaultValue": ""
+                            },
+                            "principalType": {
+                              "type": "string",
+                              "defaultValue": "ServicePrincipal"
+                            },
+                            "principalId": {
+                              "type": "string",
+                              "defaultValue": ""
+                            }
+                          },
+                          "functions": [],
+                          "resources": [
+                            {
+                              "type": "Microsoft.Authorization/roleAssignments",
+                              "apiVersion": "2020-04-01-preview",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                              "properties": {
+                                "principalId": "[parameters('principalId')]",
+                                "principalType": "[parameters('principalType')]",
+                                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "Microsoft.Resources/deployments",
+                      "apiVersion": "2019-10-01",
+                      "name": "acr_pull",
+                      "properties": {
+                        "expressionEvaluationOptions": {
+                          "scope": "inner"
+                        },
+                        "mode": "Incremental",
+                        "parameters": {
+                          "principalId": {
+                            "value": "[parameters('principalId')]"
+                          },
+                          "principalType": {
+                            "value": "[parameters('principalType')]"
+                          },
+                          "roleId": {
+                            "value": "7f951dda-4ed3-4680-a7ca-43fe172d538d"
+                          }
+                        },
+                        "template": {
+                          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                          "contentVersion": "1.0.0.0",
+                          "parameters": {
+                            "roleId": {
+                              "type": "string",
+                              "defaultValue": ""
+                            },
+                            "principalType": {
+                              "type": "string",
+                              "defaultValue": "ServicePrincipal"
+                            },
+                            "principalId": {
+                              "type": "string",
+                              "defaultValue": ""
+                            }
+                          },
+                          "functions": [],
+                          "resources": [
+                            {
+                              "type": "Microsoft.Authorization/roleAssignments",
+                              "apiVersion": "2020-04-01-preview",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                              "properties": {
+                                "principalId": "[parameters('principalId')]",
+                                "principalType": "[parameters('principalType')]",
+                                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-10-01",
+      "name": "function_perms",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "principalId": {
+            "value": "[reference(resourceId('Microsoft.Web/sites', format('{0}function', parameters('basename'))), '2020-06-01', 'full').identity.principalId]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "principalId": {
+              "type": "string",
+              "defaultValue": ""
+            },
+            "principalType": {
+              "type": "string",
+              "defaultValue": "ServicePrincipal"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "blob_contrib",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "queue_contrib",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "974c5e8b-45b9-4653-ba55-5f855dd0fb88"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "queue_msg",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "8a0f0c08-91a1-4084-bc3d-661d67233fed"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "sb_receiver",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "sb_sender",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "69a216fc-b8fb-44d8-bc22-1f3c2cd27a39"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "cog_user",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "a97b65f3-24c7-4388-baec-2e87135dc908"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "app_config",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "acr_perms",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Resources/deployments",
+                      "apiVersion": "2019-10-01",
+                      "name": "acr_push",
+                      "properties": {
+                        "expressionEvaluationOptions": {
+                          "scope": "inner"
+                        },
+                        "mode": "Incremental",
+                        "parameters": {
+                          "principalId": {
+                            "value": "[parameters('principalId')]"
+                          },
+                          "principalType": {
+                            "value": "[parameters('principalType')]"
+                          },
+                          "roleId": {
+                            "value": "8311e382-0749-4cb8-b61a-304f252e45ec"
+                          }
+                        },
+                        "template": {
+                          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                          "contentVersion": "1.0.0.0",
+                          "parameters": {
+                            "roleId": {
+                              "type": "string",
+                              "defaultValue": ""
+                            },
+                            "principalType": {
+                              "type": "string",
+                              "defaultValue": "ServicePrincipal"
+                            },
+                            "principalId": {
+                              "type": "string",
+                              "defaultValue": ""
+                            }
+                          },
+                          "functions": [],
+                          "resources": [
+                            {
+                              "type": "Microsoft.Authorization/roleAssignments",
+                              "apiVersion": "2020-04-01-preview",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                              "properties": {
+                                "principalId": "[parameters('principalId')]",
+                                "principalType": "[parameters('principalType')]",
+                                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "Microsoft.Resources/deployments",
+                      "apiVersion": "2019-10-01",
+                      "name": "acr_pull",
+                      "properties": {
+                        "expressionEvaluationOptions": {
+                          "scope": "inner"
+                        },
+                        "mode": "Incremental",
+                        "parameters": {
+                          "principalId": {
+                            "value": "[parameters('principalId')]"
+                          },
+                          "principalType": {
+                            "value": "[parameters('principalType')]"
+                          },
+                          "roleId": {
+                            "value": "7f951dda-4ed3-4680-a7ca-43fe172d538d"
+                          }
+                        },
+                        "template": {
+                          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                          "contentVersion": "1.0.0.0",
+                          "parameters": {
+                            "roleId": {
+                              "type": "string",
+                              "defaultValue": ""
+                            },
+                            "principalType": {
+                              "type": "string",
+                              "defaultValue": "ServicePrincipal"
+                            },
+                            "principalId": {
+                              "type": "string",
+                              "defaultValue": ""
+                            }
+                          },
+                          "functions": [],
+                          "resources": [
+                            {
+                              "type": "Microsoft.Authorization/roleAssignments",
+                              "apiVersion": "2020-04-01-preview",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                              "properties": {
+                                "principalId": "[parameters('principalId')]",
+                                "principalType": "[parameters('principalType')]",
+                                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', format('{0}function', parameters('basename')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-10-01",
+      "name": "aks_kubelet_perms",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "principalId": {
+            "value": "[reference(resourceId('Microsoft.ContainerService/managedClusters', format('{0}aks', parameters('basename')))).identityProfile.kubeletidentity.objectId]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "principalId": {
+              "type": "string",
+              "defaultValue": ""
+            },
+            "principalType": {
+              "type": "string",
+              "defaultValue": "ServicePrincipal"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "blob_contrib",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "queue_contrib",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "974c5e8b-45b9-4653-ba55-5f855dd0fb88"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "queue_msg",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "8a0f0c08-91a1-4084-bc3d-661d67233fed"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "sb_receiver",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "sb_sender",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "69a216fc-b8fb-44d8-bc22-1f3c2cd27a39"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "cog_user",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "a97b65f3-24c7-4388-baec-2e87135dc908"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "app_config",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "acr_perms",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Resources/deployments",
+                      "apiVersion": "2019-10-01",
+                      "name": "acr_push",
+                      "properties": {
+                        "expressionEvaluationOptions": {
+                          "scope": "inner"
+                        },
+                        "mode": "Incremental",
+                        "parameters": {
+                          "principalId": {
+                            "value": "[parameters('principalId')]"
+                          },
+                          "principalType": {
+                            "value": "[parameters('principalType')]"
+                          },
+                          "roleId": {
+                            "value": "8311e382-0749-4cb8-b61a-304f252e45ec"
+                          }
+                        },
+                        "template": {
+                          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                          "contentVersion": "1.0.0.0",
+                          "parameters": {
+                            "roleId": {
+                              "type": "string",
+                              "defaultValue": ""
+                            },
+                            "principalType": {
+                              "type": "string",
+                              "defaultValue": "ServicePrincipal"
+                            },
+                            "principalId": {
+                              "type": "string",
+                              "defaultValue": ""
+                            }
+                          },
+                          "functions": [],
+                          "resources": [
+                            {
+                              "type": "Microsoft.Authorization/roleAssignments",
+                              "apiVersion": "2020-04-01-preview",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                              "properties": {
+                                "principalId": "[parameters('principalId')]",
+                                "principalType": "[parameters('principalType')]",
+                                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "Microsoft.Resources/deployments",
+                      "apiVersion": "2019-10-01",
+                      "name": "acr_pull",
+                      "properties": {
+                        "expressionEvaluationOptions": {
+                          "scope": "inner"
+                        },
+                        "mode": "Incremental",
+                        "parameters": {
+                          "principalId": {
+                            "value": "[parameters('principalId')]"
+                          },
+                          "principalType": {
+                            "value": "[parameters('principalType')]"
+                          },
+                          "roleId": {
+                            "value": "7f951dda-4ed3-4680-a7ca-43fe172d538d"
+                          }
+                        },
+                        "template": {
+                          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                          "contentVersion": "1.0.0.0",
+                          "parameters": {
+                            "roleId": {
+                              "type": "string",
+                              "defaultValue": ""
+                            },
+                            "principalType": {
+                              "type": "string",
+                              "defaultValue": "ServicePrincipal"
+                            },
+                            "principalId": {
+                              "type": "string",
+                              "defaultValue": ""
+                            }
+                          },
+                          "functions": [],
+                          "resources": [
+                            {
+                              "type": "Microsoft.Authorization/roleAssignments",
+                              "apiVersion": "2020-04-01-preview",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                              "properties": {
+                                "principalId": "[parameters('principalId')]",
+                                "principalType": "[parameters('principalType')]",
+                                "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerService/managedClusters', format('{0}aks', parameters('basename')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-10-01",
+      "name": "aks_cluster_perms",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "principalId": {
+            "value": "[reference(resourceId('Microsoft.ContainerService/managedClusters', format('{0}aks', parameters('basename'))), '2020-09-01', 'full').identity.principalId]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "principalId": {
+              "type": "string",
+              "defaultValue": ""
+            },
+            "principalType": {
+              "type": "string",
+              "defaultValue": "ServicePrincipal"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "acr_push",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "8311e382-0749-4cb8-b61a-304f252e45ec"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2019-10-01",
+              "name": "acr_pull",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "roleId": {
+                    "value": "7f951dda-4ed3-4680-a7ca-43fe172d538d"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "parameters": {
+                    "roleId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "principalType": {
+                      "type": "string",
+                      "defaultValue": "ServicePrincipal"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    }
+                  },
+                  "functions": [],
+                  "resources": [
+                    {
+                      "type": "Microsoft.Authorization/roleAssignments",
+                      "apiVersion": "2020-04-01-preview",
+                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'))]",
+                      "properties": {
+                        "principalId": "[parameters('principalId')]",
+                        "principalType": "[parameters('principalType')]",
+                        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', parameters('roleId'))]"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerService/managedClusters', format('{0}aks', parameters('basename')))]"
       ]
     }
   ]

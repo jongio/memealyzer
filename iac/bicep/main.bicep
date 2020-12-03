@@ -13,7 +13,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2020-06-01' = {
 }
 
 module resources './resources.bicep' = {
-  name: 'resources'
+  name: 'resources-${resource_group_name}'
   scope: resourceGroup(rg.name)
   params: {
     basename: basename

@@ -8,4 +8,4 @@ terraform workspace select $WORKSPACE
 
 terraform apply tf.plan
 
-../scripts/perms.sh ${BASENAME}
+source ../scripts/perms.sh ${BASENAME}
