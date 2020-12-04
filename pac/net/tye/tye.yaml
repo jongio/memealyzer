@@ -1,5 +1,5 @@
 name: memealyzer
-registry: memealyzerbicep11acr.azurecr.io
+registry: memealyzerbicep12acr.azurecr.io
 services:
   - name: azurite
     image: mcr.microsoft.com/azure-storage/azurite:alpha
@@ -24,7 +24,7 @@ services:
       - port: 1080
         containerPort: 80
     env_file:
-      - .env.bicep11
+      - .env.bicep12
     tags:
       - local
       - cloud
@@ -34,7 +34,7 @@ services:
       - port: 2080
         containerPort: 80
     env_file: 
-      - .env.bicep11
+      - .env.bicep12
     tags:
       - local
       - cloud
@@ -48,7 +48,7 @@ services:
   - name: memealyzernetqueueservice
     project: ../../../src/net/Services/QueueService/QueueService.csproj
     env_file: 
-    - .env.bicep11
+    - .env.bicep12
     tags:
       - local
       - cloud

@@ -10,8 +10,11 @@ source ./genfiles.sh
 echo "ACR LOGIN"
 az acr login --name ${AZURE_CONTAINER_REGISTRY_SERVER}
 
+echo "DEPLOY INGRESS"
+kubectl apply -f https://aka.ms/tye/ingress/deploy
+
 echo "TYE DEPLOY"
-tye deploy -v Debug --tags cloud --interactive
+tye deploy -v Debug --tags cloud
 
 echo "DEPLOY FUNCTION"
 ${ROOT}/pac/net/kubectl/aks/func.sh

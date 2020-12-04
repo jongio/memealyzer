@@ -1,35 +1,28 @@
 # Memealyzer
 
-Meme + Analyzer = Memealyzer
+## Meme + Analyzer = Memealyzer
 
-The repo demonstrates Azure SDK usage via a complete application. This application takes in an image, uploads it to Blog Storage and enqueues a message into a Queue. A process receives that message and uses Form Recognizer to extract the text from the image, then uses Text Analytics to get the sentiment of the text, and then stores the results in Cosmos DB or Azure Table Storage.
+Memealyzer determines if a meme's sentiment is positive, negative, or neutral. 
 
-If the text in the image is positive then the border color will change to green, if neutral then black, and if negative it will change to red.
+For example, given this meme:
 
-Download the [Azure SDK](https://aka.ms/azsdk)
+![](assets/meme.png)
+
+Memealyzer will extract the text, analyize the sentiment of that text, and then change the border color to red for negative sentiment, green for positive, and yellow for neutral.
 
 ![](assets/hero.png)
 
+Memealyzer is an app built to demonstrate some the latest and greatest Azure tech, including the new [Azure SDKs](https://aka.ms/azsdk), [Azure CLI](https://aka.ms/getazcli), Azure Functions, Azure SignalR Service, [Bicep](https://github.com/azure/bicep) or [Terraform](https://terraform.io) to provision Azure resources, [Project Tye](https://github.com/dotnet/tye/) or Docker Compose to dev, debug, and deploy, and Kubernetes.
+
 ## .NET Architecture
+
 ![](assets/arch.png)
 
 > This is the current .NET architecture - we are in the process of developing for other languages and architectures as well.
 
-## Pre-reqs
-
-The following are required to run this application.
-
-1. A Terminal - WSL, GitBash, PowerShell. The Terraform deployment will not work with Windows Command Prompt because it uses some shell scripts to fill Terraform gaps. You will need to run all the commands below in your selected terminal.
-1. [Install Azure CLI](https://aka.ms/azcliget)
-1. [Install Terraform](https://terraform.io)
-1. [Install Git](https://git-scm.com/downloads) 
-1. [Install VS Code](https://code.visualstudio.com/)
-1. [Install Docker](https://docs.docker.com/get-docker/)
-1. [Azure Subscription](https://azure.microsoft.com/free/)
-
 ## Azure Resources
 
-The following Azure resources will be deployed with the Terraform script.
+The following Azure resources are used in this application:
 
 1. [Resource Group](https://docs.microsoft.com/azure/azure-resource-manager/management/overview#resource-groups)
 1. [Storage Account](https://docs.microsoft.com/azure/storage/common/storage-introduction)
@@ -44,25 +37,85 @@ The following Azure resources will be deployed with the Terraform script.
 1. [Azure Service Bus](https://azure.microsoft.com/services/service-bus/)
 
 
+## Pre-reqs
+
+The following are required to run this application.
+
+1. A Terminal - WSL, GitBash, PowerShell. The Terraform deployment will not work with Windows Command Prompt because it uses shell scripts. You will need to run all the commands below in your selected terminal.
+1. [Install Azure CLI](https://aka.ms/azcliget)
+1. [Install Git](https://git-scm.com/downloads) 
+1. [Install VS Code](https://code.visualstudio.com/)
+1. [Install Docker](https://docs.docker.com/get-docker/)
+1. [Azure Subscription](https://azure.microsoft.com/free/)
+
+   ### .NET Pre-reqs
+
+   If you are running the .NET version of this project locally, then you will need to install the following tools:
+
+   1. [.NET SDK](https://dotnet.microsoft.com/download) - 5.0
+   1. [Azure Functions Core Tools](https://docs.microsoft.com/azure/azure-functions/functions-run-local) - v3.0.2881 minimum
+   1. [Project Tye](https://github.com/dotnet/tye/blob/master/docs/getting_started.md)
+   1. [Bicep](https://github.com/Azure/bicep/blob/main/docs/installing.md)
+
+
 ## Code Setup
 
 1. Open Terminal - The same terminal you used to install the pre-reqs above.
 1. Clone Repo
    `git clone https://github.com/jongio/memealyzer`
 
-## Azure Resources
 
+
+## Quickstart
+
+Here's how to quickly provision and deploy the app:
+1. Install Pre-reqs and Code Setup above.
+1. `az login` and `az account set -s {SUBSCRIPTION_NAME}`
+1. Set Config: 
+   1. Open `.env` and change BASENAME to something unique.
+1. Provision Azure Resources: 
+   1. CD to `iac\bicep`
+   1. Run `./deploy.sh dev cloud`
+1. Deploy Application: 
+   1. CD to `pac\net\tye`
+   1. Run `./deploy.sh dev cloud`
+1. Click on the IP ADDRESS that is outputted to the console to load Memealyzer.
+1. Click + (single) or &#8734; (stream) buttons to analyze memes.
+
+
+---
+
+> The rest of this readme is further details that you can explore if you want to use Terraform instead of Bicep or Kubectl/Docker Compose instead of Project Tye.
+
+## Azure Resource Provisioning
+
+You have two options to provision your Azure resources:
+
+1. [Bicep](https://github.com/azure/bicep) - A new ARM abstraction from Microsoft.
+1. [Terraform](https://terraform.io) - A Azure provisioning system built on top of the Azure Go SDK.
+
+Both are great and have their pros and cons - please research them both and decide which one you want to use.
+
+Regardless of your choice, you need to run the Azure CLI Setup and Configuration steps below:
+
+### Azure CLI Setup
 1. Azure CLI Login
+
    `az login`
 1. Select Azure Subscription - If you have more than one subscription, make sure you have the right one selected.
+
    `az account set -s {SUBSCRIPTION_NAME}`
+
+### Configuration
 1. Set BASENAME Variable
    1. Open `.env` file in the root of this project. Set the `BASENAME` setting to something unique
-   1. You can also change your default `REGION` and `FAILOVER_REGION`.
+   1. You can also change your default `REGION` and `FAILOVER_REGION` (Used for Cosmos DB failover).
+
+
 
 ### Bicep
 
-Bicep is an Azure Resource Management (ARM) abstraction that allows you to compose JSON-like files, that get converted to ARM template files.
+[Bicep](https://github.com/azure/bicep) is an Azure Resource Management (ARM) abstraction that allows you to compose JSON-like files, that get converted to ARM template files.
 
    1. CD to `iac\bicep`
    1. Run: `./deploy.sh {ENV}`, where {ENV} matches the .env file extension that you want to use. i.e. `./deploy.sh staging` to use the values found in the `.env.staging` file.
@@ -71,8 +124,9 @@ Bicep is an Azure Resource Management (ARM) abstraction that allows you to compo
 
 ### Terraform
 
-Terraform is a system that abstracts Azure resource creation and uses the Azure SDK for Go to generate the resources instead of ARM templates.
+[Terraform](https://terraform.io) is a system that abstracts Azure resource creation and uses the Azure SDK for Go to generate the resources instead of ARM templates.
 
+   1. [Install Terraform](https://terraform.io)
    1. CD to `iac/terraform`
    1. Terraform init: `terraform init`
    1. Terraform plan: 
@@ -87,19 +141,13 @@ Terraform is a system that abstracts Azure resource creation and uses the Azure 
 
    > If you get this error: `Error validating token: IDX10223`, then run `az logout`, `az login`, and then run `./plan.sh` and `./apply.sh` again.
 
-## .NET Local Machine Setup
-
-If you are running the .NET versino of this project locally, then you will need to install the following tools.
-1. [.NET Core SDK](https://dotnet.microsoft.com/download) - 5.0
-1. [Azure Functions Core Tools](https://docs.microsoft.com/azure/azure-functions/functions-run-local) - v3.0.2881 minimum
-
 ## Run Application
 
 ### Local
 
 #### Project Tye
 1. CD to `/pac/net/tye` and run `./run.sh`
-1. Navigate to http://localhost:5000
+1. Navigate to http://localhost:1080
 
 #### Docker Compose
 1. CD to the `pac/{lang}/docker` folder for the language you would like to run, i.e. for .NET, cd to `pac/net/docker`.
@@ -120,12 +168,26 @@ If you are running the .NET versino of this project locally, then you will need 
 
 ### Azure Kubernetes Service (AKS)
 
-1. **Terraform Workspace**
+When deploying to AKS you have two options: Project Tye or Kubectl.
+
+If you chose Terraform to provision your Azure Resources:
+
    - It is recommended that you create another Azure deployment in a new Terraform workspace, so you can have a dev backend and a prod backend. i.e. `iac/terraform/plan.sh prod`, where `prod` is the name of the workspace and the name of the env file, i.e. `env.prod`.
 
-   > See the "Azure Setup" steps above for full Terraform deployment steps.
+      > See the "Azure Resource Provisioning" steps above for full Terraform deployment steps.
 
-   > The `{basename}` value is pulled from your .env file: `TF_VAR_basename`.
+      > The `{basename}` value is pulled from your .env file: `TF_VAR_basename`.
+
+      > You do not need to do this step if you are using Bicep.
+
+#### Project Tye
+
+- CD to `/pac/net/tye`
+- Run `./deploy.sh {basename} cloud`
+
+   - This will build containers, push them to ACR, apply Kubernetes files, and deploy the Azure Function.
+
+#### Kubectl
 
 1. **AKS Credentials**
    - Run the following command to get the AKS cluster credentials locally:
@@ -141,26 +203,22 @@ If you are running the .NET versino of this project locally, then you will need 
    1. Run `./scripts/nginx.sh` to install the nginx-ingress controller to your AKS cluster.
 1. **AKS Cluster IP Address**
    - Run `az network public-ip list -g memealyzerdevaksnodes --query '[0].ipAddress' --output tsv` to find the AKS cluster's public IP address.
-1. **Update .env File**
-   - Open `./.env` and change. (Use `./.env.prod` for production environment)
-    1. `FUNCTIONS_ENDPOINT` to the URI of your functions endpoint, i.e. `https://memealyzerdevfunction.azurewebsites.net` - this was outputted by your Terraform run and can be found in your `.env` file.
+
 1. **Deploy**: 
-   
-   You can choose to either deploy with kubectl or [**Project Tye**](https://github.com/dotnet/tye).
-
-   - With **kubectl**
-      - CD to `/pac/net/kubectl/aks`
-   - With **Project Tye**
-      - CD to `/pac/net/tye`
-
-   - Run `./deploy.sh {env}`, where env is the name of the environment you want to deploy to, this will match your .env file in the project root. 
+   - CD to `/pac/net/kubectl/aks`
+   - Run `./deploy.sh {env} cloud`, where env is the name of the environment you want to deploy to, this will match your .env file in the project root. 
    
    - This will build containers, push them to ACR, apply Kubernetes files, and deploy the Azure Function.
 
 ### Add a Meme
 
+#### Add a single meme:
 1. Click on the "+" icon to add a random meme.
 1. Memealyzer will analyize the sentiment of that meme and change the border color to red (negative), yellow (neutral), or green (positive) depending on the sentiment.
+
+#### Start the memestream:
+1. Click on the "&#8734;" icon to continuously add memes.
+
 
 ## Configuration
 

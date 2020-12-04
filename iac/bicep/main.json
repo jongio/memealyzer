@@ -278,7 +278,7 @@
             {
               "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
               "apiVersion": "2020-04-01",
-              "name": "[format('{0}/memealyzer/images', format('{0}cosmosaccount', parameters('basename')))]",
+              "name": "[format('{0}/images', format('{0}/memealyzer', format('{0}cosmosaccount', parameters('basename'))))]",
               "properties": {
                 "options": {
                   "throughput": 400
@@ -302,7 +302,7 @@
                 }
               },
               "dependsOn": [
-                "[resourceId('Microsoft.DocumentDB/databaseAccounts', format('{0}cosmosaccount', parameters('basename')))]"
+                "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', split(format('{0}/memealyzer', format('{0}cosmosaccount', parameters('basename'))), '/')[0], split(format('{0}/memealyzer', format('{0}cosmosaccount', parameters('basename'))), '/')[1])]"
               ]
             },
             {

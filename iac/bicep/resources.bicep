@@ -163,7 +163,7 @@ resource cosmos_sqldb 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2020-0
 }
 
 resource cosmos_sqldb_container 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2020-04-01' = {
-  name: '${cosmos_account.name}/memealyzer/images'
+  name: '${cosmos_sqldb.name}/images'
   properties: {
     options: {
       throughput: 400
