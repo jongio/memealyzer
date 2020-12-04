@@ -72,13 +72,13 @@ Here's how to quickly provision and deploy the app:
 1. Install Pre-reqs and Code Setup above.
 1. `az login` and `az account set -s {SUBSCRIPTION_NAME}`
 1. Set Config: 
-   1. Open `.env` and change BASENAME to something unique.
+   1. Open `.env.prod` and change BASENAME to something unique.
 1. Provision Azure Resources: 
    1. CD to `iac\bicep`
-   1. Run `./deploy.sh dev cloud`
+   1. Run `./deploy.sh prod cloud`
 1. Deploy Application: 
    1. CD to `pac\net\tye`
-   1. Run `./deploy.sh dev cloud`
+   1. Run `./deploy.sh prod cloud`
 1. Click on the IP ADDRESS that is outputted to the console to load Memealyzer.
 1. Click + (single) or &#8734; (stream) buttons to analyze memes.
 
@@ -118,7 +118,7 @@ Regardless of your choice, you need to run the Azure CLI Setup and Configuration
 [Bicep](https://github.com/azure/bicep) is an Azure Resource Management (ARM) abstraction that allows you to compose JSON-like files, that get converted to ARM template files.
 
    1. CD to `iac\bicep`
-   1. Run: `./deploy.sh {ENV}`, where {ENV} matches the .env file extension that you want to use. i.e. `./deploy.sh staging` to use the values found in the `.env.staging` file.
+   1. Run: `./deploy.sh {WORKSPACE}`, where {WORKSPACE} matches the .env file extension that you want to use. i.e. `./deploy.sh staging` to use the values found in the `.env.staging` file.
 
    Optionally, if you want to see what resources would be created if you run deploy, then you can first run `./plan.sh`
 
@@ -183,7 +183,7 @@ If you chose Terraform to provision your Azure Resources:
 #### Project Tye
 
 - CD to `/pac/net/tye`
-- Run `./deploy.sh {basename} cloud`
+- Run `./deploy.sh {WORKSPACE} cloud`
 
    - This will build containers, push them to ACR, apply Kubernetes files, and deploy the Azure Function.
 
@@ -206,7 +206,7 @@ If you chose Terraform to provision your Azure Resources:
 
 1. **Deploy**: 
    - CD to `/pac/net/kubectl/aks`
-   - Run `./deploy.sh {env} cloud`, where env is the name of the environment you want to deploy to, this will match your .env file in the project root. 
+   - Run `./deploy.sh {WORKSPACE} cloud`, where env is the name of the environment you want to deploy to, this will match your .env file in the project root. 
    
    - This will build containers, push them to ACR, apply Kubernetes files, and deploy the Azure Function.
 
