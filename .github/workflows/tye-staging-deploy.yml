@@ -15,7 +15,6 @@ env:
   BASENAME: memealyzerstaging
   ROOT: ${{ github.workspace }}
   DOTENV_FILENAME: .env.staging
-  WORKSPACE: staging
   AZURE_CONTAINER_REGISTRY_SERVER: memealyzerstagingacr.azurecr.io
   FUNCTIONS_ENDPOINT: http://memealyzerstagingfunction.azurewebsites.net
   REGISTRY_USERNAME: memealyzerstagingacr
@@ -71,7 +70,7 @@ jobs:
         sh genfiles.sh
         sh $GITHUB_WORKSPACE/scripts/genappsettings.sh
         kubectl apply -f https://aka.ms/tye/ingress/deploy
-        tye deploy tye.yaml -v Debug --tags ${{ env.WORKSPACE }}
+        tye deploy tye.yaml -v Debug --tags cloud
         popd
 
     - name: 'Login via Azure CLI'

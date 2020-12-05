@@ -11,7 +11,7 @@ namespace Memealyzer.Functions
     {
         [FunctionName("QueueTrigger")]
         public static async Task Run(
-            [QueueTrigger("%AZURE_CLIENT_SYNC_QUEUE_NAME%", Connection = "StorageConnectionString")] string message,
+            [QueueTrigger("%ClientSyncQueueName%", Connection = "StorageConnectionString")] string message,
             [SignalR(HubName = "STORAGE_QUEUE")] IAsyncCollector<SignalRMessage> messages,
             ILogger log)
         {

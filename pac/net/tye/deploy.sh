@@ -5,6 +5,8 @@ export ROOT=../../..;source $ROOT/scripts/base.sh
 
 ${ROOT}/scripts/k8sctx.sh
 
+export ENV=cloud
+
 source ./genfiles.sh
 
 echo "ACR LOGIN"
@@ -14,10 +16,7 @@ echo "DEPLOY INGRESS"
 kubectl apply -f https://aka.ms/tye/ingress/deploy
 
 echo "TYE DEPLOY"
-tye deploy -v Debug --tags cloud
+tye deploy -v Debug --tags $ENV
 
-echo "DEPLOY FUNCTION"
-${ROOT}/pac/net/kubectl/aks/func.sh
-
-IP_ADDRESS=$(kubectl get ing -o=jsonpath='{.items[0].status.loadBalancer.ingress[0].ip}')
-echo "SITE LOCATION: http://${IP_ADDRESS}"
+${ROOT}/scripts/func.sh
+${ROOT}/scripts/ingressip.sh

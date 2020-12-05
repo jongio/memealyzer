@@ -34,7 +34,8 @@ namespace Memealyzer
                 { "StorageConnectionString", storageConnectionString.Value.Value },
                 { "AzureSignalRConnectionString", signalRConnectionString.Value.Value },
                 { "ServiceBusConnectionString", serviceBusCnnectionString.Value.Value },
-                { "MessagingType", Config.MessagingType }
+                { "MessagingType", Config.MessagingType },
+                { "ClientSyncQueueName", Config.ClientSyncQueueName}
             })
             .AddEnvironmentVariables().Build();
 

@@ -1,34 +1,40 @@
 {
 	"folders": [
 		{
+			"name": "Api",
 			"path": "Api"
 		},
 		{
+			"name": "Lib",
 			"path": "Lib"
 		},
 		{
+			"name": "Lib.Model",
 			"path": "Lib.Model"
 		},
 		{
-			"path": "Services\\Functions"
+			"name": "Functions",
+			"path": "Services/Functions"
 		},
 		{
-			"path": "Services\\QueueService"
+			"name": "QueueService",
+			"path": "Services/QueueService"
 		},
 		{
+			"name": "WebApp",
 			"path": "WebApp"
 		},
 		{
-			"path": "..\\.."
+			"name": "memealyzer",
+			"path": "../.."
 		},
 		{
-			"path": "..\\..\\iac\\terraform"
+			"name": "bicep",
+			"path": "../../iac/bicep"
 		},
 		{
-			"path": "..\\..\\pac\\net\\tye"
-		},
-		{
-			"path": "..\\..\\pac\\net\\docker"
+			"name": "tye",
+			"path": "../../pac/net/tye"
 		}
 	]
 }

@@ -23,8 +23,6 @@ services:
     bindings:
       - port: 1080
         containerPort: 80
-    env_file:
-      - ${DOTENV_FILENAME}
     tags:
       - local
       - cloud
