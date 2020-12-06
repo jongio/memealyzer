@@ -32,7 +32,7 @@ function assign {
 }
 
 echo "Assigning Roles to Currently Logged in Azure CLI User"
-assign $(az ad signed-in-user show --query 'objectId' -o tsv) User
+assign ${CLI_USER_ID} User
 
 echo "Assigning Roles to AKS Cluster Managed Identity"
 assign $(az aks show -g ${BASENAME}rg -n ${BASENAME}aks --query identity.principalId -o tsv) ServicePrincipal

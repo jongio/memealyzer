@@ -17,18 +17,15 @@ services:
         containerPort: 10002
         protocol: http
     tags:
-      - dev
+      - local
   - name: memealyzernetwebapp
     project: ${ROOT}/src/net/WebApp/WebApp.csproj
     bindings:
       - port: 1080
         containerPort: 80
-    env_file:
-      - ${DOTENV_FILENAME}
     tags:
-      - dev
-      - staging
-      - prod
+      - local
+      - cloud
   - name: memealyzernetapi
     project: ${ROOT}/src/net/Api/Api.csproj
     bindings:
@@ -37,27 +34,25 @@ services:
     env_file: 
       - ${DOTENV_FILENAME}
     tags:
-      - dev
-      - staging
-      - prod
+      - local
+      - cloud
   - name: memealyzernetfunction
     azureFunction: ${ROOT}/src/net/Services/Functions/
     bindings:
       - port: 3080
         protocol: http
     tags:
-      - dev
+      - local
   - name: memealyzernetqueueservice
     project: ${ROOT}/src/net/Services/QueueService/QueueService.csproj
     env_file: 
     - ${DOTENV_FILENAME}
     tags:
-      - dev
-      - staging
-      - prod
+      - local
+      - cloud
 
 ingress:
-  - name: ingressdev
+  - name: ingresslocal
     rules:
       - path: /
         service: memealyzernetwebapp
@@ -77,7 +72,7 @@ ingress:
         service: memealyzernetfunction
         preservePath: true
     tags:
-      - dev
+      - local
   - name: ingress
     rules:
       - path: /
@@ -95,5 +90,4 @@ ingress:
         service: memealyzernetapi
         preservePath: true
     tags:
-      - staging
-      - prod
+      - cloud

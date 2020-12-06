@@ -18,31 +18,9 @@ spec:
     spec:
       containers:
       - name: memealyzernetwebapp
-        image: memealyzernetwebapp:1.0.9
+        image: memealyzerbicep11acr.azurecr.io/memealyzernetwebapp:1.0.10
         imagePullPolicy: Always
         env:
-        - name: BASENAME
-          value: 'memealyzerstaging'
-        - name: TF_VAR_basename
-          value: 'memealyzerstaging'
-        - name: TF_VAR_location
-          value: 'westus2'
-        - name: TF_VAR_failover_location
-          value: 'eastus2'
-        - name: AZURE_AKS_CLUSTER_NAME
-          value: 'memealyzerstagingaks'
-        - name: AZURE_FUNCTION_APP_NAME
-          value: 'memealyzerstagingfunction'
-        - name: K8S_CONTEXT
-          value: 'memealyzerstagingaks'
-        - name: CONTAINER_TAG
-          value: '1.0.9'
-        - name: AZURE_CLIENT_SYNC_QUEUE_NAME
-          value: 'sync'
-        - name: FUNCTIONS_ENDPOINT
-          value: 'http://memealyzerstagingfunction.azurewebsites.net'
-        - name: MEME_ENDPOINT
-          value: 'https://meme-api.herokuapp.com/gimme/wholesomememes'
         - name: DOTNET_LOGGING__CONSOLE__DISABLECOLORS
           value: 'true'
         - name: ASPNETCORE_URLS
@@ -103,29 +81,35 @@ spec:
     spec:
       containers:
       - name: memealyzernetapi
-        image: memealyzernetapi:1.0.9
+        image: memealyzerbicep11acr.azurecr.io/memealyzernetapi:1.0.10
         imagePullPolicy: Always
         env:
         - name: BASENAME
-          value: 'memealyzerstaging'
+          value: 'memealyzerbicep11'
+        - name: REGION
+          value: 'westus2'
+        - name: FAILOVER_REGION
+          value: 'eastus2'
         - name: TF_VAR_basename
-          value: 'memealyzerstaging'
+          value: 'memealyzerbicep11'
         - name: TF_VAR_location
           value: 'westus2'
         - name: TF_VAR_failover_location
           value: 'eastus2'
-        - name: AZURE_AKS_CLUSTER_NAME
-          value: 'memealyzerstagingaks'
         - name: AZURE_FUNCTION_APP_NAME
-          value: 'memealyzerstagingfunction'
+          value: 'memealyzerbicep11function'
+        - name: AZURE_CONTAINER_REGISTRY_SERVER
+          value: 'memealyzerbicep11acr.azurecr.io'
         - name: K8S_CONTEXT
-          value: 'memealyzerstagingaks'
+          value: 'memealyzerbicep11aks'
         - name: CONTAINER_TAG
-          value: '1.0.9'
+          value: '1.0.10'
         - name: AZURE_CLIENT_SYNC_QUEUE_NAME
           value: 'sync'
+        - name: API_ENDPOINT
+          value: ''
         - name: FUNCTIONS_ENDPOINT
-          value: 'http://memealyzerstagingfunction.azurewebsites.net'
+          value: ''
         - name: MEME_ENDPOINT
           value: 'https://meme-api.herokuapp.com/gimme/wholesomememes'
         - name: DOTNET_LOGGING__CONSOLE__DISABLECOLORS
@@ -188,29 +172,35 @@ spec:
     spec:
       containers:
       - name: memealyzernetqueueservice
-        image: memealyzernetqueueservice:1.0.9
+        image: memealyzerbicep11acr.azurecr.io/memealyzernetqueueservice:1.0.10
         imagePullPolicy: Always
         env:
         - name: BASENAME
-          value: 'memealyzerstaging'
+          value: 'memealyzerbicep11'
+        - name: REGION
+          value: 'westus2'
+        - name: FAILOVER_REGION
+          value: 'eastus2'
         - name: TF_VAR_basename
-          value: 'memealyzerstaging'
+          value: 'memealyzerbicep11'
         - name: TF_VAR_location
           value: 'westus2'
         - name: TF_VAR_failover_location
           value: 'eastus2'
-        - name: AZURE_AKS_CLUSTER_NAME
-          value: 'memealyzerstagingaks'
         - name: AZURE_FUNCTION_APP_NAME
-          value: 'memealyzerstagingfunction'
+          value: 'memealyzerbicep11function'
+        - name: AZURE_CONTAINER_REGISTRY_SERVER
+          value: 'memealyzerbicep11acr.azurecr.io'
         - name: K8S_CONTEXT
-          value: 'memealyzerstagingaks'
+          value: 'memealyzerbicep11aks'
         - name: CONTAINER_TAG
-          value: '1.0.9'
+          value: '1.0.10'
         - name: AZURE_CLIENT_SYNC_QUEUE_NAME
           value: 'sync'
+        - name: API_ENDPOINT
+          value: ''
         - name: FUNCTIONS_ENDPOINT
-          value: 'http://memealyzerstagingfunction.azurewebsites.net'
+          value: ''
         - name: MEME_ENDPOINT
           value: 'https://meme-api.herokuapp.com/gimme/wholesomememes'
         - name: DOTNET_LOGGING__CONSOLE__DISABLECOLORS
