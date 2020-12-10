@@ -231,6 +231,7 @@ resource "azurerm_function_app" "function" {
       support_credentials = false
     }
     always_on = true
+    ftps_state = "FtpsOnly"
   }
 }
 
