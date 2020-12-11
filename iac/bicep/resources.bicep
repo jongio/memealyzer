@@ -238,6 +238,27 @@ resource appconfig_borderstyle 'Microsoft.AppConfiguration/configurationStores/k
   }
 }
 
+resource appconfig_imageProvider 'Microsoft.AppConfiguration/configurationStores/keyValues@2020-07-01-preview' = {
+  name: '${appconfig.name}/imageProvider'
+  properties: {
+    value: 'RedditMemes'
+  }
+}
+
+resource appconfig_BingImageSearchTerm 'Microsoft.AppConfiguration/configurationStores/keyValues@2020-07-01-preview' = {
+  name: '${appconfig.name}/BingImageSearchTerm'
+  properties: {
+    value: 'pet memes'
+  }
+}
+
+resource appconfig_BingImageSearchApiKey 'Microsoft.AppConfiguration/configurationStores/keyValues@2020-07-01-preview' = {
+  name: '${appconfig.name}/BingImageSearchApiKey'
+  properties: {
+    value: 'your-key-here'
+  }
+}
+
 resource signalr 'Microsoft.SignalRService/signalR@2020-07-01-preview' = {
   name: '${basename}signalr'
   location: location

@@ -101,8 +101,5 @@ namespace Lib.Model
                 color = value;
             }
         }
-
-        [JsonPropertyName("searchTerm")]
-        public string SearchTerm { get; set; }
     }
 }

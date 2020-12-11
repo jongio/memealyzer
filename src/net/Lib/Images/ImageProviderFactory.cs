@@ -8,7 +8,7 @@ namespace Lib.Images
         {
             switch (type)
             {
-                case "Default":
+                case "RedditMemes":
                     return new RedditMemeProvider();
                 case "Bing":
                     return new BingImageSearchProvider();

@@ -1,7 +1,4 @@
 using System;
-using System.Linq;
-using Microsoft.Azure.CognitiveServices.Search.ImageSearch;
-using Microsoft.Azure.CognitiveServices.Search.ImageSearch.Models;
 using System.Threading.Tasks;
 using Lib.Model;
 using System.Collections.Generic;
@@ -23,7 +20,7 @@ namespace Lib.Images.Providers
         public async Task<Image> GetImage()
         {
             var images = new List<Image>();
-            SearchResult result = await BingImageSearch(Clients.SearchTerm);
+            SearchResult result = await BingImageSearch(Clients.Instance.BingImageSearchTerm);
             dynamic jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject(result.jsonResult);
 
             // pick a random one from the list
@@ -36,7 +33,7 @@ namespace Lib.Images.Providers
 
         static async Task<SearchResult> BingImageSearch(string searchQuery)
         {
-            var uriQuery = uriBase + "?count=100&q=" + Uri.EscapeDataString(searchQuery);
+            var uriQuery = uriBase + "?safeSearch=Strict&count=100&q=" + Uri.EscapeDataString(searchQuery);
             
             HttpRequestMessage request = new HttpRequestMessage() 
             {
@@ -44,7 +41,7 @@ namespace Lib.Images.Providers
                 Method = HttpMethod.Get
             };
 
-            request.Headers.Add("Ocp-Apim-Subscription-Key", Config.BingSearchKey);
+            request.Headers.Add("Ocp-Apim-Subscription-Key", Clients.Instance.BingImageSearchApiKey);
             var httpClient = new HttpClient();
             var response = await httpClient.SendAsync(request);
             var json = await response.Content.ReadAsStringAsync();

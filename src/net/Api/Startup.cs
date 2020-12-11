@@ -14,6 +14,7 @@ using DotNetEnv;
 using Microsoft.AspNetCore.ResponseCompression;
 using Lib;
 using Api.Services;
+using Api.Workers;
 
 namespace Api
 {
@@ -34,6 +35,7 @@ namespace Api
             Envs.Load();
             
             services.AddSingleton(typeof(Clients));
+            services.AddHostedService<AppConfigRefresher>();
             services.AddHostedService<DataHostedService>();
             services.AddSignalR();
             services.AddControllers();

@@ -17,6 +17,5 @@ namespace Lib.Model
         DateTime CreatedDate { get; set; }
         string Color { get; }
         string Error { get; set; }
-        string SearchTerm { get; set; }
     }
 }
