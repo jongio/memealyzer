@@ -31,7 +31,7 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        [Route("/searchTerm")]
+        [Route("/config/searchTerm")]
         public string GetSearchTerm()
         {
             return Clients.SearchTerm;

@@ -1,3 +1,5 @@
+using Lib.Images.Providers;
+
 namespace Lib.Images
 {
     public static class ImageProviderFactory
@@ -7,11 +9,11 @@ namespace Lib.Images
             switch (type)
             {
                 case "Default":
-                    return new DefaultImageSource();
+                    return new RedditMemeProvider();
                 case "Bing":
                     return new BingImageSearchProvider();
                 default:
-                    return new DefaultImageSource();
+                    return new RedditMemeProvider();
             }
         }
     }

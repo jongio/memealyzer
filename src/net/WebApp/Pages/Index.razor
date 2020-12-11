@@ -88,7 +88,7 @@ else
 
         hubConnection = FunctionsServiceClient.GetHubConnection();
 
-        hubConnection.On<Image>("ReceiveImage", (image) =>
+        hubConnection.On<Image>("ReceiveImage", async (image) =>
         {
             int index = FindImageById(image.Id);
             if (index >= 0)
@@ -100,6 +100,7 @@ else
                 images.Insert(0, image);
             }
 
+            searchTerm = await ApiServiceClient.GetSearchTerm();
             StateHasChanged();
         });
 
@@ -124,8 +125,15 @@ else
             SearchTerm = searchTerm
         };
         
-        postedImage = await ApiServiceClient.PostImage(postedImage);
-        images.Insert(0, postedImage);
+        try {
+            postedImage = await ApiServiceClient.PostImage(postedImage);
+            if(postedImage != null) {
+                images.Insert(0, postedImage);
+            }
+        }
+        catch(Exception x) {
+            Console.WriteLine(x);
+        }
     }
 
     private void ToggleStream(MouseEventArgs e)

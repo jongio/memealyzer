@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 
-namespace Lib.Images
+namespace Lib.Images.Providers
 {
     public class BingImageSearchProvider : IImageProvider
     {

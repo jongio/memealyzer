@@ -24,12 +24,12 @@ namespace Lib
         public BlobContainerClient ContainerClient;
         public IMessagingProvider MessagingProvider;
         public TextAnalyticsClient TextAnalyticsClient;
-        public IImageProvider ImageProvider { get; private set; }
+        public IImageProvider ImageProvider;
         public FormRecognizerClient FormRecognizerClient;
         public ConfigurationClient ConfigurationClient;
         public IDataProvider DataProvider;
+        public static string SearchTerm = Config.BingSearchTerm;
         private HttpClient httpClient = new HttpClient();
-        public static string SearchTerm { get; set; }
 
         public Clients()
         {

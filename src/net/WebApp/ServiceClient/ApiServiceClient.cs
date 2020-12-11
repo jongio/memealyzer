@@ -63,7 +63,7 @@ public class ApiServiceClient : ServiceClient
     {
         try
         {
-            var term = await base.httpClient.GetStringAsync("/searchTerm");
+            var term = await base.httpClient.GetStringAsync("/config/searchTerm");
             return term;
         }
         catch { }
