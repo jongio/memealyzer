@@ -58,4 +58,16 @@ public class ApiServiceClient : ServiceClient
         catch { }
         return borderStyle;
     }
+
+    public async Task<string> GetImageProvider()
+    {
+        var imageProvider = "RedditMemes";
+        try
+        {
+            var imageProviderSetting = await base.httpClient.GetFromJsonAsync<ConfigurationSetting>("/config?name=imageProvider");
+            imageProvider = imageProviderSetting.Value;
+        }
+        catch { }
+        return imageProvider;
+    }
 }

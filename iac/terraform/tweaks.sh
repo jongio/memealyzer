@@ -15,7 +15,12 @@ az appconfig identity assign -n $APP_CONFIG_NAME -g $RESOURCE_GROUP_NAME
 
 # App Configuration Default Values
 az appconfig kv set -y -n $APP_CONFIG_NAME --key borderStyle --value solid
+az appconfig kv set -y -n $APP_CONFIG_NAME --key imageProvider --value RedditMemes
 
 # Azure Function MI Permissions to KV
 # We need this becuase of the cyclic dependency on KV and AF
 az keyvault set-policy -g $RESOURCE_GROUP_NAME -n $KEY_VAULT_NAME --object-id $FUNCTION_MI_ID --secret-permissions get set list delete
+
+# App Configuration Values for Bing Search
+az appconfig kv set -y -n $APP_CONFIG_NAME --key BingImageSearchTerm --value "space memes"
+az appconfig kv set -y -n $APP_CONFIG_NAME --key BingImageSearchApiKey --value your-api-key-here

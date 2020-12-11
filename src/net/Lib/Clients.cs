@@ -10,6 +10,7 @@ using Azure.Security.KeyVault.Secrets;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Lib.Data;
+using Lib.Images;
 using Lib.Messaging;
 using Lib.Model;
 
@@ -23,13 +24,19 @@ namespace Lib
         public BlobContainerClient ContainerClient;
         public IMessagingProvider MessagingProvider;
         public TextAnalyticsClient TextAnalyticsClient;
+        public IImageProvider ImageProvider;
+        public string BingImageSearchTerm;
+        public string BingImageSearchApiKey;
         public FormRecognizerClient FormRecognizerClient;
         public ConfigurationClient ConfigurationClient;
         public IDataProvider DataProvider;
         private HttpClient httpClient = new HttpClient();
 
+        public static Clients Instance { get; private set; }
+
         public Clients()
         {
+            Instance = this;
         }
 
         public async Task InitializeAsync()
@@ -42,20 +49,35 @@ namespace Lib
             MessagingProvider = MessagingProviderFactory.Get(Config.MessagingType);
             await MessagingProvider.InitializeAsync(credential, DataProvider);
 
-            // App Config
-            ConfigurationClient = new ConfigurationClient(Config.AppConfigEndpoint, credential);
-
             // Blob
             BlobServiceClient = new BlobServiceClient(Config.StorageBlobEndpoint, credential);
             ContainerClient = BlobServiceClient.GetBlobContainerClient(Config.StorageBlobContainerName);
             await ContainerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
 
+            await RefreshAppConfiguration();
 
             // FormRecognizerClient
             FormRecognizerClient = new FormRecognizerClient(Config.FormRecognizerEndpoint, credential);
 
             // TextAnalyticsClient
             TextAnalyticsClient = new TextAnalyticsClient(Config.TextAnalyticsEndpoint, credential);
+        }
+
+        public Task RefreshAppConfiguration()
+        {
+            // App Config
+            ConfigurationClient = new ConfigurationClient(Config.AppConfigEndpoint, credential);
+            
+            // Image Provider
+            ImageProvider = ImageProviderFactory.Get(
+                ConfigurationClient.GetConfigurationSetting("imageProvider").Value.Value
+            );
+
+            // Bing image search settings
+            BingImageSearchTerm = ConfigurationClient.GetConfigurationSetting("BingImageSearchTerm").Value.Value;
+            BingImageSearchApiKey = ConfigurationClient.GetConfigurationSetting("BingImageSearchApiKey").Value.Value;
+
+            return Task.CompletedTask;
         }
 
         public ValueTask DisposeAsync()
@@ -68,8 +90,8 @@ namespace Lib
         {
             if (image?.Url is null || string.IsNullOrEmpty(image.Url))
             {
-                var memeImage = await httpClient.GetFromJsonAsync<Image>(Config.MemeEndpoint);
-                image.Url = memeImage.Url;
+                // Get the Image from the provider
+                image = await ImageProvider.GetImage();
             }
 
             // Get Image Stream

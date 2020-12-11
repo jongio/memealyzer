@@ -362,6 +362,39 @@
               ]
             },
             {
+              "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
+              "apiVersion": "2020-07-01-preview",
+              "name": "[format('{0}/imageProvider', format('{0}appconfig', parameters('basename')))]",
+              "properties": {
+                "value": "RedditMemes"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.AppConfiguration/configurationStores', format('{0}appconfig', parameters('basename')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
+              "apiVersion": "2020-07-01-preview",
+              "name": "[format('{0}/BingImageSearchTerm', format('{0}appconfig', parameters('basename')))]",
+              "properties": {
+                "value": "pet memes"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.AppConfiguration/configurationStores', format('{0}appconfig', parameters('basename')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.AppConfiguration/configurationStores/keyValues",
+              "apiVersion": "2020-07-01-preview",
+              "name": "[format('{0}/BingImageSearchApiKey', format('{0}appconfig', parameters('basename')))]",
+              "properties": {
+                "value": "your-key-here"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.AppConfiguration/configurationStores', format('{0}appconfig', parameters('basename')))]"
+              ]
+            },
+            {
               "type": "Microsoft.SignalRService/signalR",
               "apiVersion": "2020-07-01-preview",
               "name": "[format('{0}signalr', parameters('basename'))]",
@@ -414,7 +447,8 @@
                       "*"
                     ],
                     "supportCredentials": false
-                  }
+                  },
+                  "ftpsState": "FtpsOnly"
                 }
               },
               "dependsOn": [

@@ -80,7 +80,6 @@ else
     {
         borderStyle = await ApiServiceClient.GetBorderStyle();
         images = await ApiServiceClient.GetImages();
-
         hubConnection = FunctionsServiceClient.GetHubConnection();
 
         hubConnection.On<Image>("ReceiveImage", (image) =>
@@ -114,8 +113,16 @@ else
     private async Task PostImageAsync()
     {
         Image postedImage = new Image { Id = Guid.NewGuid().ToString() };
-        postedImage = await ApiServiceClient.PostImage(postedImage);
-        images.Insert(0, postedImage);
+        
+        try {
+            postedImage = await ApiServiceClient.PostImage(postedImage);
+            if(postedImage != null) {
+                images.Insert(0, postedImage);
+            }
+        }
+        catch(Exception x) {
+            Console.WriteLine(x);
+        }
     }
 
     private void ToggleStream(MouseEventArgs e)
