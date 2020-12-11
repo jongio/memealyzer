@@ -8,6 +8,8 @@ namespace Lib.Images
             {
                 case "Default":
                     return new DefaultImageSource();
+                case "Bing":
+                    return new BingImageSearchProvider();
                 default:
                     return new DefaultImageSource();
             }

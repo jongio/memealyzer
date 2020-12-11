@@ -58,4 +58,15 @@ public class ApiServiceClient : ServiceClient
         catch { }
         return borderStyle;
     }
+
+    public async Task<string> GetSearchTerm()
+    {
+        try
+        {
+            var term = await base.httpClient.GetStringAsync("/searchTerm");
+            return term;
+        }
+        catch { }
+        return null;
+    }
 }

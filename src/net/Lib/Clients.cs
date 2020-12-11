@@ -29,6 +29,7 @@ namespace Lib
         public ConfigurationClient ConfigurationClient;
         public IDataProvider DataProvider;
         private HttpClient httpClient = new HttpClient();
+        public static string SearchTerm { get; set; }
 
         public Clients()
         {
@@ -70,6 +71,15 @@ namespace Lib
 
         public async Task<Image> EnqueueImageAsync(Image image = null)
         {
+            if(!(image?.SearchTerm is null) && !string.IsNullOrEmpty(image.SearchTerm))
+            {
+                SearchTerm = image.SearchTerm;
+            }
+            else
+            {
+                SearchTerm = Config.BingSearchTerm;
+            }
+            
             if (image?.Url is null || string.IsNullOrEmpty(image.Url))
             {
                 // Get the Image from the provider

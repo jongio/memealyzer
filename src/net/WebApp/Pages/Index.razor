@@ -12,7 +12,7 @@
         </div>
         <div class="col-12">
             <div class="form-row">
-                <div class="col col-6">
+                <div class="col col-2">
                     <EditForm OnValidSubmit="HandleAddFormSubmit" Model="@image">
                         <DataAnnotationsValidator />
                         <ValidationSummary />
@@ -20,7 +20,10 @@
                                 aria-hidden="true"></span></button>
                     </EditForm>
                 </div>
-                <div class="col col-6">
+                <div class="col col-8">
+                    <input type="text" @bind-value="searchTerm"/>
+                </div>
+                <div class="col col-2">
                     <button disabled="@(!IsConnected)" class="btn shadow-none btn-@streaming" @onclick="ToggleStream" style="cursor:pointer"><span style="font-size: 22px" class="oi oi-infinity" title="Meme Stream"
                             aria-hidden="true"></span></button>
                 </div>
@@ -75,11 +78,13 @@ else
     private string borderStyle;
     private bool streaming = false;
     private Timer timer;
+    private string searchTerm;
 
     protected override async Task OnInitializedAsync()
     {
         borderStyle = await ApiServiceClient.GetBorderStyle();
         images = await ApiServiceClient.GetImages();
+        searchTerm = await ApiServiceClient.GetSearchTerm();
 
         hubConnection = FunctionsServiceClient.GetHubConnection();
 
@@ -113,7 +118,12 @@ else
 
     private async Task PostImageAsync()
     {
-        Image postedImage = new Image { Id = Guid.NewGuid().ToString() };
+        Image postedImage = new Image 
+        { 
+            Id = Guid.NewGuid().ToString(),
+            SearchTerm = searchTerm
+        };
+        
         postedImage = await ApiServiceClient.PostImage(postedImage);
         images.Insert(0, postedImage);
     }

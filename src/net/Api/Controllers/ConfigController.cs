@@ -29,5 +29,12 @@ namespace Api.Controllers
             //TODO: Move try/catch to here?
             return await clients.ConfigurationClient.GetConfigurationSettingAsync(name);
         }
+
+        [HttpGet]
+        [Route("/searchTerm")]
+        public string GetSearchTerm()
+        {
+            return Clients.SearchTerm;
+        }
     }
 }

@@ -35,5 +35,7 @@ namespace Lib
         public static readonly string AzuriteAccountKey = Env.GetString("AZURITE_ACCOUNT_KEY");
         public static readonly string CosmostKey = Env.GetString("AZURE_COSMOS_KEY");
         public static readonly string ImageProvider = Env.GetString("IMAGE_PROVIDER", "Default");
+        public static readonly string BingSearchKey = Env.GetString("BING_SEARCH_KEY");
+        public static readonly string BingSearchTerm = Env.GetString("BING_SEARCH_TERM");
     }
 }
