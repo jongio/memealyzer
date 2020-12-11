@@ -34,5 +34,6 @@ namespace Lib
         public static readonly string MemeEndpoint = Env.GetString("MEME_ENDPOINT", "https://meme-api.herokuapp.com/gimme/wholesomememes");
         public static readonly string AzuriteAccountKey = Env.GetString("AZURITE_ACCOUNT_KEY");
         public static readonly string CosmostKey = Env.GetString("AZURE_COSMOS_KEY");
+        public static readonly string ImageProvider = Env.GetString("IMAGE_PROVIDER", "Default");
     }
 }

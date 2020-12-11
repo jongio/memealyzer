@@ -10,6 +10,7 @@ using Azure.Security.KeyVault.Secrets;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Lib.Data;
+using Lib.Images;
 using Lib.Messaging;
 using Lib.Model;
 
@@ -23,6 +24,7 @@ namespace Lib
         public BlobContainerClient ContainerClient;
         public IMessagingProvider MessagingProvider;
         public TextAnalyticsClient TextAnalyticsClient;
+        public IImageProvider ImageProvider { get; private set; }
         public FormRecognizerClient FormRecognizerClient;
         public ConfigurationClient ConfigurationClient;
         public IDataProvider DataProvider;
@@ -50,6 +52,8 @@ namespace Lib
             ContainerClient = BlobServiceClient.GetBlobContainerClient(Config.StorageBlobContainerName);
             await ContainerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
 
+            // Image Provider
+            ImageProvider = ImageProviderFactory.Get(Config.ImageProvider);
 
             // FormRecognizerClient
             FormRecognizerClient = new FormRecognizerClient(Config.FormRecognizerEndpoint, credential);
@@ -68,8 +72,8 @@ namespace Lib
         {
             if (image?.Url is null || string.IsNullOrEmpty(image.Url))
             {
-                var memeImage = await httpClient.GetFromJsonAsync<Image>(Config.MemeEndpoint);
-                image.Url = memeImage.Url;
+                // Get the Image from the provider
+                image = await ImageProvider.GetImage();
             }
 
             // Get Image Stream
