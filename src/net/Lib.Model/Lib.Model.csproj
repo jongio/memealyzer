@@ -4,7 +4,7 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Azure.Data.Tables" Version="3.0.0-beta.2" />
+    <PackageReference Include="Azure.Data.Tables" Version="3.0.0-beta.4" />
   </ItemGroup>
   <!-- <PropertyGroup>
     <RestoreSources>https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json;https://api.nuget.org/v3/index.json</RestoreSources>
