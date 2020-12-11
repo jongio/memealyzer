@@ -34,9 +34,12 @@ namespace Lib
 
         public async Task InitializeAsync()
         {
+            // KeyVault Secret
+            SecretClient = new SecretClient(Config.KeyVaultEndpoint, credential);
+
             // Data Provider            
             DataProvider = DataProviderFactory.Get(Config.StorageType);
-            await DataProvider.InitializeAsync(credential);
+            await DataProvider.InitializeAsync(credential, SecretClient);
 
             // Messaging Provider            
             MessagingProvider = MessagingProviderFactory.Get(Config.MessagingType);
@@ -49,7 +52,6 @@ namespace Lib
             BlobServiceClient = new BlobServiceClient(Config.StorageBlobEndpoint, credential);
             ContainerClient = BlobServiceClient.GetBlobContainerClient(Config.StorageBlobContainerName);
             await ContainerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
-
 
             // FormRecognizerClient
             FormRecognizerClient = new FormRecognizerClient(Config.FormRecognizerEndpoint, credential);

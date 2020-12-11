@@ -106,6 +106,13 @@ resource storage_key_secret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
   }
 }
 
+resource azurite_key_secret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
+  name: '${key_vault.name}/AzuriteKey'
+  properties: {
+    value: 'Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=='
+  }
+}
+
 resource signalr_connection_string_secret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
   name: '${key_vault.name}/SignalRConnectionString'
   properties: {

@@ -13,27 +13,14 @@ namespace Lib.Data.Providers
     {
         public TableServiceClient TableServiceClient;
         public TableClient TableClient;
-        public SecretClient SecretClient;
 
-        public async Task InitializeAsync(TokenCredential credential)
+        public async Task InitializeAsync(TokenCredential credential, SecretClient secretClient)
         {
-            var storageKeyValue = string.Empty;
-
-            if (Config.StorageTableEndpoint.ToString().Contains("127"))
-            {
-                storageKeyValue = Config.AzuriteAccountKey;
-            }
-            else
-            {
-                // KeyVault
-                SecretClient = new SecretClient(Config.KeyVaultEndpoint, credential);
-                var storageKey = await SecretClient.GetSecretAsync(Config.StorageKeySecretName);
-                storageKeyValue = storageKey.Value.Value;
-            }
+            var storageKey = await secretClient.GetSecretAsync(Config.StorageKeySecretName);
 
             TableClient = new TableClient(Config.StorageTableEndpoint,
                 Config.StorageTableName,
-                new TableSharedKeyCredential(Config.StorageAccountName, storageKeyValue));
+                new TableSharedKeyCredential(Config.StorageAccountName, storageKey.Value.Value));
 
             await TableClient.CreateIfNotExistsAsync();
         }

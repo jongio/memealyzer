@@ -14,13 +14,10 @@ namespace Lib.Data.Providers
     {
         public CosmosClient CosmosClient;
         public CosmosContainer CosmosContainer;
-        public SecretClient SecretClient;
 
-        public async Task InitializeAsync(TokenCredential credential)
+        public async Task InitializeAsync(TokenCredential credential, SecretClient secretClient)
         {
-            // KeyVault
-            SecretClient = new SecretClient(Config.KeyVaultEndpoint, credential);
-            var cosmosKey = await SecretClient.GetSecretAsync(Config.CosmosKeySecretName);
+            var cosmosKey = await secretClient.GetSecretAsync(Config.CosmosKeySecretName);
 
             CosmosClientOptions options = new CosmosClientOptions
             {
@@ -33,7 +30,6 @@ namespace Lib.Data.Providers
             };
 
             var cosmosSerializerOptions = new CosmosSerializationOptions { PropertyNamingPolicy = CosmosPropertyNamingPolicy.Default };
-
 
             // Cosmos
             CosmosClient = new CosmosClient(

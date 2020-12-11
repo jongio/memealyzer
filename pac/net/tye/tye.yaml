@@ -1,21 +1,25 @@
 name: memealyzer
-registry: memealyzerbicep20acr.azurecr.io
+registry: memealyzerdevacr.azurecr.io
 services:
   - name: azurite
     image: mcr.microsoft.com/azure-storage/azurite:alpha
+    args: azurite --oauth basic --cert /usr/remote/bin/127.0.0.1.pem --key /usr/remote/bin/127.0.0.1-key.pem
+    volumes:
+      - source: /usr/local/bin
+        target: /usr/remote/bin
     bindings:
       - name: blob
         port: 10000
         containerPort: 10000
-        protocol: http
+        protocol: https
       - name: queue
         port: 10001
         containerPort: 10001
-        protocol: http
+        protocol: https
       - name: table
         port: 10002
         containerPort: 10002
-        protocol: http
+        protocol: https
     tags:
       - local
   - name: memealyzernetwebapp

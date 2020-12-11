@@ -13,7 +13,7 @@ debug.log
 **/azurite/**
 .bin
 .tye
-
+127.0.0.1*
 pac/net/tye/.env*
 __*storage__
 __azurite*

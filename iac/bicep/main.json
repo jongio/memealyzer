@@ -202,6 +202,17 @@
             {
               "type": "Microsoft.KeyVault/vaults/secrets",
               "apiVersion": "2019-09-01",
+              "name": "[format('{0}/AzuriteKey', format('{0}kv', parameters('basename')))]",
+              "properties": {
+                "value": "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', format('{0}kv', parameters('basename')))]"
+              ]
+            },
+            {
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2019-09-01",
               "name": "[format('{0}/SignalRConnectionString', format('{0}kv', parameters('basename')))]",
               "properties": {
                 "value": "[listKeys(resourceId('Microsoft.SignalRService/signalR', format('{0}signalr', parameters('basename'))), '2020-07-01-preview').primaryConnectionString]"
@@ -414,7 +425,8 @@
                       "*"
                     ],
                     "supportCredentials": false
-                  }
+                  },
+                  "ftpsState": "FtpsOnly"
                 }
               },
               "dependsOn": [
