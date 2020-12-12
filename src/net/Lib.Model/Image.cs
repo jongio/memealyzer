@@ -53,6 +53,8 @@ namespace Lib.Model
         [JsonPropertyName("blobUri")]
         public string BlobUri { get; set; }
 
+        public bool Complete { get { return string.Compare(Status, "Completed", true) == 0; } }
+
         [JsonPropertyName("text")]
         public string Text { get; set; }
 
@@ -90,8 +92,11 @@ namespace Lib.Model
                     case "mixed":
                         color = "warning";
                         break;
-                    case "loading":
-                        color = "white";
+                    case "none":
+                        color = "default";
+                        break;
+                    default:
+                        color = "";
                         break;
                 }
                 return color;

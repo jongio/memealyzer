@@ -197,3 +197,7 @@ app {
 .btn-False {
   color: #cccccc;
 }
+
+.card-body {
+  padding: 0 !important;
+}
