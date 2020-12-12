@@ -69,7 +69,7 @@ jobs:
         pushd $GITHUB_WORKSPACE/pac/net/tye
         sh genfiles.sh
         sh $GITHUB_WORKSPACE/scripts/genappsettings.sh
-        kubectl apply -f https://aka.ms/tye/ingress/deploy
+        #kubectl apply -f https://aka.ms/tye/ingress/deploy
         tye deploy tye.yaml -v Debug --tags cloud
         popd
 
