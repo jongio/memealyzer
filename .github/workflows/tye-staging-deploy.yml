@@ -12,6 +12,7 @@ env:
   REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD_STAGING }}
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
   DOTENV_FILENAME: .env
+  ENV: cloud
   BASENAME: memealyzerstaging
   ROOT: ${{ github.workspace }}
   AZURE_CONTAINER_REGISTRY_SERVER: memealyzerstagingacr.azurecr.io
@@ -68,7 +69,7 @@ jobs:
         pushd $GITHUB_WORKSPACE/pac/net/tye
         sh genfiles.sh
         sh $GITHUB_WORKSPACE/scripts/genappsettings.sh
-        kubectl apply -f https://aka.ms/tye/ingress/deploy
+        #kubectl apply -f https://aka.ms/tye/ingress/deploy
         tye deploy tye.yaml -v Debug --tags cloud
         popd
 
