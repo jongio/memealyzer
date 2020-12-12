@@ -11,10 +11,7 @@ on:
 env:
   REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD_STAGING }}
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-<<<<<<< HEAD
   DOTENV_FILENAME: .env
-=======
->>>>>>> 0d63e9f60ce9ebb9f2d6207be2e8caeda1384c7c
   ENV: cloud
   BASENAME: memealyzerstaging
   ROOT: ${{ github.workspace }}
