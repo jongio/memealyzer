@@ -74,6 +74,7 @@ namespace QueueService
                         else
                         {
                             message.Image.Text = "No Text Extracted from Image.";
+                            message.Image.Sentiment = "None";
                             Console.WriteLine(message.Image.Text);
                         }
 

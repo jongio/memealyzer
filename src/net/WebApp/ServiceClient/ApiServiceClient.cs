@@ -38,7 +38,6 @@ public class ApiServiceClient : ServiceClient
     {
         var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, IgnoreNullValues = true };
         image.Status = "Uploading...";
-        image.Sentiment = "loading";
         var response = await base.httpClient.PostAsJsonAsync("/image", image, options);
         image = await response.Content.ReadFromJsonAsync<Image>(options);
         image.Status = response.StatusCode.ToString().ToLower() == "ok" ? "Processing..." : "Upload failed, try again.";
