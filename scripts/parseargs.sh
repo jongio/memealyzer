@@ -20,7 +20,7 @@ get_abs_filename() {
   # $1 : relative filename
   echo "$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
 }
-export DOTENV_FULLPATH=get_abs_filename DOTENV
+export DOTENV_FULLPATH=$(get_abs_filename $DOTENV)
 
 [ -f $DOTENV ] && echo "$DOTENV exists." || echo "$DOTENV does not exist."
 
