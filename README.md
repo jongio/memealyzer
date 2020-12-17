@@ -20,7 +20,6 @@ Memealyzer is an app built to demonstrate some the latest and greatest Azure tec
 - [Blazor](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) - for a responsive client-side app built with .NET/C#.
 - [Azure Functions](https://azure.microsoft.com/services/functions/) - to connect message queues with SignalR
 - [Azure SignalR Service](https://azure.microsoft.com/services/signalr-service/) - to send messages to the web app
-]
 
 > Since 12/5/2020, this project will use Bicep and Project Tye instead of Terraform and Docker Compose, so we will **not** keep those files up to date. They will be kept in the project for historical purposes only. More info can be found on the ["Legacy Tools"](docs/LegacyTools.md) page
 
@@ -70,18 +69,39 @@ The following are required to run this application.
 Here's how to quickly provision and deploy the app:
 1. Open a Terminal - The same terminal you used to install the pre-reqs above.
 1. Clone Repo
-   `git clone https://github.com/jongio/memealyzer`
+   - `git clone https://github.com/jongio/memealyzer`
 1. Make sure you follow the ["Dev Machine Setup"](#dev-machine-setup) steps above.
-1. `az login` and `az account set -s {SUBSCRIPTION_NAME}`
+1. You can open the entire VS Code workspace here
+   - `./open.sh` 
+   
+      or
+   
+   - Open `/src/net/memealyzer.code-workspace`
+1. Login to the Azure CLI and set your subscription
+   - `az login` and `az account set -s {SUBSCRIPTION_NAME}`
+1. To deploy all required Azure Resources and run locally:
+   - `./run.sh {BASENAME}`
+1. To deploy all required Azure Resources and run in Azure:
+   - `./deploy.sh {BASENAME}`
+
+### Deployment
+To only deploy resources:
 1. Provision Azure Resources with [Bicep](https://github.com/azure/bicep): 
    1. CD to `iac\bicep`
    1. Run `./deploy.sh {BASENAME}`
+
+### Run Locally
+To run the app locally:
+
 1. Run Application with [Project Tye](https://github.com/dotnet/tye/): 
    1. CD to `pac\net\tye`
    1. Run `./run.sh {BASENAME}`
    1. Open http://localhost:1080
    1. Click + (single) or &#8734; (stream) buttons to analyze memes.
    1. Enjoy the memes and the sentiment analysis.
+### Run in Azure
+To run the app in Azure:
+
 1. Deploy Application to Azure with [Project Tye](https://github.com/dotnet/tye/):
    1. CD to `pac\net\tye`
    1. Run `./deploy.sh {BASENAME}`
