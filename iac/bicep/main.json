@@ -414,7 +414,8 @@
                       "*"
                     ],
                     "supportCredentials": false
-                  }
+                  },
+                  "ftpsState": "FtpsOnly"
                 }
               },
               "dependsOn": [
