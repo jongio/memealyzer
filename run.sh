@@ -3,10 +3,6 @@ set -euo pipefail
 
 export ROOT=.;source $ROOT/scripts/base.sh
 
-pushd iac/bicep
-./deploy.sh ${BASENAME}
-popd
-
-pushd pac/net/tye
+pushd ./pac/net/tye
 ./run.sh ${BASENAME}
 popd
