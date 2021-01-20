@@ -35,6 +35,9 @@
 		{
 			"name": "tye",
 			"path": "../../pac/net/tye"
+		},
+		{
+			"path": "../../.devcontainer"
 		}
 	]
 }
