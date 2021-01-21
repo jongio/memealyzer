@@ -46,7 +46,8 @@ namespace Lib.Data.Providers
 
         public void Dispose()
         {
-            CosmosClient.Dispose();
+            if (CosmosClient != null)
+                CosmosClient.Dispose();
         }
 
         public async Task<Image> GetImageAsync(string id)
