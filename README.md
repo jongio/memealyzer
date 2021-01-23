@@ -74,7 +74,7 @@ You have two Dev Container options:
    1. This will launch the GitHub Codespace
    1. Skip down to step 2 below: Login with Azure CLI
 
-   #### 2. VS Code Codespaces - Code on local machine
+   #### 2. VS Code Remote Containers - Code on local machine
 
    1. Install [VS Code](https://code.visualstudio.com)
    1. Install [VS Code - Remote Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)

@@ -25,10 +25,6 @@
 			"path": "WebApp"
 		},
 		{
-			"name": "memealyzer",
-			"path": "../.."
-		},
-		{
 			"name": "bicep",
 			"path": "../../iac/bicep"
 		},
@@ -38,6 +34,9 @@
 		},
 		{
 			"path": "../../.devcontainer"
+		},
+		{
+			"path": "../.."
 		}
 	]
 }

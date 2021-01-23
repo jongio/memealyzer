@@ -14,16 +14,6 @@ if [ $# -eq 0 ]
         export ENV=local
     fi
 fi
-export DOTENV_FILENAME=.env
-export DOTENV=$ROOT/$DOTENV_FILENAME
-get_abs_filename() {
-  # $1 : relative filename
-  echo "$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
-}
-export DOTENV_FULLPATH=$(get_abs_filename $DOTENV)
-
-[ -f $DOTENV ] && echo "$DOTENV exists." || echo "$DOTENV does not exist."
 
 echo "BASENAME=${BASENAME}"
 echo "ENV=${ENV}"
-echo "DOTENV=${DOTENV}"

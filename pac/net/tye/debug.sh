@@ -7,4 +7,8 @@ export ENV=local
 
 source ./genfiles.sh
 
+source $ROOT/scripts/login.sh
+
+echo "DEBUGGING APPLICATION"
+
 tye run --logs console -v debug --watch --tags $ENV --debug memealyzernetqueueservice
