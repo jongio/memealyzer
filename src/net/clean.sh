@@ -1,0 +1,12 @@
+rm -rf src/net/Api/bin
+rm -rf src/net/Api/obj
+rm -rf src/net/Lib/bin
+rm -rf src/net/Lib/obj
+rm -rf src/net/Lib.Model/bin
+rm -rf src/net/Lib.Model/obj
+rm -rf src/net/Services/Functions/bin
+rm -rf src/net/Services/Functions/obj
+rm -rf src/net/QueueService/bin
+rm -rf src/net/QueueService/obj
+rm -rf src/net/WebApp/bin
+rm -rf src/net/WebApp/obj
