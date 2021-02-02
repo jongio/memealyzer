@@ -7,7 +7,7 @@ LOGGED_IN=$(az account show --query "id" || true)
 EXPIRED_TOKEN=$(az ad signed-in-user show --query 'objectId' -o tsv || true)
 
 if [ -z "$LOGGED_IN" ] || [ -z "$EXPIRED_TOKEN" ]; then
-    az login -o none
+    az login -o none --only-show-errors
 fi
 
 echo "AZURE SUBSCRIPTION"
@@ -15,8 +15,9 @@ echo "AZURE SUBSCRIPTION"
 if [[ -z "${SUBSCRIPTION_ID:-}" ]]; then
     ACCOUNT=$(az account show --query '[id,name]')
 
+    echo "You can set the \`SUBSCRIPTION_ID\` environment variable in the \`.env\` file if you don't want to be prompted every time you run these scripts."
     echo $ACCOUNT
-
+    
     read -r -p "Do you want to use the above subscription? [y/N] " response
     case "$response" in
         [yY][eE][sS]|[yY]) 
@@ -27,7 +28,7 @@ if [[ -z "${SUBSCRIPTION_ID:-}" ]]; then
             ;;
     esac
 else
-    echo "Setting active subscription to: $SUBSCRIPTION_ID."
+    echo "Found SUBSCRIPTION_ID environment variable. Setting active subscription to: $SUBSCRIPTION_ID"
     az account set -s $SUBSCRIPTION_ID
 fi
 

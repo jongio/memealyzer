@@ -86,12 +86,10 @@ You have two Dev Container options:
 
    ### 2. Login with Azure CLI
 
-   We use the Azure CLI to perform resource deployment and configuration. You need to first login to the Azure CLI and then set your active subscription.
+   We use the Azure CLI to perform resource deployment and configuration. The scripts below will automatically prompt you to login to the Azure CLI and set your active Azure subscription. 
 
-   1. Login to the Azure CLI
-      - `az login`
-   1. Set active Azure subscription - only required if your account has access to more than one subscription.
-      - `az account set -s {SUBSCRIPTION_NAME}`
+   You can set the `SUBSCRIPTION_ID` environment variable in the `.env` file if you don't want to be prompted every time you run these scripts.
+
    ### 3. Provision Azure Resources with Bicep
 
    This will provision all the required Azure resources with Bicep and run the app locally with Tye.

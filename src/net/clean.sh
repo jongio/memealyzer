@@ -1,12 +1,23 @@
-rm -rf src/net/Api/bin
-rm -rf src/net/Api/obj
-rm -rf src/net/Lib/bin
-rm -rf src/net/Lib/obj
-rm -rf src/net/Lib.Model/bin
-rm -rf src/net/Lib.Model/obj
-rm -rf src/net/Services/Functions/bin
-rm -rf src/net/Services/Functions/obj
-rm -rf src/net/QueueService/bin
-rm -rf src/net/QueueService/obj
-rm -rf src/net/WebApp/bin
-rm -rf src/net/WebApp/obj
+dotnet clean ${ROOT}/src/net/Api
+rm -rf ${ROOT}/src/net/Api/bin
+rm -rf ${ROOT}/src/net/Api/obj
+
+dotnet clean ${ROOT}/src/net/Lib
+rm -rf ${ROOT}/src/net/Lib/bin
+rm -rf ${ROOT}/src/net/Lib/obj
+
+dotnet clean ${ROOT}/src/net/Lib.Model
+rm -rf ${ROOT}/src/net/Lib.Model/bin
+rm -rf ${ROOT}/src/net/Lib.Model/obj
+
+dotnet clean ${ROOT}/src/net/Services/Functions
+rm -rf ${ROOT}/src/net/Services/Functions/bin
+rm -rf ${ROOT}/src/net/Services/Functions/obj
+
+dotnet clean ${ROOT}/src/net/Services/QueueService
+rm -rf ${ROOT}/src/net/Services/QueueService/bin
+rm -rf ${ROOT}/src/net/Services/QueueService/obj
+
+dotnet clean ${ROOT}/src/net/WebApp
+rm -rf ${ROOT}/src/net/WebApp/bin
+rm -rf ${ROOT}/src/net/WebApp/obj

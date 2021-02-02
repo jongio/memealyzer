@@ -60,8 +60,19 @@ namespace Lib
 
         public ValueTask DisposeAsync()
         {
-            DataProvider.Dispose();
-            return MessagingProvider.DisposeAsync();
+            if (DataProvider != null)
+            {
+                DataProvider.Dispose();
+            }
+            
+            if (MessagingProvider != null)
+            {
+                return MessagingProvider.DisposeAsync();
+            }
+            else
+            {
+                return new ValueTask();
+            }
         }
 
         public async Task<Image> EnqueueImageAsync(Image image = null)

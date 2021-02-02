@@ -32,9 +32,6 @@ namespace Lib.Data.Providers
                 SerializerOptions = new CosmosSerializationOptions { PropertyNamingPolicy = CosmosPropertyNamingPolicy.Default }
             };
 
-            var cosmosSerializerOptions = new CosmosSerializationOptions { PropertyNamingPolicy = CosmosPropertyNamingPolicy.Default };
-
-
             // Cosmos
             CosmosClient = new CosmosClient(
                 Config.CosmosEndpoint,

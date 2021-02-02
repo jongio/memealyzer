@@ -11,4 +11,4 @@ source $ROOT/scripts/login.sh
 
 echo "DEBUGGING APPLICATION"
 
-tye run --logs console -v debug --watch --tags $ENV --debug memealyzernetqueueservice
+tye run --logs console -v debug --watch --tags $ENV --debug memealyzernetapi
