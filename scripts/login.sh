@@ -3,11 +3,10 @@ set -euo pipefail
 
 echo "AZURE LOGIN"
 
-LOGGED_IN=$(az account show --query "id" || true)
 EXPIRED_TOKEN=$(az ad signed-in-user show --query 'objectId' -o tsv || true)
 
-if [ -z "$LOGGED_IN" ] || [ -z "$EXPIRED_TOKEN" ]; then
-    az login -o none --only-show-errors
+if [[ -z "$EXPIRED_TOKEN" ]]; then
+    az login -o none
 fi
 
 echo "AZURE SUBSCRIPTION"
