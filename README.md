@@ -59,67 +59,9 @@ We follow a 5 step process to go from nothing to a completely deployed Azure sol
 
 > You will see `{BASENAME}` throughout this document.  Replace it with any unique text that you'd like, such as memealyzer007. That will be used as the basename for all your Azure resources, i.e. If you use memealyzer007, then the resource group will be named memealyzer007rg.
 
-### 1. Start Dev Container with GitHub Codespaces or VS Codespaces
+### 1. Setup Dev Environment
 
-The fastest way to get to get the Memealyzer dev machine setup is to use the Codespaces Dev Container which includes all your development dependencies.
-
-You have two Dev Container options: 
-
-   #### 1. GitHub Codespaces - Code in your browser
-
-   > Note that GitHub Codespaces is currently in preview. You can request access here: [Sign up for the Codespaces beta](https://github.com/features/codespaces/signup)
-
-   1. Go to https://github.com/jongio/memealyzer
-   1. Click on the green "Code" button and select "Open with Codespaces" --> "New Codespace"
-   1. This will launch the GitHub Codespace
-   1. Skip down to step 2 below: Login with Azure CLI
-
-   #### 2. VS Code Remote Containers - Code on local machine
-
-   1. Install [VS Code](https://code.visualstudio.com)
-   1. Install [VS Code - Remote Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-   1. Open a Linux shell, such as bash or WSL bash
-   1. Clone the repo: 
-      - `git clone https://github.com/jongio/memealyzer`
-   1. Open the repo in VS Code `code memealyzer`
-   1. Hit F1, then select "Remote Containers - Open Folder in Container"
-
-   ### 2. Login with Azure CLI
-
-   We use the Azure CLI to perform resource deployment and configuration. The scripts below will automatically prompt you to login to the Azure CLI and set your active Azure subscription. 
-
-   You can set the `SUBSCRIPTION_ID` environment variable in the `.env` file if you don't want to be prompted every time you run these scripts.
-
-   ### 3. Provision Azure Resources with Bicep
-
-   This will provision all the required Azure resources with Bicep and run the app locally with Tye.
-
-   - `./provision.sh {BASENAME}`
-   
-   > It may take up to 30 minutes to provision all resources.
-
-   ### 4. Run Locally with Tye
-
-   Now that our Azure Resources are provisioned, we'll now use Tye to run our application locally.
-
-   1. `./run.sh {BASENAME}`
-   1. Open the Tye dashboard: http://localhost:8000 and ensure that all services are running.
-      > Note that the Azure Function takes a few minutes to start, so if you get an error while loading the app, then wait a few minutes before trying again.
-   1. Open http://localhost:1080
-   1. You can add memes by clicking on the "+" button
-   1. You can start the memestream by clicking on the "&#8734;" button. This will add a new meme every 5 seconds.
-
-   ### 5. Deploy to Azure with Tye
-
-   Now that we've provisioned our resources and tested locally, it is time to deploy our code to Azure with Tye.
-
-   1. `./deploy.sh {BASENAME}`
-      > It may take up to 30 minutes to provision all resources.
-   1. Click on the link that is outputted to the console - this address will be unique to your deployment.
-
-## Dev Machine Setup
-
-While we prefer to use the Dev Container method above you can install all of the dev tools on your machine as well. The following are required to run this application.
+Codespaces support is coming soon.  In the meantime, please install these components to setup your dev machine.
 
 1. Terminal - WSL2, Zsh, GitBash, PowerShell, not Windows Command prompt as this application uses bash script files.  
 1. [Azure CLI](https://aka.ms/azcliget)
@@ -131,6 +73,39 @@ While we prefer to use the Dev Container method above you can install all of the
 1. [Azure Functions Core Tools](https://docs.microsoft.com/azure/azure-functions/functions-run-local) - v3.0.2881 minimum
 1. [Project Tye](https://github.com/dotnet/tye/blob/master/docs/getting_started.md)
 1. [Bicep](https://github.com/Azure/bicep/blob/main/docs/installing.md)
+
+### 2. Login with Azure CLI
+
+   We use the Azure CLI to perform resource deployment and configuration. The scripts below will automatically prompt you to login to the Azure CLI and set your active Azure subscription. 
+
+   You can set the `SUBSCRIPTION_ID` environment variable in the `.env` file if you don't want to be prompted every time you run these scripts.
+
+### 3. Provision Azure Resources with Bicep
+
+   This will provision all the required Azure resources with Bicep and run the app locally with Tye.
+
+   - `./provision.sh {BASENAME}`
+   
+   > It may take up to 30 minutes to provision all resources.
+
+### 4. Run Locally with Tye
+
+   Now that our Azure Resources are provisioned, we'll now use Tye to run our application locally.
+
+   1. `./run.sh {BASENAME}`
+   1. Open the Tye dashboard: http://localhost:8000 and ensure that all services are running.
+      > Note that the Azure Function takes a few minutes to start, so if you get an error while loading the app, then wait a few minutes before trying again.
+   1. Open http://localhost:1080
+   1. You can add memes by clicking on the "+" button
+   1. You can start the memestream by clicking on the "&#8734;" button. This will add a new meme every 5 seconds.
+
+### 5. Deploy to Azure with Tye
+
+   Now that we've provisioned our resources and tested locally, it is time to deploy our code to Azure with Tye.
+
+   1. `./deploy.sh {BASENAME}`
+      > It may take up to 30 minutes to provision all resources.
+   1. Click on the link that is outputted to the console - this address will be unique to your deployment.
 
 ### VS Code Workspace
 
