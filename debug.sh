@@ -2,5 +2,5 @@
 set -euo pipefail
 
 pushd ./pac/net/tye > /dev/null
-./deploy.sh "$@"
+./debug.sh "$@"
 popd > /dev/null

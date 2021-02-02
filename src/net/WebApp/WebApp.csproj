@@ -1,25 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
-
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <Version>$(CONTAINER_TAG)</Version>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Azure.Data.AppConfiguration" Version="1.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Analyzers" Version="5.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.1" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="5.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
-    <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Lib.Model\Lib.Model.csproj" />
+    <PackageReference Include="Azure.Data.AppConfiguration" Version="1.0.2"/>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Analyzers" Version="5.0.2"/>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.2"/>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.2" PrivateAssets="all"/>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="5.0.2"/>
+    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0"/>
+    <PackageReference Include="System.Net.Http.Json" Version="5.0.0"/>
   </ItemGroup>
   <ItemGroup>
-    <None Update="nginx.conf" CopyToOutputDirectory="Always" />
+    <ProjectReference Include="..\Lib.Model\Lib.Model.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="nginx.conf" CopyToOutputDirectory="Always"/>
   </ItemGroup>
   <!-- <PropertyGroup>
     <RestoreSources>https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json;https://api.nuget.org/v3/index.json</RestoreSources>

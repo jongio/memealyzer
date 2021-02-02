@@ -32,9 +32,6 @@ namespace Lib.Data.Providers
                 SerializerOptions = new CosmosSerializationOptions { PropertyNamingPolicy = CosmosPropertyNamingPolicy.Default }
             };
 
-            var cosmosSerializerOptions = new CosmosSerializationOptions { PropertyNamingPolicy = CosmosPropertyNamingPolicy.Default };
-
-
             // Cosmos
             CosmosClient = new CosmosClient(
                 Config.CosmosEndpoint,
@@ -46,7 +43,8 @@ namespace Lib.Data.Providers
 
         public void Dispose()
         {
-            CosmosClient.Dispose();
+            if (CosmosClient != null)
+                CosmosClient.Dispose();
         }
 
         public async Task<Image> GetImageAsync(string id)

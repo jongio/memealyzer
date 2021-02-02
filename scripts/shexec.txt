@@ -1,3 +1,4 @@
 # Run this from the root of the project when committing new .sh files to make them executable xplat
 
 find . -name '*.sh' | xargs git update-index --chmod=+x
+find . -name '*.sh' | xargs dos2unix -k -o

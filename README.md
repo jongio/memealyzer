@@ -47,9 +47,21 @@ The following Azure resources are used in this application:
 
 > You can select the Data and Messaging Providers via environment variables.  See the ["Environment Variables"](#environment-variables) section below for more information.
 
-## Dev Machine Setup
+## Quickstart
 
-The following are required to run this application.
+We follow a 5 step process to go from nothing to a completely deployed Azure solution.
+
+1. Start Dev Container with GitHub Codespaces or VS Codespaces
+1. Login with Azure CLI
+1. Provision Azure Resources with Bicep
+1. Run Locally with Tye
+1. Deploy to Azure with Tye
+
+> You will see `{BASENAME}` throughout this document.  Replace it with any unique text that you'd like, such as memealyzer007. That will be used as the basename for all your Azure resources, i.e. If you use memealyzer007, then the resource group will be named memealyzer007rg.
+
+### 1. Setup Dev Environment
+
+Codespaces support is coming soon.  In the meantime, please install these components to setup your dev machine.
 
 1. Terminal - WSL2, Zsh, GitBash, PowerShell, not Windows Command prompt as this application uses bash script files.  
 1. [Azure CLI](https://aka.ms/azcliget)
@@ -62,27 +74,52 @@ The following are required to run this application.
 1. [Project Tye](https://github.com/dotnet/tye/blob/master/docs/getting_started.md)
 1. [Bicep](https://github.com/Azure/bicep/blob/main/docs/installing.md)
 
-## Quickstart
+### 2. Login with Azure CLI
 
-> Please note that you will see {BASENAME} throughout this document.  Replace it with any unique text that you'd like, such as memealyzer007.
+   We use the Azure CLI to perform resource deployment and configuration. The scripts below will automatically prompt you to login to the Azure CLI and set your active Azure subscription. 
 
-Here's how to quickly provision and deploy the app:
-1. Open a Terminal - The same terminal you used to install the pre-reqs above.
-1. Clone Repo
-   - `git clone https://github.com/jongio/memealyzer`
-1. Make sure you follow the ["Dev Machine Setup"](#dev-machine-setup) steps above.
-1. You can open the entire VS Code workspace here
+   You can set the `SUBSCRIPTION_ID` environment variable in the `.env` file if you don't want to be prompted every time you run these scripts.
+
+### 3. Provision Azure Resources with Bicep
+
+   This will provision all the required Azure resources with Bicep and run the app locally with Tye.
+
+   - `./provision.sh {BASENAME}`
+   
+   > It may take up to 30 minutes to provision all resources.
+
+### 4. Run Locally with Tye
+
+   Now that our Azure Resources are provisioned, we'll now use Tye to run our application locally.
+
+   1. `./run.sh {BASENAME}`
+   1. Open the Tye dashboard: http://localhost:8000 and ensure that all services are running.
+      > Note that the Azure Function takes a few minutes to start, so if you get an error while loading the app, then wait a few minutes before trying again.
+   1. Open http://localhost:1080
+   1. You can add memes by clicking on the "+" button
+   1. You can start the memestream by clicking on the "&#8734;" button. This will add a new meme every 5 seconds.
+
+### 5. Deploy to Azure with Tye
+
+   Now that we've provisioned our resources and tested locally, it is time to deploy our code to Azure with Tye.
+
+   1. `./deploy.sh {BASENAME}`
+      > It may take up to 30 minutes to provision all resources.
+   1. Click on the link that is outputted to the console - this address will be unique to your deployment.
+
+### VS Code Workspace
+
+   You can open the entire VS Code workspace here
+   
    - `./open.sh` 
    
       or
    
    - Open `/src/net/memealyzer.code-workspace`
-1. Login to the Azure CLI and set your subscription
-   - `az login` and `az account set -s {SUBSCRIPTION_NAME}`
-1. To deploy all required Azure Resources and run locally:
-   - `./run.sh {BASENAME}`
-1. To deploy all required Azure Resources and run in Azure:
-   - `./deploy.sh {BASENAME}`
+
+      or
+   
+   - `./open.sh insiders` - if you are using VS Code Insiders
 
 ### Deployment
 To only deploy resources:

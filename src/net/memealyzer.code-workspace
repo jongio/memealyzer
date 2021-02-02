@@ -25,16 +25,18 @@
 			"path": "WebApp"
 		},
 		{
-			"name": "memealyzer",
-			"path": "../.."
-		},
-		{
 			"name": "bicep",
 			"path": "../../iac/bicep"
 		},
 		{
 			"name": "tye",
 			"path": "../../pac/net/tye"
+		},
+		{
+			"path": "../../.devcontainer"
+		},
+		{
+			"path": "../.."
 		}
 	]
 }

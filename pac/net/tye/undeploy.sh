@@ -9,5 +9,8 @@ export ENV=cloud
 
 source ./genfiles.sh
 
-echo "UNDEPLOYING K8S"
+source $ROOT/scripts/login.sh
+
+echo "UNDEPLOYING APPLICATION"
+
 tye undeploy -v Debug --tags $ENV

@@ -10,3 +10,5 @@ echo "GENERATING .ENV FILE"
 envsubst < ${ROOT}/${DOTENV_FILENAME} > ${DOTENV_FILENAME}
 
 ${ROOT}/scripts/genappsettings.sh
+
+#$ROOT/src/net/clean.sh

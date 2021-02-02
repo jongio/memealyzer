@@ -1,12 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-export ROOT=.;source $ROOT/scripts/base.sh
-
-pushd iac/bicep
-./deploy.sh ${BASENAME}
-popd
-
-pushd pac/net/tye
-./run.sh ${BASENAME}
-popd
+pushd ./pac/net/tye > /dev/null
+./run.sh "$@"
+popd > /dev/null

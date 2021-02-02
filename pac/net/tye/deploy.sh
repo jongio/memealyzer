@@ -9,13 +9,15 @@ export ENV=cloud
 
 source ./genfiles.sh
 
+source $ROOT/scripts/login.sh
+
 echo "ACR LOGIN"
 az acr login --name ${AZURE_CONTAINER_REGISTRY_SERVER}
 
-echo "DEPLOY INGRESS"
+echo "DEPLOYING INGRESS"
 kubectl apply -f https://aka.ms/tye/ingress/deploy
 
-echo "TYE DEPLOY"
+echo "DEPLOYING APPLICATION"
 tye deploy -v Debug --tags $ENV
 
 ${ROOT}/scripts/func.sh
