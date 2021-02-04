@@ -3,13 +3,12 @@
     "proxies": {
       "mock.catalog.item": {
         "matchCondition": {
-          "methods": [ "OPTIONS" ],
+          "methods": [ "OPTIONS", "POST" ],
           "route": "/api/negotiate"
         },
         "responseOverrides": {
           "response.headers.Access-Control-Allow-Origin": "https://3778f1c2-941c-4481-b078-087af5b82b01-1080.apps.codespaces.githubusercontent.com"
         }
-   
       }
     }
   }
