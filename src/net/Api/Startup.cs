@@ -32,7 +32,7 @@ namespace Api
         public void ConfigureServices(IServiceCollection services)
         {
             Envs.Load();
-            
+
             services.AddSingleton(typeof(Clients));
             services.AddHostedService<DataHostedService>();
             services.AddSignalR();
@@ -40,9 +40,13 @@ namespace Api
             services.AddCors(options =>
             {
                 options.AddPolicy(CorsOrigins,
-                    builder => builder.AllowAnyOrigin()
+                    builder => builder //.AllowAnyOrigin() 
+                    //.WithOrigins(new string[] { "http://localhost", "https://*.apps.codespaces.githubusercontent.com"})
+                    //.SetIsOriginAllowedToAllowWildcardSubdomains()
                     .AllowAnyMethod()
-                    .AllowAnyHeader());
+                    .AllowAnyHeader()
+                    .SetIsOriginAllowed(origin => true)
+                    .AllowCredentials());
             });
 
             services.AddResponseCompression(opts =>
@@ -65,6 +69,18 @@ namespace Api
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.Use(async (context, next) =>
+                    {
+                        context.Response.OnStarting(() =>
+                        {
+                            context.Response.Headers["Access-Control-Allow-Origin"] = "https://3778f1c2-941c-4481-b078-087af5b82b01-1080.apps.codespaces.githubusercontent.com";
+                            return Task.FromResult(0);
+                        });
+
+                        // Call the next delegate/middleware in the pipeline
+                        await next();
+                    });
 
             app.UseCors(CorsOrigins);
 
