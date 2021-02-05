@@ -3,7 +3,7 @@
     "proxies": {
       "mock.catalog.item": {
         "matchCondition": {
-          "methods": [ "OPTIONS", "POST" ],
+          "methods": [ "OPTIONS", "POST", "GET" ],
           "route": "/api/negotiate"
         },
         "responseOverrides": {
