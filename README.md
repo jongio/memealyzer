@@ -49,24 +49,23 @@ The following Azure resources are used in this application:
 
 ## Quickstart
 
-We follow a 5 step process to go from nothing to a completely deployed Azure solution.
+We follow a 4 step process to go from nothing to a completely deployed Azure solution.
 
-1. Start Dev Container with VS Code Codespaces
-1. Login with Azure CLI
-1. Provision Azure Resources with Bicep
-1. Run Locally with Tye
-1. Deploy to Azure with Tye
+1. **Start** Dev Environment
+1. **Provision** Azure Resources
+1. **Run** Locally
+1. **Deploy** to Azure
 
 > You will see `{BASENAME}` throughout this document.  Replace it with any unique text that you'd like, such as memealyzer007. That will be used as the basename for all your Azure resources, i.e. If you use memealyzer007, then the resource group will be named memealyzer007rg.
 
 ### 1. Start Dev Environment
-The fastest way to get to get the Memealyzer dev machine setup is to use the Codespaces Dev Container which includes all your development dependencies.
+The fastest way to get to get the Memealyzer dev machine setup is to use the Codespaces Dev Container which includes all of your development dependencies.
 
    1. Install [VS Code](https://code.visualstudio.com)
    1. Install [VS Code - Remote Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
    1. Open a Linux shell, such as bash or WSL bash
    1. Clone the repo: 
-      - `git clone https://github.com/jongio/memealyzer`
+      - `git clone https://github.com/jongio/memealyzer`
    1. Open the repo in VS Code `code memealyzer`
    1. Hit F1, then select "Remote Containers - Open Folder in Container"
 
@@ -81,6 +80,8 @@ The fastest way to get to get the Memealyzer dev machine setup is t
    - `./provision.sh {BASENAME}`
    
    > It may take up to 30 minutes to provision all resources.
+
+   You can deprovision at any time with `./deprovision.sh {BASENAME}`
 
 ### 3. Run Locally
 
