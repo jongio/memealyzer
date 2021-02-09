@@ -58,6 +58,9 @@ We follow a 4 step process to go from nothing to a completely deployed Azure sol
 
 > You will see `{BASENAME}` throughout this document.  Replace it with any unique text that you'd like, such as memealyzer007. That will be used as the basename for all your Azure resources, i.e. If you use memealyzer007, then the resource group will be named memealyzer007rg.
 
+
+> We use the Azure CLI to perform resource deployment and configuration. The scripts below will automatically prompt you to login to the Azure CLI and set your active Azure subscription. You can set the `SUBSCRIPTION_ID` environment variable in the `.env` file if you don't want to be prompted every time you run these scripts.
+
 ### 1. Start Dev Environment
 The fastest way to get to get the Memealyzer dev machine setup is to use the Codespaces Dev Container which includes all of your development dependencies.
 
@@ -69,13 +72,11 @@ The fastest way to get to get the Memealyzer dev machine setup is t
    1. Open the repo in VS Code `code memealyzer`
    1. Hit F1, then select "Remote Containers - Open Folder in Container"
 
-   We use the Azure CLI to perform resource deployment and configuration. The scripts below will automatically prompt you to login to the Azure CLI and set your active Azure subscription. 
 
-   You can set the `SUBSCRIPTION_ID` environment variable in the `.env` file if you don't want to be prompted every time you run these scripts.
 
 ### 2. Provision Azure Resources
 
-   This will provision all the required Azure resources with Bicep and run the app locally with Tye.
+   This will provision all the required Azure resources with Bicep.
 
    - `./provision.sh {BASENAME}`
    
