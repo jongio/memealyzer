@@ -95,7 +95,7 @@ The fastest way to get to get the Memealyzer dev machine setup is t
    1. You can add memes by clicking on the "+" button
    1. You can start the memestream by clicking on the "&#8734;" button. This will add a new meme every 5 seconds.
 
-   > If you get build errors, then run `./src/net/clean.sh` to clean up the .NET dirs.
+   > If you get build errors, then CD to `./src/net` and run `clean.sh` to clean up the .NET dirs.
 
    > If the app doesn't start correctly, then stop using CTRL+C and re-run the run.sh command.  We are researching why this happens.
 

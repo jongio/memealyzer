@@ -1,3 +1,8 @@
+#!/bin/bash 
+set -euo pipefail
+
+export ROOT=../..;
+
 dotnet clean ${ROOT}/src/net/Api
 rm -rf ${ROOT}/src/net/Api/bin
 rm -rf ${ROOT}/src/net/Api/obj
