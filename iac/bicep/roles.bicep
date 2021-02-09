@@ -1,6 +1,7 @@
-param principalId string = ''
 param principalType string = 'ServicePrincipal'
-param rgName string = ''
+param principalId string = ''
+param resourceGroupName string = ''
+param location string = ''
 
 module blob_contrib './role.bicep' = {
   name: 'blob_contrib-${principalId}'
@@ -8,7 +9,7 @@ module blob_contrib './role.bicep' = {
     principalId: principalId
     principalType: principalType
     roleId: 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
-    rgName: rgName
+    resourceGroupName: resourceGroupName
   }
 }
 
@@ -18,7 +19,7 @@ module queue_contrib './role.bicep' = {
     principalId: principalId
     principalType: principalType
     roleId: '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
-    rgName: rgName
+    resourceGroupName: resourceGroupName
   }
 }
 
@@ -28,7 +29,7 @@ module queue_msg './role.bicep' = {
     principalId: principalId
     principalType: principalType
     roleId: '8a0f0c08-91a1-4084-bc3d-661d67233fed'
-    rgName: rgName
+    resourceGroupName: resourceGroupName
   }
 }
 
@@ -38,7 +39,7 @@ module sb_receiver './role.bicep' = {
     principalId: principalId
     principalType: principalType
     roleId: '4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0'
-    rgName: rgName
+    resourceGroupName: resourceGroupName
   }
 }
 
@@ -48,7 +49,7 @@ module sb_sender './role.bicep' = {
     principalId: principalId
     principalType: principalType
     roleId: '69a216fc-b8fb-44d8-bc22-1f3c2cd27a39'
-    rgName: rgName
+    resourceGroupName: resourceGroupName
   }
 }
 
@@ -58,7 +59,7 @@ module cog_user './role.bicep' = {
     principalId: principalId
     principalType: principalType
     roleId: 'a97b65f3-24c7-4388-baec-2e87135dc908'
-    rgName: rgName
+    resourceGroupName: resourceGroupName
   }
 }
 
@@ -68,7 +69,7 @@ module app_config './role.bicep' = {
     principalId: principalId
     principalType: principalType
     roleId: '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b'
-    rgName: rgName
+    resourceGroupName: resourceGroupName
   }
 }
 
@@ -77,6 +78,6 @@ module acr_perms './rolesacr.bicep' = {
   params: {
     principalId: principalId
     principalType: principalType
-    rgName: rgName
+    resourceGroupName: resourceGroupName
   }
 }

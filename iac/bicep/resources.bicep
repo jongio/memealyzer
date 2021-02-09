@@ -1,7 +1,7 @@
 param basename string = ''
 param location string = 'westus2'
-param failover_location string = 'eastus2'
-param cli_user_id string = ''
+param failoverLocation string = 'eastus2'
+param principalId string = ''
 
 var secrets = [
   'get'
@@ -61,7 +61,7 @@ resource key_vault 'Microsoft.KeyVault/vaults@2019-09-01' = {
     }
     accessPolicies: [
       {
-        objectId: cli_user_id
+        objectId: principalId
         permissions: {
           secrets: secrets
         }
@@ -140,7 +140,7 @@ resource cosmos_account 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
     locations: [
       {
         failoverPriority: 1
-        locationName: failover_location
+        locationName: failoverLocation
       }
       {
         failoverPriority: 0
@@ -345,9 +345,9 @@ resource sync 'Microsoft.ServiceBus/namespaces/queues@2017-04-01' = {
 module cli_perms './roles.bicep' = {
   name: 'cli_perms-${resourceGroup().name}'
   params: {
-    principalId: cli_user_id
+    principalId: principalId
     principalType: 'User'
-    rgName: resourceGroup().name
+    resourceGroupName: resourceGroup().name
   }
 }
 
@@ -355,7 +355,7 @@ module function_perms './roles.bicep' = {
   name: 'function_perms-${resourceGroup().name}'
   params: {
     principalId: function.identity.principalId
-    rgName: resourceGroup().name
+    resourceGroupName: resourceGroup().name
   }
 }
 
@@ -363,7 +363,7 @@ module aks_kubelet_perms './roles.bicep' = {
   name: 'aks_kubelet_perms-${resourceGroup().name}'
   params: {
     principalId: aks.properties.identityProfile.kubeletidentity.objectId
-    rgName: resourceGroup().name
+    resourceGroupName: resourceGroup().name
   }
 }
 
@@ -371,6 +371,6 @@ module aks_cluster_perms './rolesacr.bicep' = {
   name: 'aks_cluster_perms-${resourceGroup().name}'
   params: {
     principalId: aks.identity.principalId
-    rgName: resourceGroup().name
+    resourceGroupName: resourceGroup().name
   }
 }

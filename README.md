@@ -49,46 +49,42 @@ The following Azure resources are used in this application:
 
 ## Quickstart
 
-We follow a 5 step process to go from nothing to a completely deployed Azure solution.
+We follow a 4 step process to go from nothing to a completely deployed Azure solution.
 
-1. Start Dev Container with GitHub Codespaces or VS Codespaces
-1. Login with Azure CLI
-1. Provision Azure Resources with Bicep
-1. Run Locally with Tye
-1. Deploy to Azure with Tye
+1. **Start** Dev Environment
+1. **Provision** Azure Resources
+1. **Run** Locally
+1. **Deploy** to Azure
 
 > You will see `{BASENAME}` throughout this document.  Replace it with any unique text that you'd like, such as memealyzer007. That will be used as the basename for all your Azure resources, i.e. If you use memealyzer007, then the resource group will be named memealyzer007rg.
 
-### 1. Setup Dev Environment
 
-Codespaces support is coming soon.  In the meantime, please install these components to setup your dev machine.
+> We use the Azure CLI to perform resource deployment and configuration. The scripts below will automatically prompt you to login to the Azure CLI and set your active Azure subscription. You can set the `SUBSCRIPTION_ID` environment variable in the `.env` file if you don't want to be prompted every time you run these scripts.
 
-1. Terminal - WSL2, Zsh, GitBash, PowerShell, not Windows Command prompt as this application uses bash script files.  
-1. [Azure CLI](https://aka.ms/azcliget)
-1. [Git](https://git-scm.com/downloads) 
-1. [VS Code](https://code.visualstudio.com/)
-1. [Docker](https://docs.docker.com/get-docker/)
-1. [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-1. [.NET SDK](https://dotnet.microsoft.com/download) - 5.0
-1. [Azure Functions Core Tools](https://docs.microsoft.com/azure/azure-functions/functions-run-local) - v3.0.2881 minimum
-1. [Project Tye](https://github.com/dotnet/tye/blob/master/docs/getting_started.md)
-1. [Bicep](https://github.com/Azure/bicep/blob/main/docs/installing.md)
+### 1. Start Dev Environment
+The fastest way to get to get the Memealyzer dev machine setup is to use the Codespaces Dev Container which includes all of your development dependencies.
 
-### 2. Login with Azure CLI
+   1. Install [VS Code](https://code.visualstudio.com)
+   1. Install [VS Code - Remote Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+   1. Open a Linux shell, such as bash or WSL bash
+   1. Clone the repo: 
+      - `git clone https://github.com/jongio/memealyzer`
+   1. Open the repo in VS Code `code memealyzer`
+   1. Hit F1, then select "Remote Containers - Open Folder in Container"
 
-   We use the Azure CLI to perform resource deployment and configuration. The scripts below will automatically prompt you to login to the Azure CLI and set your active Azure subscription. 
 
-   You can set the `SUBSCRIPTION_ID` environment variable in the `.env` file if you don't want to be prompted every time you run these scripts.
 
-### 3. Provision Azure Resources with Bicep
+### 2. Provision Azure Resources
 
-   This will provision all the required Azure resources with Bicep and run the app locally with Tye.
+   This will provision all the required Azure resources with Bicep.
 
    - `./provision.sh {BASENAME}`
    
    > It may take up to 30 minutes to provision all resources.
 
-### 4. Run Locally with Tye
+   You can deprovision at any time with `./deprovision.sh {BASENAME}`
+
+### 3. Run Locally
 
    Now that our Azure Resources are provisioned, we'll now use Tye to run our application locally.
 
@@ -99,7 +95,11 @@ Codespaces support is coming soon.  In the meantime, please install these compon
    1. You can add memes by clicking on the "+" button
    1. You can start the memestream by clicking on the "&#8734;" button. This will add a new meme every 5 seconds.
 
-### 5. Deploy to Azure with Tye
+   > If you get build errors, then run `./src/net/clean.sh` to clean up the .NET dirs.
+
+   > If the app doesn't start correctly, then stop using CTRL+C and re-run the run.sh command.  We are researching why this happens.
+
+### 4. Deploy to Azure
 
    Now that we've provisioned our resources and tested locally, it is time to deploy our code to Azure with Tye.
 
@@ -120,6 +120,21 @@ Codespaces support is coming soon.  In the meantime, please install these compon
       or
    
    - `./open.sh insiders` - if you are using VS Code Insiders
+
+### Manual Dev Machine Setup
+
+We recommend using a VS Code Dev Container, but you can setup on bare metal with these steps.
+
+1. Terminal - WSL2, Zsh, GitBash, PowerShell, not Windows Command prompt as this application uses bash script files.  
+1. [Azure CLI](https://aka.ms/azcliget)
+1. [Git](https://git-scm.com/downloads) 
+1. [VS Code](https://code.visualstudio.com/)
+1. [Docker](https://docs.docker.com/get-docker/)
+1. [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
+1. [.NET SDK](https://dotnet.microsoft.com/download) - 5.0
+1. [Azure Functions Core Tools](https://docs.microsoft.com/azure/azure-functions/functions-run-local) - v3.0.2881 minimum
+1. [Project Tye](https://github.com/dotnet/tye/blob/master/docs/getting_started.md)
+1. [Bicep](https://github.com/Azure/bicep/blob/main/docs/installing.md)
 
 ### Deployment
 To only deploy resources:
@@ -186,6 +201,7 @@ You can add override any of the following environment variables to suit your nee
 |Name |Default Value|Values|
 |---|---|---|
 |BASENAME|This is the only variable that you are required to set.||
+|SUBSCRIPTION_ID|The subscription that you want to use for your app.||
 |AZURE_COSMOS_ENDPOINT|https://${BASENAME}cosmosaccount.documents.azure.com:443||
 |AZURE_FORM_RECOGNIZER_ENDPOINT|https://${BASENAME}fr.cognitiveservices.azure.com/||
 |AZURE_KEYVAULT_ENDPOINT|https://${BASENAME}kv.vault.azure.net/||
