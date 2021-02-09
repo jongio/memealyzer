@@ -10,31 +10,31 @@
       "type": "string",
       "defaultValue": "westus2"
     },
-    "failover_location": {
+    "failoverLocation": {
       "type": "string",
       "defaultValue": "eastus2"
     },
-    "cli_user_id": {
+    "principalId": {
       "type": "string",
       "defaultValue": ""
     }
   },
   "functions": [],
   "variables": {
-    "resource_group_name": "[format('{0}rg', parameters('basename'))]"
+    "resourceGroupName": "[format('{0}rg', parameters('basename'))]"
   },
   "resources": [
     {
       "type": "Microsoft.Resources/resourceGroups",
       "apiVersion": "2020-06-01",
-      "name": "[variables('resource_group_name')]",
+      "name": "[variables('resourceGroupName')]",
       "location": "[parameters('location')]"
     },
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2019-10-01",
-      "name": "[format('resources-{0}', variables('resource_group_name'))]",
-      "resourceGroup": "[variables('resource_group_name')]",
+      "name": "[format('resources-{0}', variables('resourceGroupName'))]",
+      "resourceGroup": "[variables('resourceGroupName')]",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -47,11 +47,11 @@
           "location": {
             "value": "[parameters('location')]"
           },
-          "failover_location": {
-            "value": "[parameters('failover_location')]"
+          "failoverLocation": {
+            "value": "[parameters('failoverLocation')]"
           },
-          "cli_user_id": {
-            "value": "[parameters('cli_user_id')]"
+          "principalId": {
+            "value": "[parameters('principalId')]"
           }
         },
         "template": {
@@ -66,11 +66,11 @@
               "type": "string",
               "defaultValue": "westus2"
             },
-            "failover_location": {
+            "failoverLocation": {
               "type": "string",
               "defaultValue": "eastus2"
             },
-            "cli_user_id": {
+            "principalId": {
               "type": "string",
               "defaultValue": ""
             }
@@ -141,7 +141,7 @@
                 },
                 "accessPolicies": [
                   {
-                    "objectId": "[parameters('cli_user_id')]",
+                    "objectId": "[parameters('principalId')]",
                     "permissions": {
                       "secrets": "[variables('secrets')]"
                     },
@@ -250,7 +250,7 @@
                 "locations": [
                   {
                     "failoverPriority": 1,
-                    "locationName": "[parameters('failover_location')]"
+                    "locationName": "[parameters('failoverLocation')]"
                   },
                   {
                     "failoverPriority": 0,
@@ -498,12 +498,12 @@
                 "mode": "Incremental",
                 "parameters": {
                   "principalId": {
-                    "value": "[parameters('cli_user_id')]"
+                    "value": "[parameters('principalId')]"
                   },
                   "principalType": {
                     "value": "User"
                   },
-                  "rgName": {
+                  "resourceGroupName": {
                     "value": "[resourceGroup().name]"
                   }
                 },
@@ -511,15 +511,19 @@
                   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
                   "contentVersion": "1.0.0.0",
                   "parameters": {
-                    "principalId": {
-                      "type": "string",
-                      "defaultValue": ""
-                    },
                     "principalType": {
                       "type": "string",
                       "defaultValue": "ServicePrincipal"
                     },
-                    "rgName": {
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "resourceGroupName": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "location": {
                       "type": "string",
                       "defaultValue": ""
                     }
@@ -545,8 +549,8 @@
                           "roleId": {
                             "value": "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -565,7 +569,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -575,7 +579,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -605,8 +609,8 @@
                           "roleId": {
                             "value": "974c5e8b-45b9-4653-ba55-5f855dd0fb88"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -625,7 +629,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -635,7 +639,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -665,8 +669,8 @@
                           "roleId": {
                             "value": "8a0f0c08-91a1-4084-bc3d-661d67233fed"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -685,7 +689,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -695,7 +699,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -725,8 +729,8 @@
                           "roleId": {
                             "value": "4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -745,7 +749,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -755,7 +759,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -785,8 +789,8 @@
                           "roleId": {
                             "value": "69a216fc-b8fb-44d8-bc22-1f3c2cd27a39"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -805,7 +809,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -815,7 +819,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -845,8 +849,8 @@
                           "roleId": {
                             "value": "a97b65f3-24c7-4388-baec-2e87135dc908"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -865,7 +869,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -875,7 +879,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -905,8 +909,8 @@
                           "roleId": {
                             "value": "5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -925,7 +929,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -935,7 +939,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -962,8 +966,8 @@
                           "principalType": {
                             "value": "[parameters('principalType')]"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -978,7 +982,7 @@
                               "type": "string",
                               "defaultValue": "ServicePrincipal"
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -1004,8 +1008,8 @@
                                   "roleId": {
                                     "value": "8311e382-0749-4cb8-b61a-304f252e45ec"
                                   },
-                                  "rgName": {
-                                    "value": "[parameters('rgName')]"
+                                  "resourceGroupName": {
+                                    "value": "[parameters('resourceGroupName')]"
                                   }
                                 },
                                 "template": {
@@ -1024,7 +1028,7 @@
                                       "type": "string",
                                       "defaultValue": ""
                                     },
-                                    "rgName": {
+                                    "resourceGroupName": {
                                       "type": "string",
                                       "defaultValue": ""
                                     }
@@ -1034,7 +1038,7 @@
                                     {
                                       "type": "Microsoft.Authorization/roleAssignments",
                                       "apiVersion": "2020-04-01-preview",
-                                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                                       "properties": {
                                         "principalId": "[parameters('principalId')]",
                                         "principalType": "[parameters('principalType')]",
@@ -1064,8 +1068,8 @@
                                   "roleId": {
                                     "value": "7f951dda-4ed3-4680-a7ca-43fe172d538d"
                                   },
-                                  "rgName": {
-                                    "value": "[parameters('rgName')]"
+                                  "resourceGroupName": {
+                                    "value": "[parameters('resourceGroupName')]"
                                   }
                                 },
                                 "template": {
@@ -1084,7 +1088,7 @@
                                       "type": "string",
                                       "defaultValue": ""
                                     },
-                                    "rgName": {
+                                    "resourceGroupName": {
                                       "type": "string",
                                       "defaultValue": ""
                                     }
@@ -1094,7 +1098,7 @@
                                     {
                                       "type": "Microsoft.Authorization/roleAssignments",
                                       "apiVersion": "2020-04-01-preview",
-                                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                                       "properties": {
                                         "principalId": "[parameters('principalId')]",
                                         "principalType": "[parameters('principalType')]",
@@ -1126,7 +1130,7 @@
                   "principalId": {
                     "value": "[reference(resourceId('Microsoft.Web/sites', format('{0}function', parameters('basename'))), '2020-06-01', 'full').identity.principalId]"
                   },
-                  "rgName": {
+                  "resourceGroupName": {
                     "value": "[resourceGroup().name]"
                   }
                 },
@@ -1134,15 +1138,19 @@
                   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
                   "contentVersion": "1.0.0.0",
                   "parameters": {
-                    "principalId": {
-                      "type": "string",
-                      "defaultValue": ""
-                    },
                     "principalType": {
                       "type": "string",
                       "defaultValue": "ServicePrincipal"
                     },
-                    "rgName": {
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "resourceGroupName": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "location": {
                       "type": "string",
                       "defaultValue": ""
                     }
@@ -1168,8 +1176,8 @@
                           "roleId": {
                             "value": "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -1188,7 +1196,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -1198,7 +1206,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -1228,8 +1236,8 @@
                           "roleId": {
                             "value": "974c5e8b-45b9-4653-ba55-5f855dd0fb88"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -1248,7 +1256,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -1258,7 +1266,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -1288,8 +1296,8 @@
                           "roleId": {
                             "value": "8a0f0c08-91a1-4084-bc3d-661d67233fed"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -1308,7 +1316,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -1318,7 +1326,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -1348,8 +1356,8 @@
                           "roleId": {
                             "value": "4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -1368,7 +1376,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -1378,7 +1386,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -1408,8 +1416,8 @@
                           "roleId": {
                             "value": "69a216fc-b8fb-44d8-bc22-1f3c2cd27a39"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -1428,7 +1436,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -1438,7 +1446,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -1468,8 +1476,8 @@
                           "roleId": {
                             "value": "a97b65f3-24c7-4388-baec-2e87135dc908"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -1488,7 +1496,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -1498,7 +1506,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -1528,8 +1536,8 @@
                           "roleId": {
                             "value": "5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -1548,7 +1556,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -1558,7 +1566,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -1585,8 +1593,8 @@
                           "principalType": {
                             "value": "[parameters('principalType')]"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -1601,7 +1609,7 @@
                               "type": "string",
                               "defaultValue": "ServicePrincipal"
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -1627,8 +1635,8 @@
                                   "roleId": {
                                     "value": "8311e382-0749-4cb8-b61a-304f252e45ec"
                                   },
-                                  "rgName": {
-                                    "value": "[parameters('rgName')]"
+                                  "resourceGroupName": {
+                                    "value": "[parameters('resourceGroupName')]"
                                   }
                                 },
                                 "template": {
@@ -1647,7 +1655,7 @@
                                       "type": "string",
                                       "defaultValue": ""
                                     },
-                                    "rgName": {
+                                    "resourceGroupName": {
                                       "type": "string",
                                       "defaultValue": ""
                                     }
@@ -1657,7 +1665,7 @@
                                     {
                                       "type": "Microsoft.Authorization/roleAssignments",
                                       "apiVersion": "2020-04-01-preview",
-                                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                                       "properties": {
                                         "principalId": "[parameters('principalId')]",
                                         "principalType": "[parameters('principalType')]",
@@ -1687,8 +1695,8 @@
                                   "roleId": {
                                     "value": "7f951dda-4ed3-4680-a7ca-43fe172d538d"
                                   },
-                                  "rgName": {
-                                    "value": "[parameters('rgName')]"
+                                  "resourceGroupName": {
+                                    "value": "[parameters('resourceGroupName')]"
                                   }
                                 },
                                 "template": {
@@ -1707,7 +1715,7 @@
                                       "type": "string",
                                       "defaultValue": ""
                                     },
-                                    "rgName": {
+                                    "resourceGroupName": {
                                       "type": "string",
                                       "defaultValue": ""
                                     }
@@ -1717,7 +1725,7 @@
                                     {
                                       "type": "Microsoft.Authorization/roleAssignments",
                                       "apiVersion": "2020-04-01-preview",
-                                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                                       "properties": {
                                         "principalId": "[parameters('principalId')]",
                                         "principalType": "[parameters('principalType')]",
@@ -1752,7 +1760,7 @@
                   "principalId": {
                     "value": "[reference(resourceId('Microsoft.ContainerService/managedClusters', format('{0}aks', parameters('basename')))).identityProfile.kubeletidentity.objectId]"
                   },
-                  "rgName": {
+                  "resourceGroupName": {
                     "value": "[resourceGroup().name]"
                   }
                 },
@@ -1760,15 +1768,19 @@
                   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
                   "contentVersion": "1.0.0.0",
                   "parameters": {
-                    "principalId": {
-                      "type": "string",
-                      "defaultValue": ""
-                    },
                     "principalType": {
                       "type": "string",
                       "defaultValue": "ServicePrincipal"
                     },
-                    "rgName": {
+                    "principalId": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "resourceGroupName": {
+                      "type": "string",
+                      "defaultValue": ""
+                    },
+                    "location": {
                       "type": "string",
                       "defaultValue": ""
                     }
@@ -1794,8 +1806,8 @@
                           "roleId": {
                             "value": "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -1814,7 +1826,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -1824,7 +1836,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -1854,8 +1866,8 @@
                           "roleId": {
                             "value": "974c5e8b-45b9-4653-ba55-5f855dd0fb88"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -1874,7 +1886,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -1884,7 +1896,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -1914,8 +1926,8 @@
                           "roleId": {
                             "value": "8a0f0c08-91a1-4084-bc3d-661d67233fed"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -1934,7 +1946,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -1944,7 +1956,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -1974,8 +1986,8 @@
                           "roleId": {
                             "value": "4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -1994,7 +2006,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -2004,7 +2016,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -2034,8 +2046,8 @@
                           "roleId": {
                             "value": "69a216fc-b8fb-44d8-bc22-1f3c2cd27a39"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -2054,7 +2066,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -2064,7 +2076,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -2094,8 +2106,8 @@
                           "roleId": {
                             "value": "a97b65f3-24c7-4388-baec-2e87135dc908"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -2114,7 +2126,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -2124,7 +2136,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -2154,8 +2166,8 @@
                           "roleId": {
                             "value": "5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -2174,7 +2186,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -2184,7 +2196,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -2211,8 +2223,8 @@
                           "principalType": {
                             "value": "[parameters('principalType')]"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -2227,7 +2239,7 @@
                               "type": "string",
                               "defaultValue": "ServicePrincipal"
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -2253,8 +2265,8 @@
                                   "roleId": {
                                     "value": "8311e382-0749-4cb8-b61a-304f252e45ec"
                                   },
-                                  "rgName": {
-                                    "value": "[parameters('rgName')]"
+                                  "resourceGroupName": {
+                                    "value": "[parameters('resourceGroupName')]"
                                   }
                                 },
                                 "template": {
@@ -2273,7 +2285,7 @@
                                       "type": "string",
                                       "defaultValue": ""
                                     },
-                                    "rgName": {
+                                    "resourceGroupName": {
                                       "type": "string",
                                       "defaultValue": ""
                                     }
@@ -2283,7 +2295,7 @@
                                     {
                                       "type": "Microsoft.Authorization/roleAssignments",
                                       "apiVersion": "2020-04-01-preview",
-                                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                                       "properties": {
                                         "principalId": "[parameters('principalId')]",
                                         "principalType": "[parameters('principalType')]",
@@ -2313,8 +2325,8 @@
                                   "roleId": {
                                     "value": "7f951dda-4ed3-4680-a7ca-43fe172d538d"
                                   },
-                                  "rgName": {
-                                    "value": "[parameters('rgName')]"
+                                  "resourceGroupName": {
+                                    "value": "[parameters('resourceGroupName')]"
                                   }
                                 },
                                 "template": {
@@ -2333,7 +2345,7 @@
                                       "type": "string",
                                       "defaultValue": ""
                                     },
-                                    "rgName": {
+                                    "resourceGroupName": {
                                       "type": "string",
                                       "defaultValue": ""
                                     }
@@ -2343,7 +2355,7 @@
                                     {
                                       "type": "Microsoft.Authorization/roleAssignments",
                                       "apiVersion": "2020-04-01-preview",
-                                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                                      "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                                       "properties": {
                                         "principalId": "[parameters('principalId')]",
                                         "principalType": "[parameters('principalType')]",
@@ -2378,7 +2390,7 @@
                   "principalId": {
                     "value": "[reference(resourceId('Microsoft.ContainerService/managedClusters', format('{0}aks', parameters('basename'))), '2020-09-01', 'full').identity.principalId]"
                   },
-                  "rgName": {
+                  "resourceGroupName": {
                     "value": "[resourceGroup().name]"
                   }
                 },
@@ -2394,7 +2406,7 @@
                       "type": "string",
                       "defaultValue": "ServicePrincipal"
                     },
-                    "rgName": {
+                    "resourceGroupName": {
                       "type": "string",
                       "defaultValue": ""
                     }
@@ -2420,8 +2432,8 @@
                           "roleId": {
                             "value": "8311e382-0749-4cb8-b61a-304f252e45ec"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -2440,7 +2452,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -2450,7 +2462,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -2480,8 +2492,8 @@
                           "roleId": {
                             "value": "7f951dda-4ed3-4680-a7ca-43fe172d538d"
                           },
-                          "rgName": {
-                            "value": "[parameters('rgName')]"
+                          "resourceGroupName": {
+                            "value": "[parameters('resourceGroupName')]"
                           }
                         },
                         "template": {
@@ -2500,7 +2512,7 @@
                               "type": "string",
                               "defaultValue": ""
                             },
-                            "rgName": {
+                            "resourceGroupName": {
                               "type": "string",
                               "defaultValue": ""
                             }
@@ -2510,7 +2522,7 @@
                             {
                               "type": "Microsoft.Authorization/roleAssignments",
                               "apiVersion": "2020-04-01-preview",
-                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('rgName'))]",
+                              "name": "[guid(subscription().id, parameters('principalId'), parameters('roleId'), parameters('resourceGroupName'))]",
                               "properties": {
                                 "principalId": "[parameters('principalId')]",
                                 "principalType": "[parameters('principalType')]",
@@ -2532,7 +2544,7 @@
         }
       },
       "dependsOn": [
-        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resource_group_name'))]"
+        "[subscriptionResourceId('Microsoft.Resources/resourceGroups', variables('resourceGroupName'))]"
       ]
     }
   ]
