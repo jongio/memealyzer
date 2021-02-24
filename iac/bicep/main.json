@@ -286,7 +286,7 @@
                 "resource": {
                   "partitionKey": {
                     "paths": [
-                      "/uid"
+                      "/partitionKey"
                     ]
                   },
                   "id": "images",
@@ -314,7 +314,7 @@
                 "type": "SystemAssigned"
               },
               "properties": {
-                "kubernetesVersion": "1.19.3",
+                "kubernetesVersion": "1.20.2",
                 "nodeResourceGroup": "[format('{0}aksnodes', parameters('basename'))]",
                 "dnsPrefix": "[format('{0}aks', parameters('basename'))]",
                 "agentPoolProfiles": [

@@ -8,11 +8,8 @@
     <ProjectReference Include="..\Lib.Model\Lib.Model.csproj"/>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DotNetEnv" Version="2.0.0"/>
+    <PackageReference Include="DotNetEnv" Version="2.1.0"/>
     <PackageReference Include="System.Linq.Async" Version="5.0.0"/>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0"/>
   </ItemGroup>
-  <!-- <PropertyGroup>
-    <RestoreSources>https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json;https://api.nuget.org/v3/index.json</RestoreSources>
-  </PropertyGroup> -->
 </Project>

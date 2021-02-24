@@ -8,6 +8,7 @@ namespace Lib
     {
         public static void Load()
         {
+            // If we have DOTENV_FULLPATH, then the app has passed in the full path to the .env file, so just use that.
             string dotEnvFullPath = Environment.GetEnvironmentVariable("DOTENV_FULLPATH");
             if (!string.IsNullOrEmpty(dotEnvFullPath))
             {
@@ -15,19 +16,12 @@ namespace Lib
             }
             else
             {
+                // We don't have DOTENV_FULLPATH, so let's try to find the .env file.  
+                // The app can override the default .env file name with DOTENV_FILENAME env var
+                
                 string dotEnvFileNameEnv = Environment.GetEnvironmentVariable("DOTENV_FILENAME");
                 string dotEnvFileName = !String.IsNullOrEmpty(dotEnvFileNameEnv) ? dotEnvFileNameEnv : DotNetEnv.Env.DEFAULT_ENVFILENAME;
-
-                var pathParts = Directory.GetCurrentDirectory().Split(Path.DirectorySeparatorChar);
-                for (int i = pathParts.Length; i > 0; i--)
-                {
-                    var path = Path.Combine(String.Join(Path.DirectorySeparatorChar.ToString(), pathParts, 0, i), dotEnvFileName);
-                    if (File.Exists(path))
-                    {
-                        Env.Load(path);
-                        break;
-                    }
-                }
+                Env.TraversePath().Load(dotEnvFileName);
             }
         }
     }

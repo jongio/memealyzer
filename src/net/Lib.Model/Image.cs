@@ -9,12 +9,29 @@ namespace Lib.Model
         private string extension;
         private string blobName;
         private string color = "light";
+        private string partitionKey = string.Empty;
+        private bool complete = false;
+
+        [JsonPropertyName("partitionKey")]
+        public string PartitionKey
+        {
+            get
+            {
+                // Cannot use C#6 default prop value b/c the value is based on a class property, Id.
+                if (string.IsNullOrEmpty(partitionKey))
+                {
+                    partitionKey = this.Id.Substring(0, 1);
+                }
+                return partitionKey;
+            }
+            set => partitionKey = value;
+        }
 
         [JsonPropertyName("id")]
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [JsonPropertyName("uid")]
-        public string Uid { get { return Id; } set { Id = value; } }
+        public string Uid { get => Id; set => Id = value; }
 
         [JsonPropertyName("title")]
         public string Title { get; set; }
@@ -53,7 +70,11 @@ namespace Lib.Model
         [JsonPropertyName("blobUri")]
         public string BlobUri { get; set; }
 
-        public bool Complete { get { return string.Compare(Status, "Completed", true) == 0; } }
+        public bool Complete
+        {
+            get => string.Compare(Status, "Completed", true) == 0;
+            set => complete = value;
+        }
 
         [JsonPropertyName("text")]
         public string Text { get; set; }
