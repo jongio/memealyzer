@@ -60,8 +60,8 @@ namespace Lib.Data.Providers
 
         public async Task<Image> DeleteImageAsync(string id)
         {
-            var partitionKey = new PartitionKey(id);
-            var response = await CosmosContainer.DeleteItemAsync<Image>(id, partitionKey);
+            var cosmosImage = new CosmosImage { Id = id };
+            var response = await CosmosContainer.DeleteItemAsync<Image>(id, cosmosImage.PartitionKeyValue);
             return response.Value;
 
             //TODO : Bubble up errors through the stack

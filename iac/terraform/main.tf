@@ -123,7 +123,7 @@ resource "azurerm_cosmosdb_sql_container" "cosmos_sqldb_container" {
   resource_group_name = azurerm_resource_group.rg.name
   account_name        = azurerm_cosmosdb_account.cosmos_account.name
   database_name       = azurerm_cosmosdb_sql_database.cosmos_sqldb.name
-  partition_key_path  = "/uid"
+  partition_key_path  = "/partitionKey"
   throughput          = 400
 
   unique_key {
@@ -136,7 +136,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   dns_prefix          = "${var.basename}aks"
-  kubernetes_version  = "1.19.0"
+  kubernetes_version  = "1.20.2"
   node_resource_group = "${var.basename}aksnodes"
 
   default_node_pool {

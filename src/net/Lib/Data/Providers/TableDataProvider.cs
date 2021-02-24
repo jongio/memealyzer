@@ -44,9 +44,9 @@ namespace Lib.Data.Providers
 
         public async Task<Image> GetImageAsync(string id)
         {
-            var image = new ImageTableEntity() { Id = id };
+            var image = new TableImage() { Id = id };
 
-            await foreach (ImageTableEntity item in TableClient.QueryAsync<ImageTableEntity>(i => i.PartitionKey == image.PartitionKey && i.RowKey == image.RowKey))
+            await foreach (TableImage item in TableClient.QueryAsync<TableImage>(i => i.PartitionKey == image.PartitionKey && i.RowKey == image.RowKey))
             {
                 return item;
             }
@@ -55,7 +55,7 @@ namespace Lib.Data.Providers
 
         public async Task<Image> DeleteImageAsync(string id)
         {
-            var image = new ImageTableEntity { Id = id };
+            var image = new TableImage { Id = id };
             await TableClient.DeleteEntityAsync(image.PartitionKey, image.RowKey);
             return image;
 
@@ -64,7 +64,7 @@ namespace Lib.Data.Providers
 
         public async IAsyncEnumerable<Image> GetImagesAsync()
         {
-            await foreach (var item in TableClient.QueryAsync<ImageTableEntity>())
+            await foreach (var item in TableClient.QueryAsync<TableImage>())
             {
                 yield return item;
             }
@@ -72,13 +72,13 @@ namespace Lib.Data.Providers
 
         public async Task<Image> UpsertImageAsync(IImage image)
         {
-            var response = await TableClient.UpsertEntityAsync<ImageTableEntity>(image as ImageTableEntity);
-            return image as ImageTableEntity;
+            var response = await TableClient.UpsertEntityAsync<TableImage>(image as TableImage);
+            return image as TableImage;
         }
 
         public IImage DeserializeImage(string json)
         {
-            return JsonSerializer.Deserialize<ImageTableEntity>(json, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            return JsonSerializer.Deserialize<TableImage>(json, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
         }
     }
 }
