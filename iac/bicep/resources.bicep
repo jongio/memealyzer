@@ -342,7 +342,7 @@ resource sync 'Microsoft.ServiceBus/namespaces/queues@2017-04-01' = {
   }
 }
 
-module cli_perms './roles.bicep' = {
+module cli_perms './rolesapp.bicep' = {
   name: 'cli_perms-${resourceGroup().name}'
   params: {
     principalId: principalId
@@ -351,7 +351,7 @@ module cli_perms './roles.bicep' = {
   }
 }
 
-module function_perms './roles.bicep' = {
+module function_perms './rolesapp.bicep' = {
   name: 'function_perms-${resourceGroup().name}'
   params: {
     principalId: function.identity.principalId
@@ -359,7 +359,7 @@ module function_perms './roles.bicep' = {
   }
 }
 
-module aks_kubelet_perms './roles.bicep' = {
+module aks_kubelet_perms './rolesapp.bicep' = {
   name: 'aks_kubelet_perms-${resourceGroup().name}'
   params: {
     principalId: aks.properties.identityProfile.kubeletidentity.objectId
