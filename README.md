@@ -126,7 +126,7 @@ The fastest way to get to get the Memealyzer dev machine setup is t
 We recommend using a VS Code Dev Container, but you can setup on bare metal with these steps.
 
 1. Terminal - WSL2, Zsh, GitBash, PowerShell, not Windows Command prompt as this application uses bash script files.  
-1. [Azure CLI](https://aka.ms/azcliget)
+1. [Azure CLI](https://aka.ms/azcliget) - v2.20.0+
 1. [Git](https://git-scm.com/downloads) 
 1. [VS Code](https://code.visualstudio.com/)
 1. [Docker](https://docs.docker.com/get-docker/)
@@ -134,7 +134,7 @@ We recommend using a VS Code Dev Container, but you can setup on bare metal with
 1. [.NET SDK](https://dotnet.microsoft.com/download) - 5.0
 1. [Azure Functions Core Tools](https://docs.microsoft.com/azure/azure-functions/functions-run-local) - v3.0.2881 minimum
 1. [Project Tye](https://github.com/dotnet/tye/blob/master/docs/getting_started.md)
-1. [Bicep](https://github.com/Azure/bicep/blob/main/docs/installing.md)
+1. [Bicep](https://github.com/Azure/bicep/blob/main/docs/installing.md) - `az bicep install`
 
 ### Deployment
 To only deploy resources:

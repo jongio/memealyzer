@@ -17,7 +17,6 @@ resource storage 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   sku: {
     name: 'Standard_LRS'
   }
-  properties: {}
 }
 
 resource form_recognizer 'Microsoft.CognitiveServices/accounts@2017-04-18' = {
@@ -228,7 +227,6 @@ resource appconfig 'Microsoft.AppConfiguration/configurationStores@2020-06-01' =
   identity: {
     type: 'SystemAssigned'
   }
-  properties: {}
 }
 
 resource appconfig_borderstyle 'Microsoft.AppConfiguration/configurationStores/keyValues@2020-07-01-preview' = {
@@ -268,7 +266,6 @@ resource plan 'Microsoft.Web/serverfarms@2020-06-01' = {
     size: 'S1'
     name: 'S1'
   }
-  properties: {}
 }
 
 resource function 'Microsoft.Web/sites@2020-06-01' = {
@@ -342,7 +339,7 @@ resource sync 'Microsoft.ServiceBus/namespaces/queues@2017-04-01' = {
   }
 }
 
-module cli_perms './roles.bicep' = {
+module cli_perms './rolesapp.bicep' = {
   name: 'cli_perms-${resourceGroup().name}'
   params: {
     principalId: principalId
@@ -351,7 +348,7 @@ module cli_perms './roles.bicep' = {
   }
 }
 
-module function_perms './roles.bicep' = {
+module function_perms './rolesapp.bicep' = {
   name: 'function_perms-${resourceGroup().name}'
   params: {
     principalId: function.identity.principalId
@@ -359,7 +356,7 @@ module function_perms './roles.bicep' = {
   }
 }
 
-module aks_kubelet_perms './roles.bicep' = {
+module aks_kubelet_perms './rolesapp.bicep' = {
   name: 'aks_kubelet_perms-${resourceGroup().name}'
   params: {
     principalId: aks.properties.identityProfile.kubeletidentity.objectId
