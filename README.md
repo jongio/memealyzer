@@ -6,11 +6,11 @@ Memealyzer determines if a meme's sentiment is positive, negative, or neutral.
 
 For example, given this meme:
 
-![](assets/meme.png)
+!["Meme"](assets/meme.png)
 
 Memealyzer will extract the text, analyize the sentiment of that text, and then change the border color to red for negative sentiment, green for positive, and yellow for neutral.
 
-![](assets/hero.png)
+!["Memealyzer Hero"](assets/hero.png)
 
 Memealyzer is an app built to demonstrate some the latest and greatest Azure tech to dev, debug, and deploy microservice applications, including:
 
@@ -25,7 +25,7 @@ Memealyzer is an app built to demonstrate some the latest and greatest Azure tec
 
 ## Architecture
 
-![](assets/arch.png)
+!["Architecture"](assets/arch.png)
 
 > This is the current .NET architecture - we are in the process of developing for other languages and architectures as well.
 
@@ -51,15 +51,18 @@ The following Azure resources are used in this application:
 
 We follow a 4 step process to go from nothing to a completely deployed Azure solution.
 
-1. **Start** Dev Environment
-1. **Provision** Azure Resources
-1. **Run** Locally
-1. **Deploy** to Azure
+1. **Start** Dev Environment with VS Code Remote Container (GitHub Codespaces coming soon)
+1. **Provision** Azure Resources with Bicep
+1. **Run** Locally with Tye
+1. **Deploy** to Azure with Tye or GitHub Actions
+
+!["Quickstart"](assets/quickstart.png)
+
 
 > You will see `{BASENAME}` throughout this document.  Replace it with any unique text that you'd like, such as memealyzer007. That will be used as the basename for all your Azure resources, i.e. If you use memealyzer007, then the resource group will be named memealyzer007rg.
 
 
-> We use the Azure CLI to perform resource deployment and configuration. The scripts below will automatically prompt you to login to the Azure CLI and set your active Azure subscription. You can set the `SUBSCRIPTION_ID` environment variable in the `.env` file if you don't want to be prompted every time you run these scripts.
+> We use the Azure CLI to perform resource deployment and configuration. The scripts below will automatically prompt you to login to the Azure CLI and set your active Azure subscription. You can set the `AZURE_SUBSCRIPTION_ID` environment variable in the `.env` file if you don't want to be prompted every time you run these scripts.
 
 ### 1. Start Dev Environment
 The fastest way to get to get the Memealyzer dev machine setup is to use the Codespaces Dev Container which includes all of your development dependencies.
@@ -72,7 +75,7 @@ The fastest way to get to get the Memealyzer dev machine setup is t
    1. Open the repo in VS Code `code memealyzer`
    1. Hit F1, then select "Remote Containers - Open Folder in Container"
 
-
+   > It can take a while to open the Dev Container the first time, but subsequent opens will load much faster.
 
 ### 2. Provision Azure Resources
 
@@ -90,7 +93,7 @@ The fastest way to get to get the Memealyzer dev machine setup is t
 
    1. `./run.sh {BASENAME}`
    1. Open the Tye dashboard: http://localhost:8000 and ensure that all services are running.
-      > Note that the Azure Function takes a few minutes to start, so if you get an error while loading the app, then wait a few minutes before trying again.
+      > The Azure Function takes a few minutes to start, so if you get an error while loading the app, then wait a few minutes before trying again.
    1. Open http://localhost:1080
    1. You can add memes by clicking on the "+" button
    1. You can start the memestream by clicking on the "&#8734;" button. This will add a new meme every 5 seconds.
@@ -104,8 +107,9 @@ The fastest way to get to get the Memealyzer dev machine setup is t
    Now that we've provisioned our resources and tested locally, it is time to deploy our code to Azure with Tye.
 
    1. `./deploy.sh {BASENAME}`
-      > It may take up to 30 minutes to provision all resources.
    1. Click on the link that is outputted to the console - this address will be unique to your deployment.
+
+   > Please also take a look at the GitHub Action in the .github/workflows folder to see how we are auto-deploying this to an environment.
 
 ### VS Code Workspace
 
@@ -201,7 +205,7 @@ You can add override any of the following environment variables to suit your nee
 |Name |Default Value|Values|
 |---|---|---|
 |BASENAME|This is the only variable that you are required to set.||
-|SUBSCRIPTION_ID|The subscription that you want to use for your app.||
+|AZURE_SUBSCRIPTION_ID|The subscription that you want to use for your app.||
 |AZURE_COSMOS_ENDPOINT|https://${BASENAME}cosmosaccount.documents.azure.com:443||
 |AZURE_FORM_RECOGNIZER_ENDPOINT|https://${BASENAME}fr.cognitiveservices.azure.com/||
 |AZURE_KEYVAULT_ENDPOINT|https://${BASENAME}kv.vault.azure.net/||

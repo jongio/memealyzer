@@ -1,6 +1,6 @@
-param principalId string = ''
+param principalId string
 param principalType string = 'ServicePrincipal'
-param resourceGroupName string = ''
+param resourceGroupName string
 
 var roles = [
   {
