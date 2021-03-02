@@ -48,7 +48,7 @@ jobs:
       
     - name: 'Install Tye tools'
       run: |
-        dotnet tool install -g Microsoft.Tye --version "0.6.0-*" --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet5/nuget/v3/index.json
+        dotnet tool install -g Microsoft.Tye --version "0.7.0-*" --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet5/nuget/v3/index.json
     
     - name: 'Login to ACR'
       uses: Azure/docker-login@v1
