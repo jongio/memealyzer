@@ -17,7 +17,6 @@ resource storage 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   sku: {
     name: 'Standard_LRS'
   }
-  properties: {}
 }
 
 resource form_recognizer 'Microsoft.CognitiveServices/accounts@2017-04-18' = {
@@ -228,7 +227,6 @@ resource appconfig 'Microsoft.AppConfiguration/configurationStores@2020-06-01' =
   identity: {
     type: 'SystemAssigned'
   }
-  properties: {}
 }
 
 resource appconfig_borderstyle 'Microsoft.AppConfiguration/configurationStores/keyValues@2020-07-01-preview' = {
@@ -268,7 +266,6 @@ resource plan 'Microsoft.Web/serverfarms@2020-06-01' = {
     size: 'S1'
     name: 'S1'
   }
-  properties: {}
 }
 
 resource function 'Microsoft.Web/sites@2020-06-01' = {
