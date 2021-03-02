@@ -11,10 +11,10 @@ fi
 
 echo "AZURE SUBSCRIPTION"
 
-if [[ -z "${SUBSCRIPTION_ID:-}" ]]; then
+if [[ -z "${AZURE_SUBSCRIPTION_ID:-}" ]]; then
     ACCOUNT=$(az account show --query '[id,name]')
 
-    echo "You can set the \`SUBSCRIPTION_ID\` environment variable in the \`.env\` file if you don't want to be prompted every time you run these scripts."
+    echo "You can set the \`AZURE_SUBSCRIPTION_ID\` environment variable in the \`.env\` file if you don't want to be prompted every time you run these scripts."
     echo $ACCOUNT
     
     read -r -p "Do you want to use the above subscription? (y/n) " response
@@ -27,8 +27,8 @@ if [[ -z "${SUBSCRIPTION_ID:-}" ]]; then
             ;;
     esac
 else
-    echo "Found SUBSCRIPTION_ID environment variable. Setting active subscription to: $SUBSCRIPTION_ID"
-    az account set -s $SUBSCRIPTION_ID
+    echo "Found AZURE_SUBSCRIPTION_ID environment variable. Setting active subscription to: $AZURE_SUBSCRIPTION_ID"
+    az account set -s $AZURE_SUBSCRIPTION_ID
 fi
 
 CLI_USER_ID=$(az ad signed-in-user show --query 'objectId' -o tsv)

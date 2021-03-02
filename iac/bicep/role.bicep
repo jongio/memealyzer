@@ -1,7 +1,7 @@
-param principalId string = ''
+param principalId string
 param principalType string = 'ServicePrincipal'
-param resourceGroupName string = ''
-param roleId string = ''
+param resourceGroupName string
+param roleId string
 
 resource role_assignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
   name: guid(subscription().id, principalId, roleId, resourceGroupName)

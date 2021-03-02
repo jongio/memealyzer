@@ -1,9 +1,9 @@
 targetScope = 'subscription'
 
-param basename string = ''
+param basename string
 param location string = 'westus2'
 param failoverLocation string = 'eastus2'
-param principalId string = ''
+param principalId string
 
 var resourceGroupName = '${basename}rg'
 
