@@ -90,35 +90,35 @@ resource key_vault 'Microsoft.KeyVault/vaults@2019-09-01' = {
     ]
   }
 
-  resource cosmos_key_secret 'secrets@2019-09-01' = {
+  resource cosmos_key_secret 'secrets' = {
     name: 'CosmosKey'
     properties: {
       value: listKeys(cosmos_account.id, cosmos_account.apiVersion).primaryMasterKey
     }
   }
 
-  resource storage_key_secret 'secrets@2019-09-01' = {
+  resource storage_key_secret 'secrets' = {
     name: 'StorageKey'
     properties: {
       value: listKeys(storage.id, storage.apiVersion).keys[0].value
     }
   }
 
-  resource signalr_connection_string_secret 'secrets@2019-09-01' = {
+  resource signalr_connection_string_secret 'secrets' = {
     name: 'SignalRConnectionString'
     properties: {
       value: listKeys(signalr.id, signalr.apiVersion).primaryConnectionString
     }
   }
 
-  resource storage_connection_string_secret 'secrets@2019-09-01' = {
+  resource storage_connection_string_secret 'secrets' = {
     name: 'StorageConnectionString'
     properties: {
       value: 'DefaultEndpointsProtocol=https;AccountName=${storage.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storage.id, storage.apiVersion).keys[0].value}'
     }
   }
 
-  resource service_bus_connection_string_secret 'secrets@2019-09-01' = {
+  resource service_bus_connection_string_secret 'secrets' = {
     name: 'ServiceBusConnectionString'
     properties: {
       value: listKeys(resourceId('Microsoft.ServiceBus/Namespaces/AuthorizationRules', service_bus.name, 'RootManageSharedAccessKey'), service_bus.apiVersion).primaryConnectionString
@@ -148,7 +148,7 @@ resource cosmos_account 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
     ]
   }
 
-  resource cosmos_sqldb 'sqlDatabases@2020-04-01' = {
+  resource cosmos_sqldb 'sqlDatabases' = {
     name: 'memealyzer'
     properties: {
       options: {
@@ -159,7 +159,7 @@ resource cosmos_account 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
       }
     }
 
-    resource cosmos_sqldb_container 'containers@2020-04-01' = {
+    resource cosmos_sqldb_container 'containers' = {
       name: 'images'
       properties: {
         options: {
@@ -324,14 +324,14 @@ resource service_bus 'Microsoft.ServiceBus/namespaces@2017-04-01' = {
     name: 'Basic'
   }
 
-  resource messages 'queues@2017-04-01' = {
+  resource messages 'queues' = {
     name: 'messages'
     properties: {
       defaultMessageTimeToLive: 'PT30S'
     }
   }
 
-  resource sync 'queues@2017-04-01' = {
+  resource sync 'queues' = {
     name: 'sync'
     properties: {
       defaultMessageTimeToLive: 'PT30S'
