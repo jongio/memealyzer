@@ -6,7 +6,6 @@ resource kv 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
 
   resource kv_ap 'accessPolicies' = {
     name: 'add'
-    parent: kv
     properties: {
       accessPolicies: [
         {
