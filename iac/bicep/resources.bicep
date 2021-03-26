@@ -339,35 +339,24 @@ resource service_bus 'Microsoft.ServiceBus/namespaces@2017-04-01' = {
   }
 }
 
-module cli_perms './rolesapp.bicep' = {
-  name: 'cli_perms-${resourceGroup().name}'
-  params: {
+var identities = [
+  {
     principalId: principalId
     principalType: 'User'
-    resourceGroupName: resourceGroup().name
+    name: 'cli'
+    tag: 'app'
   }
-}
-
-module function_perms './rolesapp.bicep' = {
-  name: 'function_perms-${resourceGroup().name}'
-  params: {
+  {
     principalId: function.identity.principalId
-    resourceGroupName: resourceGroup().name
+    name: 'func'
   }
-}
-
-module aks_kubelet_perms './rolesapp.bicep' = {
-  name: 'aks_kubelet_perms-${resourceGroup().name}'
-  params: {
+  {
     principalId: aks.properties.identityProfile.kubeletidentity.objectId
-    resourceGroupName: resourceGroup().name
+    name: 'aks_kubelet'
   }
-}
-
-module aks_cluster_perms './rolesacr.bicep' = {
-  name: 'aks_cluster_perms-${resourceGroup().name}'
-  params: {
+  {
     principalId: aks.identity.principalId
-    resourceGroupName: resourceGroup().name
+    name: 'aks'
+    tag: 'acr'
   }
-}
+]
