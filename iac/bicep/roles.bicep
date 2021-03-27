@@ -1,7 +1,6 @@
 param principalId string
 param principalType string = 'ServicePrincipal'
 param resourceGroupName string
-param identities array
 
 var roles = [
   {
@@ -42,7 +41,7 @@ var roles = [
   }
 ]
 
-module roleAssignments './role.bicep' = [for identity in identities: {
+module roleAssignments './role.bicep' = [for role in roles: {
   name: role.name
   params: {
     principalId: principalId

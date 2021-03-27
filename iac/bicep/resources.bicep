@@ -360,3 +360,13 @@ var identities = [
     tag: 'acr'
   }
 ]
+
+module rolesAssignments './roles.bicep' = [for identity in identities: {
+  name: role.name
+  params: {
+    principalId: principalId
+    principalType: principalType
+    roleId: role.id
+    resourceGroupName: resourceGroupName
+  }
+}]
