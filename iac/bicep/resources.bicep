@@ -287,6 +287,7 @@ resource function 'Microsoft.Web/sites@2020-06-01' = {
       }
       ftpsState: 'FtpsOnly'
     }
+    httpsOnly: true
   }
 
   resource function_app_settings 'config@2018-11-01' = {

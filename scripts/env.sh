@@ -5,5 +5,5 @@ if [ "$ENV" = "local" ]
 then
     export FUNCTIONS_ENDPOINT=
 else
-    export FUNCTIONS_ENDPOINT=http://${BASENAME}function.azurewebsites.net
+    export FUNCTIONS_ENDPOINT=https://${BASENAME}function.azurewebsites.net
 fi
