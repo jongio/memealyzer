@@ -16,7 +16,7 @@ env:
   BASENAME: memealyzerstaging
   ROOT: ${{ github.workspace }}
   AZURE_CONTAINER_REGISTRY_SERVER: memealyzerstagingacr.azurecr.io
-  FUNCTIONS_ENDPOINT: http://memealyzerstagingfunction.azurewebsites.net
+  FUNCTIONS_ENDPOINT: https://memealyzerstagingfunction.azurewebsites.net
   REGISTRY_USERNAME: memealyzerstagingacr
   AZURE_AKS_CLUSTER_NAME: memealyzerstagingaks
   AZURE_RESOURCE_GROUP: memealyzerstagingrg
