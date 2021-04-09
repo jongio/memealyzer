@@ -39,7 +39,7 @@ resource text_analytics 'Microsoft.CognitiveServices/accounts@2017-04-18' = {
   location: location
   kind: 'TextAnalytics'
   sku: {
-    name: 'S0'
+    name: 'S'
   }
   properties: {
     customSubDomainName: '${basename}ta'
