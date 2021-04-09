@@ -74,6 +74,7 @@ The fastest way to get to get the Memealyzer dev machine setup is t
       - `git clone https://github.com/jongio/memealyzer`
    1. Open the repo in VS Code `code memealyzer`
    1. Hit F1, then select "Remote Containers - Open Folder in Container"
+   1. Select the memealyzer root folder and click the Open button.
 
    > It can take a while to open the Dev Container the first time, but subsequent opens will load much faster.
 
