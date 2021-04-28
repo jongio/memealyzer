@@ -114,17 +114,13 @@ The fastest way to get to get the Memealyzer dev machine setup is t
 
 ### VS Code Workspace
 
-   You can open the entire VS Code workspace here
-   
-   - `./open.sh` 
-   
-      or
-   
-   - Open `/src/net/memealyzer.code-workspace`
+   Execute the following command to open the VS Code workspace that has all the projects you need to get started:
 
-      or
-   
-   - `./open.sh insiders` - if you are using VS Code Insiders
+   `code memealyzer-net.code-workspace`
+
+   or
+
+   `code memealyzer-net.code-workspace` if you are using VS Code Insiders build.
 
 ### Manual Dev Machine Setup
 

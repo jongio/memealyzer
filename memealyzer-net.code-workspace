@@ -1,0 +1,40 @@
+{
+	"folders": [
+		{
+			"name": "Api",
+			"path": "src/net/Api"
+		},
+		{
+			"name": "Lib",
+			"path": "src/net/Lib"
+		},
+		{
+			"name": "Lib.Model",
+			"path": "src/net/Lib.Model"
+		},
+		{
+			"name": "Functions",
+			"path": "src/net/Services/Functions"
+		},
+		{
+			"name": "QueueService",
+			"path": "src/net/Services/QueueService"
+		},
+		{
+			"name": "WebApp",
+			"path": "src/net/WebApp"
+		},
+		{
+			"name": "bicep",
+			"path": "iac/bicep"
+		},
+		{
+			"name": "tye",
+			"path": "pac/net/tye"
+		},
+		{
+			"name": "memealyzer",
+			"path": "."
+		}
+	]
+}
