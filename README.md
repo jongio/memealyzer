@@ -151,7 +151,7 @@ You can configure which store the app uses to persist your image metadata, eithe
 
 ### Cosmos Emulator
 
-You can now use the Cosmos Emulator instead of Azure Cosmos. Follow these steps to configure Cosmos Emulator for first use.  After you do this once you do not need to do it again.
+You can now use the Cosmos Emulator instead of Azure Cosmos. Follow these steps to enable the emulator, which will tell the `./run.sh` and `./debug.sh` scripts to run the cosmos-emulator container.  See, `./scripts/cosmos.sh` for details.
 
 1. Open `.env` file that is in the root of this project.
 1. Scroll to bottom and uncomment `USE_COSMOS_EMULATOR=true`
@@ -159,8 +159,7 @@ You can now use the Cosmos Emulator instead of Azure Cosmos. Follow these steps 
 
 #### Troubleshooting
 1. You may see this error message when starting the emulator: `Error: failed to start containers: cosmos-emulator`, which is likely a false-negative and can be ignored.
-
-1. If you see this error while trying to run the app, then re-run `./scripts/cosmost-cert.sh`. 
+1. If you see this error while trying to run the app, then remove the container using docker tools and re-start memealyzer.
 
    `The remote certificate is invalid because of errors in the certificate chain: UntrustedRoot`
 
