@@ -7,7 +7,25 @@ namespace Lib
     {
         public static string BaseName { get { return Env.GetString("BASENAME"); } }
         public static bool UseAzurite { get { return Env.GetBool("USE_AZURITE", false); } }
-        public static string CosmosEndpoint { get { return String.Format(Env.GetString("AZURE_COSMOS_ENDPOINT", "https://{0}cosmosaccount.documents.azure.com:443"), BaseName); } }
+        public static bool UseCosmosEmulator { get { return Env.GetBool("USE_COSMOS_EMULATOR", false); } }
+
+        public static string CosmosEndpoint
+        {
+            get
+            {
+                return String.Format(Env.GetString("AZURE_COSMOS_ENDPOINT", UseCosmosEmulator ? "https://localhost:8081" : "https://{0}cosmosaccount.documents.azure.com:443"), BaseName);
+            }
+        }
+
+        public static string CosmosKey
+        {
+            get
+            {
+                return Env.GetString("AZURE_COSMOS_KEY", UseCosmosEmulator ? "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==" : "");
+            }
+
+        }
+        public static int CosmosThroughput { get { return Env.GetInt("AZURE_COSMOS_THROUGHPUT", 400); } }
         public static Uri FormRecognizerEndpoint { get { return new Uri(String.Format(Env.GetString("AZURE_FORM_RECOGNIZER_ENDPOINT", "https://{0}fr.cognitiveservices.azure.com/"), BaseName)); } }
         public static Uri KeyVaultEndpoint { get { return new Uri(String.Format(Env.GetString("AZURE_KEYVAULT_ENDPOINT", "https://{0}kv.vault.azure.net/"), BaseName)); } }
         public static string StorageAccountName { get { return String.Format(Env.GetString("AZURE_STORAGE_ACCOUNT_NAME", UseAzurite ? "devstoreaccount1" : "{0}storage"), BaseName); } }
@@ -34,7 +52,6 @@ namespace Lib
         public static string StorageConnectionStringSecretName { get { return Env.GetString("AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME", "StorageConnectionString"); } }
         public static string ServiceBusConnectionStringSecretName { get { return Env.GetString("AZURE_SERVICE_BUS_CONNECTION_STRING_SECRET_NAME", "ServiceBusConnectionString"); } }
         public static string MemeEndpoint { get { return Env.GetString("MEME_ENDPOINT", "https://meme-api.herokuapp.com/gimme/wholesomememes"); } }
-        public static string CosmosKey { get { return Env.GetString("AZURE_COSMOS_KEY"); } }
-        public static string AzuriteAccountKey { get { return Env.GetString("AZURITE_ACCOUNT_KEY"); } }
+        public static string AzuriteAccountKey { get { return Env.GetString("AZURITE_ACCOUNT_KEY", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="); } }
     }
 }

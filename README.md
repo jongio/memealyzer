@@ -112,7 +112,7 @@ The fastest way to get to get the Memealyzer dev machine setup is t
 
    > Please also take a look at the GitHub Action in the .github/workflows folder to see how we are auto-deploying this to an environment.
 
-### VS Code Workspace
+## VS Code Workspace
 
    Execute the following command to open the VS Code workspace that has all the projects you need to get started:
 
@@ -120,9 +120,9 @@ The fastest way to get to get the Memealyzer dev machine setup is t
 
    or
 
-   `code memealyzer-net.code-workspace` if you are using VS Code Insiders build.
+   `code-insiders memealyzer-net.code-workspace` if you are using VS Code Insiders build.
 
-### Manual Dev Machine Setup
+## Manual Dev Machine Setup
 
 We recommend using a VS Code Dev Container, but you can setup on bare metal with these steps.
 
@@ -137,49 +137,38 @@ We recommend using a VS Code Dev Container, but you can setup on bare metal with
 1. [Project Tye](https://github.com/dotnet/tye/blob/master/docs/getting_started.md)
 1. [Bicep](https://github.com/Azure/bicep/blob/main/docs/installing.md) - `az bicep install`
 
-### Deployment
-To only deploy resources:
-1. Provision Azure Resources with [Bicep](https://github.com/azure/bicep): 
-   1. CD to `iac\bicep`
-   1. Run `./deploy.sh {BASENAME}`
-
-### Run Locally
-To run the app locally:
-
-1. Run Application with [Project Tye](https://github.com/dotnet/tye/): 
-   1. CD to `pac\net\tye`
-   1. Run `./run.sh {BASENAME}`
-   1. Open http://localhost:1080
-   1. Click + (single) or &#8734; (stream) buttons to analyze memes.
-   1. Enjoy the memes and the sentiment analysis.
-### Run in Azure
-To run the app in Azure:
-
-1. Deploy Application to Azure with [Project Tye](https://github.com/dotnet/tye/):
-   1. CD to `pac\net\tye`
-   1. Run `./deploy.sh {BASENAME}`
-   1. Click on the IP ADDRESS that is outputted to the console to load Memealyzer.
-
----
-
-
 ## Configuration
 
 ### Data Provider
 
 You can configure which store the app uses to persist your image metadata, either Cosmos DB or Azure Table Storage.
 
-1. Open `.env` file
+1. Open `.env` file that is in the root of this project.
 1. Find or add the `AZURE_STORAGE_TYPE` setting
 1. Set it to one of the following values:
    - `COSMOS_SQL` - This will instruct the app to use Cosmos DB.
    - `STORAGE_TABLE` - This will instruct the app to use Azure Storage Tables.
 
+### Cosmos Emulator
+
+You can now use the Cosmos Emulator instead of Azure Cosmos. Follow these steps to configure Cosmos Emulator for first use.  After you do this once you do not need to do it again.
+
+1. Open `.env` file that is in the root of this project.
+1. Scroll to bottom and uncomment `USE_COSMOS_EMULATOR=true`
+1. Use the `./run.sh` and other commands as you normally would and the Cosmos Emulator will be used.
+
+#### Troubleshooting
+1. You may see this error message when starting the emulator: `Error: failed to start containers: cosmos-emulator`, which is likely a false-negative and can be ignored.
+
+1. If you see this error while trying to run the app, then re-run `./scripts/cosmost-cert.sh`. 
+
+   `The remote certificate is invalid because of errors in the certificate chain: UntrustedRoot`
+
 ### Messaging Provider
 
 You can configure which messaging service you want to use, either Service Bus Queue or Azure Storage Queue.
 
-1. Open `.env` file
+1. Open `.env` file that is in the root of this project.
 1. Find or add the `AZURE_MESSAGING_TYPE` setting
 1. Set it to one of the following values:
    - `SERVICE_BUS_QUEUE` - This will instruct the app to use Service Bus Queue.
@@ -199,11 +188,14 @@ After you change the setting, reload the WebApp to see the new style take effect
 
 You can add override any of the following environment variables to suit your needs. Memealyzer chooses smart defaults that match what is created when you deploy the app with Terraform.
 
-|Name |Default Value|Values|
+|Name |Default Value|Allowed Values|
 |---|---|---|
-|BASENAME|This is the only variable that you are required to set.||
+|BASENAME|This will be populated from the first argument you pass to scripts, such as `./run.sh meme01`||
 |AZURE_SUBSCRIPTION_ID|The subscription that you want to use for your app.||
 |AZURE_COSMOS_ENDPOINT|https://${BASENAME}cosmosaccount.documents.azure.com:443||
+|AZURE_COSMOS_KEY|Default value in .env files||
+|USE_COSMOS_EMULATOR|Set to true to enable Cosmos Emulator|false|
+|USE_AZURITE|Set this to true to use Azurite for Tables, Blobs, and Queue|false|
 |AZURE_FORM_RECOGNIZER_ENDPOINT|https://${BASENAME}fr.cognitiveservices.azure.com/||
 |AZURE_KEYVAULT_ENDPOINT|https://${BASENAME}kv.vault.azure.net/||
 |AZURE_STORAGE_ACCOUNT_NAME|${BASENAME}storage||
@@ -230,4 +222,3 @@ You can add override any of the following environment variables to suit your nee
 |AZURE_SERVICE_BUS_CONNECTION_STRING_SECRET_NAME|ServiceBusConnectionString||
 |MEME_ENDPOINT|https://meme-api.herokuapp.com/gimme/wholesomememes||
 |AZURITE_ACCOUNT_KEY|Default value in .env files||
-|AZURE_COSMOS_KEY|Default value in .env files||
