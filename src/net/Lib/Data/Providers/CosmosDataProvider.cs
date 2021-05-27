@@ -18,9 +18,15 @@ namespace Lib.Data.Providers
 
         public async Task InitializeAsync(TokenCredential credential)
         {
-            // KeyVault
-            SecretClient = new SecretClient(Config.KeyVaultEndpoint, credential);
-            var cosmosKey = await SecretClient.GetSecretAsync(Config.CosmosKeySecretName);
+
+            string cosmosKey = Config.CosmosKey;
+            if (String.IsNullOrEmpty(cosmosKey))
+            {
+                // KeyVault
+                SecretClient = new SecretClient(Config.KeyVaultEndpoint, credential);
+                var cosmosKeySecret = await SecretClient.GetSecretAsync(Config.CosmosKeySecretName);
+                cosmosKey = cosmosKeySecret.Value.Value;
+            }
 
             CosmosClientOptions options = new CosmosClientOptions
             {
@@ -35,10 +41,24 @@ namespace Lib.Data.Providers
             // Cosmos
             CosmosClient = new CosmosClient(
                 Config.CosmosEndpoint,
-                cosmosKey.Value.Value,
+                cosmosKey,
                 options);
 
-            CosmosContainer = CosmosClient.GetDatabase(Config.CosmosDB).GetContainer(Config.CosmosCollection);
+            var containerProperties = new ContainerProperties(Config.CosmosCollection, "/partitionKey")
+            {
+                UniqueKeyPolicy = new UniqueKeyPolicy
+                {
+                    UniqueKeys =
+                    {
+                        new UniqueKey { Paths = { "/uid" } }
+                    }
+                }
+            };
+
+            var databaseCreate = await CosmosClient.CreateDatabaseIfNotExistsAsync(Config.CosmosDB, Config.CosmosThroughput);
+            var containerCreate = await databaseCreate.Database.CreateContainerIfNotExistsAsync(containerProperties, Config.CosmosThroughput);
+
+            CosmosContainer = containerCreate.Container;
         }
 
         public void Dispose()

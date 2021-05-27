@@ -17,7 +17,8 @@ if [[ -z "${AZURE_SUBSCRIPTION_ID:-}" ]]; then
     echo "You can set the \`AZURE_SUBSCRIPTION_ID\` environment variable in the \`.env\` file if you don't want to be prompted every time you run these scripts."
     echo $ACCOUNT
     
-    read -r -p "Do you want to use the above subscription? (y/n) " response
+    read -r -p "Do you want to use the above subscription? (Y/n) " response
+    response=${response:-Y}
     case "$response" in
         [yY][eE][sS]|[yY]) 
             ;;
