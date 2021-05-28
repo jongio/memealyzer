@@ -279,7 +279,7 @@ resource function 'Microsoft.Web/sites@2020-06-01' = {
   resource function_app_settings 'config@2018-11-01' = {
     name: 'appsettings'
     properties: {
-      'AzureWebJobsStorage': 'DefaultEndpointsProtocol=https;AccountName=${storage.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storage.id, storage.apiVersion).keys[0].value}'
+      'AzureWebJobsStorage__accountName': storage.name
       'APPINSIGHTS_INSTRUMENTATIONKEY': logging.properties.InstrumentationKey
       'FUNCTIONS_WORKER_RUNTIME': 'dotnet'
       'FUNCTIONS_EXTENSION_VERSION': '~3'
