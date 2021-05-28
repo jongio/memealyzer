@@ -28,6 +28,7 @@ namespace Memealyzer
             var config = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string> {
                 { "StorageConnection:queueServiceUri", Config.StorageQueueEndpoint.ToString() },
+                { "AzureWebJobsStorage:accountName", Config.StorageAccountName },
                 { "AzureSignalRConnectionString", signalRConnectionString.Value.Value },
                 { "ServiceBusConnection:fullyQualifiedNamespace", Config.ServiceBusNamespace },
                 { "MessagingType", Config.MessagingType },
