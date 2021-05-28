@@ -110,20 +110,6 @@ resource key_vault 'Microsoft.KeyVault/vaults@2019-09-01' = {
       value: listKeys(signalr.id, signalr.apiVersion).primaryConnectionString
     }
   }
-
-  resource storage_connection_string_secret 'secrets' = {
-    name: 'StorageConnectionString'
-    properties: {
-      value: 'DefaultEndpointsProtocol=https;AccountName=${storage.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storage.id, storage.apiVersion).keys[0].value}'
-    }
-  }
-
-  resource service_bus_connection_string_secret 'secrets' = {
-    name: 'ServiceBusConnectionString'
-    properties: {
-      value: listKeys(resourceId('Microsoft.ServiceBus/Namespaces/AuthorizationRules', service_bus.name, 'RootManageSharedAccessKey'), service_bus.apiVersion).primaryConnectionString
-    }
-  }
 }
 
 resource cosmos_account 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
@@ -293,16 +279,13 @@ resource function 'Microsoft.Web/sites@2020-06-01' = {
   resource function_app_settings 'config@2018-11-01' = {
     name: 'appsettings'
     properties: {
-      'AZURE_KEYVAULT_ENDPOINT': key_vault.properties.vaultUri
       'AzureWebJobsStorage': 'DefaultEndpointsProtocol=https;AccountName=${storage.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storage.id, storage.apiVersion).keys[0].value}'
       'APPINSIGHTS_INSTRUMENTATIONKEY': logging.properties.InstrumentationKey
       'FUNCTIONS_WORKER_RUNTIME': 'dotnet'
       'FUNCTIONS_EXTENSION_VERSION': '~3'
       'WEBSITES_ENABLE_APP_SERVICE_STORAGE': 'false'
-      'AZURE_CLIENT_SYNC_QUEUE_NAME': 'sync'
-      'AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME': 'StorageConnectionString'
-      'AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME': 'SignalRConnectionString'
       'WEBSITE_RUN_FROM_PACKAGE': ''
+      'BASENAME': basename
     }
   }
 }

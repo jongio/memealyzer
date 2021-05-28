@@ -25,7 +25,11 @@ namespace Lib
             }
 
         }
+
         public static int CosmosThroughput { get { return Env.GetInt("AZURE_COSMOS_THROUGHPUT", 400); } }
+        public static string CosmosDB { get { return Env.GetString("AZURE_COSMOS_DB", "memealyzer"); } }
+        public static string CosmosCollection { get { return Env.GetString("AZURE_COSMOS_COLLECTION", "images"); } }
+        public static string CosmosKeySecretName { get { return Env.GetString("AZURE_COSMOS_KEY_SECRET_NAME", "CosmosKey"); } }
         public static Uri FormRecognizerEndpoint { get { return new Uri(String.Format(Env.GetString("AZURE_FORM_RECOGNIZER_ENDPOINT", "https://{0}fr.cognitiveservices.azure.com/"), BaseName)); } }
         public static Uri KeyVaultEndpoint { get { return new Uri(String.Format(Env.GetString("AZURE_KEYVAULT_ENDPOINT", "https://{0}kv.vault.azure.net/"), BaseName)); } }
         public static string StorageAccountName { get { return String.Format(Env.GetString("AZURE_STORAGE_ACCOUNT_NAME", UseAzurite ? "devstoreaccount1" : "{0}storage"), BaseName); } }
@@ -40,17 +44,12 @@ namespace Lib
         public static int StorageQueueMessageCount { get { return Env.GetInt("AZURE_STORAGE_QUEUE_MSG_COUNT", 10); } }
         public static int StorageQueueReceiveSleep { get { return Env.GetInt("AZURE_STORAGE_QUEUE_RECEIVE_SLEEP", 1); } }
         public static string StorageTableName { get { return Env.GetString("AZURE_STORAGE_TABLE_NAME", "images"); } }
-        public static string CosmosDB { get { return Env.GetString("AZURE_COSMOS_DB", "memealyzer"); } }
-        public static string CosmosCollection { get { return Env.GetString("AZURE_COSMOS_COLLECTION", "images"); } }
-        public static string CosmosKeySecretName { get { return Env.GetString("AZURE_COSMOS_KEY_SECRET_NAME", "CosmosKey"); } }
         public static string StorageType { get { return Env.GetString("AZURE_STORAGE_TYPE", "COSMOS_SQL"); } }
         public static string MessagingType { get { return Env.GetString("AZURE_MESSAGING_TYPE", "SERVICE_BUS_QUEUE"); } }
         public static string AzuriteAccountKeySecretName { get { return Env.GetString("AZURITE_ACCOUNT_KEY_SECRET_NAME", "AzuriteKey"); } }
         public static string StorageKeySecretName { get { return UseAzurite ? AzuriteAccountKeySecretName : Env.GetString("AZURE_STORAGE_KEY_SECRET_NAME", "StorageKey"); } }
         public static string ClientSyncQueueName { get { return Env.GetString("AZURE_CLIENT_SYNC_QUEUE_NAME", "sync"); } }
         public static string SignalRConnectionStringSecretName { get { return Env.GetString("AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME", "SignalRConnectionString"); } }
-        public static string StorageConnectionStringSecretName { get { return Env.GetString("AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME", "StorageConnectionString"); } }
-        public static string ServiceBusConnectionStringSecretName { get { return Env.GetString("AZURE_SERVICE_BUS_CONNECTION_STRING_SECRET_NAME", "ServiceBusConnectionString"); } }
         public static string MemeEndpoint { get { return Env.GetString("MEME_ENDPOINT", "https://meme-api.herokuapp.com/gimme/wholesomememes"); } }
         public static string AzuriteAccountKey { get { return Env.GetString("AZURITE_ACCOUNT_KEY", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="); } }
     }

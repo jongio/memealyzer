@@ -23,17 +23,13 @@ namespace Memealyzer
 
             // KeyVault
             var secretClient = new SecretClient(Config.KeyVaultEndpoint, Identity.GetCredentialChain());
-            var storageConnectionString = secretClient.GetSecret(Config.StorageConnectionStringSecretName);
             var signalRConnectionString = secretClient.GetSecret(Config.SignalRConnectionStringSecretName);
-            var serviceBusCnnectionString = secretClient.GetSecret(Config.ServiceBusConnectionStringSecretName);
 
-            
-            //Environment.SetEnvironmentVariable("Values:AzureWebJobsStorage", storageConnectionString.Value.Value);
             var config = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string> {
-                { "StorageConnectionString", storageConnectionString.Value.Value },
+                { "StorageConnection:queueServiceUri", Config.StorageQueueEndpoint.ToString() },
                 { "AzureSignalRConnectionString", signalRConnectionString.Value.Value },
-                { "ServiceBusConnectionString", serviceBusCnnectionString.Value.Value },
+                { "ServiceBusConnection:fullyQualifiedNamespace", Config.ServiceBusNamespace },
                 { "MessagingType", Config.MessagingType },
                 { "ClientSyncQueueName", Config.ClientSyncQueueName}
             })

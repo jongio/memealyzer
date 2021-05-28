@@ -7,7 +7,7 @@ namespace Memealyzer.Functions
 {
     public static class NegotiateFunction
     {
-        [FunctionName("negotiate")]
+        [FunctionName(nameof(Negotiate))]
         public static SignalRConnectionInfo Negotiate(
                     [HttpTrigger(AuthorizationLevel.Anonymous)] HttpRequest req,
                     [SignalRConnectionInfo(HubName = "%MessagingType%")] SignalRConnectionInfo connectionInfo)
