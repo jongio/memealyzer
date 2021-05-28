@@ -7,12 +7,13 @@ namespace Memealyzer.Functions
 {
     public static class ServiceBusFunction
     {
-        [FunctionName("ServiceBugTrigger")]
-        public static async Task Run(
-            [ServiceBusTrigger("%AZURE_CLIENT_SYNC_QUEUE_NAME%", Connection = "ServiceBusConnectionString")] string message,
+        [FunctionName(nameof(RunServiceBusFunction))]
+        public static async Task RunServiceBusFunction(
+            [ServiceBusTrigger("%ClientSyncQueueName%", Connection = "ServiceBusConnection")] string message,
             [SignalR(HubName = "SERVICE_BUS_QUEUE")] IAsyncCollector<SignalRMessage> messages,
             ILogger log)
         {
+            log.LogInformation(message);
             await Messages.SendAsync(messages, message);
         }
     }
