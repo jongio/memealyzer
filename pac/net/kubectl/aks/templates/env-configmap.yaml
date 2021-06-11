@@ -20,7 +20,7 @@ data:
   AZURE_STORAGE_QUEUE_MSG_COUNT: "10"
   AZURE_MESSAGES_QUEUE_NAME: messages
   AZURE_STORAGE_QUEUE_RECEIVE_SLEEP: "1"
-  MEME_ENDPOINT: https://meme-api.herokuapp.com/gimme/wholesomememes
+  IMAGE_ENDPOINT: https://meme-api.herokuapp.com/gimme/wholesomememes
   AZURE_STORAGE_ACCOUNT_NAME: ${AZURE_STORAGE_ACCOUNT_NAME}
   AZURE_STORAGE_TYPE: ${AZURE_STORAGE_TYPE}
   AZURE_STORAGE_KEY_SECRET_NAME: StorageKey

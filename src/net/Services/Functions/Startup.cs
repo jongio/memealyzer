@@ -25,6 +25,9 @@ namespace Memealyzer
             var secretClient = new SecretClient(Config.KeyVaultEndpoint, Identity.GetCredentialChain());
             var signalRConnectionString = secretClient.GetSecret(Config.SignalRConnectionStringSecretName);
 
+            // We use the following value to indicate which function to enable/disable.  That way our function isn't listening for messages when it doesn't have to.
+            var storageQueueEnabled = Config.MessagingType == "STORAGE_QUEUE";
+
             var config = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string> {
                 { "StorageConnection:queueServiceUri", Config.StorageQueueEndpoint.ToString() },
@@ -32,7 +35,9 @@ namespace Memealyzer
                 { "AzureSignalRConnectionString", signalRConnectionString.Value.Value },
                 { "ServiceBusConnection:fullyQualifiedNamespace", Config.ServiceBusNamespace },
                 { "MessagingType", Config.MessagingType },
-                { "ClientSyncQueueName", Config.ClientSyncQueueName}
+                { "ClientSyncQueueName", Config.ClientSyncQueueName },
+                { "AzureWebJobs.StorageQueueFunctionRun.Disabled", (!storageQueueEnabled).ToString() },
+                { "AzureWebJobs.ServiceBusFunctionRun.Disabled", storageQueueEnabled.ToString() }
             })
             .AddEnvironmentVariables().Build();
 

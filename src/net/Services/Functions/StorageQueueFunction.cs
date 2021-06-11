@@ -7,10 +7,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Memealyzer.Functions
 {
-    public static class QueueFunction
+    public static class StorageQueueFunction
     {
-        [FunctionName(nameof(RunQueueFunction))]
-        public static async Task RunQueueFunction(
+        [FunctionName(nameof(StorageQueueFunctionRun))]
+        public static async Task StorageQueueFunctionRun(
             [QueueTrigger("%ClientSyncQueueName%", Connection = "StorageConnection")] string message,
             [SignalR(HubName = "STORAGE_QUEUE")] IAsyncCollector<SignalRMessage> messages,
             ILogger log)

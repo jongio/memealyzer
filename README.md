@@ -219,5 +219,5 @@ You can add override any of the following environment variables to suit your nee
 |AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME|SignalRConnectionString||
 |AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME|StorageConnectionString||
 |AZURE_SERVICE_BUS_CONNECTION_STRING_SECRET_NAME|ServiceBusConnectionString||
-|MEME_ENDPOINT|https://meme-api.herokuapp.com/gimme/wholesomememes||
+|IMAGE_ENDPOINT|https://meme-api.herokuapp.com/gimme/wholesomememes||
 |AZURITE_ACCOUNT_KEY|Default value in .env files||

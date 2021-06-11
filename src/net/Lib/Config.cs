@@ -50,7 +50,7 @@ namespace Lib
         public static string StorageKeySecretName { get { return UseAzurite ? AzuriteAccountKeySecretName : Env.GetString("AZURE_STORAGE_KEY_SECRET_NAME", "StorageKey"); } }
         public static string ClientSyncQueueName { get { return Env.GetString("AZURE_CLIENT_SYNC_QUEUE_NAME", "sync"); } }
         public static string SignalRConnectionStringSecretName { get { return Env.GetString("AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME", "SignalRConnectionString"); } }
-        public static string MemeEndpoint { get { return Env.GetString("MEME_ENDPOINT", "https://meme-api.herokuapp.com/gimme/wholesomememes"); } }
+        public static string ImageEndpoint { get { return Env.GetString("IMAGE_ENDPOINT", "https://meme-api.herokuapp.com/gimme/wholesomememes"); } }
         public static string AzuriteAccountKey { get { return Env.GetString("AZURITE_ACCOUNT_KEY", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="); } }
     }
 }

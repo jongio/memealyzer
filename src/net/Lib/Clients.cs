@@ -1,32 +1,33 @@
 using System;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Azure.AI.FormRecognizer;
 using Azure.AI.TextAnalytics;
 using Azure.Data.AppConfiguration;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
 using Lib.Data;
+using Lib.Media;
+using Lib.Ingest;
 using Lib.Messaging;
-using Lib.Model;
+using Lib.Storage;
 
 namespace Lib
 {
     public class Clients : IAsyncDisposable
     {
-        public SecretClient SecretClient;
         public ChainedTokenCredential credential = Identity.GetCredentialChain();
-        public BlobServiceClient BlobServiceClient;
-        public BlobContainerClient ContainerClient;
+
+        public SecretClient SecretClient;
+        public IStorageClient StorageClient;
         public IMessagingProvider MessagingProvider;
         public TextAnalyticsClient TextAnalyticsClient;
         public FormRecognizerClient FormRecognizerClient;
         public ConfigurationClient ConfigurationClient;
         public IDataProvider DataProvider;
-        private HttpClient httpClient = new HttpClient();
+        public IImageClient ImageClient;
+        public IIngestClient IngestClient;
+        private HttpClient HttpClient = new HttpClient();
 
         public Clients()
         {
@@ -45,17 +46,21 @@ namespace Lib
             // App Config
             ConfigurationClient = new ConfigurationClient(Config.AppConfigEndpoint, credential);
 
-            // Blob
-            BlobServiceClient = new BlobServiceClient(Config.StorageBlobEndpoint, credential);
-            ContainerClient = BlobServiceClient.GetBlobContainerClient(Config.StorageBlobContainerName);
-            await ContainerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
-
+            // Storage
+            StorageClient = new StorageClient();
+            await StorageClient.InitializeAsync(credential);
 
             // FormRecognizerClient
             FormRecognizerClient = new FormRecognizerClient(Config.FormRecognizerEndpoint, credential);
 
             // TextAnalyticsClient
             TextAnalyticsClient = new TextAnalyticsClient(Config.TextAnalyticsEndpoint, credential);
+
+            // ImageClient
+            ImageClient = new ImageClient(HttpClient);
+
+            // IngestClient
+            IngestClient = new IngestClient(ImageClient, StorageClient, MessagingProvider);
         }
 
         public ValueTask DisposeAsync()
@@ -73,32 +78,6 @@ namespace Lib
             {
                 return new ValueTask();
             }
-        }
-
-        public async Task<Image> EnqueueImageAsync(Image image = null)
-        {
-            if (image?.Url is null || string.IsNullOrEmpty(image.Url))
-            {
-                var memeImage = await httpClient.GetFromJsonAsync<Image>(Config.MemeEndpoint);
-                image.Url = memeImage.Url;
-            }
-
-            // Get Image Stream
-            using var imageStream = await httpClient.GetStreamAsync(image.Url);
-
-            // Upload to Blob
-            var blobClient = ContainerClient.GetBlobClient(image.BlobName);
-            await blobClient.UploadAsync(imageStream);
-
-            Console.WriteLine($"Uploaded to Blob Storage: {blobClient.Uri}");
-
-            image.BlobUri = blobClient.Uri.ToString();
-
-            // Send Queue Message
-            var sendReceipt = await MessagingProvider.ImageQueueClient.SendMessageAsync(new ImageQueueMessage { Image = image });
-
-            //Console.WriteLine($"Added to Queue: {sendReceipt.Message.Id}");
-            return image;
         }
     }
 }
