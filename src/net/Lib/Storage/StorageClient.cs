@@ -20,11 +20,12 @@ namespace Lib.Storage
             await ContainerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
         }
 
-        public async Task<BlobInfo> UploadBlob(string name, Stream stream)
+        public async Task<BlobInfo> UploadBlobAsync(Image image, Stream stream)
         {
-            var blobClient = ContainerClient.GetBlobClient(name);
+            var blobClient = ContainerClient.GetBlobClient(image.BlobName);
             var blobContentInfo = await blobClient.UploadAsync(stream);
-            return new BlobInfo { BlobContentInfo = blobContentInfo, Uri = blobClient.Uri };
+            image.BlobUri = blobClient.Uri.ToString();
+            return new BlobInfo { BlobContentInfo = blobContentInfo, Image = image };
         }
     }
 }

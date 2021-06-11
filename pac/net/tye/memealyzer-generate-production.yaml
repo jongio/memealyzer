@@ -110,7 +110,7 @@ spec:
           value: ''
         - name: FUNCTIONS_ENDPOINT
           value: ''
-        - name: MEME_ENDPOINT
+        - name: IMAGE_ENDPOINT
           value: 'https://meme-api.herokuapp.com/gimme/wholesomememes'
         - name: DOTNET_LOGGING__CONSOLE__DISABLECOLORS
           value: 'true'
@@ -201,7 +201,7 @@ spec:
           value: ''
         - name: FUNCTIONS_ENDPOINT
           value: ''
-        - name: MEME_ENDPOINT
+        - name: IMAGE_ENDPOINT
           value: 'https://meme-api.herokuapp.com/gimme/wholesomememes'
         - name: DOTNET_LOGGING__CONSOLE__DISABLECOLORS
           value: 'true'
