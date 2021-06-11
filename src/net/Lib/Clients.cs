@@ -12,6 +12,7 @@ using Azure.Storage.Blobs.Models;
 using Lib.Data;
 using Lib.Messaging;
 using Lib.Model;
+using Lib.Storage;
 
 namespace Lib
 {
@@ -19,8 +20,7 @@ namespace Lib
     {
         public SecretClient SecretClient;
         public ChainedTokenCredential credential = Identity.GetCredentialChain();
-        public BlobServiceClient BlobServiceClient;
-        public BlobContainerClient ContainerClient;
+        public StorageClient StorageClient;
         public IMessagingProvider MessagingProvider;
         public TextAnalyticsClient TextAnalyticsClient;
         public FormRecognizerClient FormRecognizerClient;
@@ -45,11 +45,9 @@ namespace Lib
             // App Config
             ConfigurationClient = new ConfigurationClient(Config.AppConfigEndpoint, credential);
 
-            // Blob
-            BlobServiceClient = new BlobServiceClient(Config.StorageBlobEndpoint, credential);
-            ContainerClient = BlobServiceClient.GetBlobContainerClient(Config.StorageBlobContainerName);
-            await ContainerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
-
+            // Storage
+            StorageClient = new StorageClient();
+            await StorageClient.InitializeAsync(credential);
 
             // FormRecognizerClient
             FormRecognizerClient = new FormRecognizerClient(Config.FormRecognizerEndpoint, credential);
@@ -87,12 +85,11 @@ namespace Lib
             using var imageStream = await httpClient.GetStreamAsync(image.Url);
 
             // Upload to Blob
-            var blobClient = ContainerClient.GetBlobClient(image.BlobName);
-            await blobClient.UploadAsync(imageStream);
+            var blobInfo = await StorageClient.UploadBlob(image.BlobName, imageStream);
 
-            Console.WriteLine($"Uploaded to Blob Storage: {blobClient.Uri}");
+            Console.WriteLine($"Uploaded to Blob Storage: {blobInfo.Uri}");
 
-            image.BlobUri = blobClient.Uri.ToString();
+            image.BlobUri = blobInfo.Uri.ToString();
 
             // Send Queue Message
             var sendReceipt = await MessagingProvider.ImageQueueClient.SendMessageAsync(new ImageQueueMessage { Image = image });

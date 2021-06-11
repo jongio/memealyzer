@@ -4,10 +4,13 @@ targetScope = 'subscription'
 @maxLength(17)
 @description('Prefix for all resources, i.e. {basename}storage')
 param basename string
+
 @description('Primary location for all resources')
 param location string = 'westus2'
+
 @description('Failover location for Cosmos DB')
 param failoverLocation string = 'eastus2'
+
 @minLength(1)
 param principalId string
 
