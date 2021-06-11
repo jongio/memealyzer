@@ -17,7 +17,7 @@ namespace Memealyzer
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            //using var listener = AzureEventSourceListener.CreateConsoleLogger();
+            using var listener = AzureEventSourceListener.CreateConsoleLogger();
 
             Envs.Load();
 

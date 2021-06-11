@@ -4,7 +4,7 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Azure.Data.Tables" Version="12.0.0-beta.8"/>
+    <PackageReference Include="Azure.Data.Tables" Version="12.0.1"/>
     <PackageReference Include="Azure.Cosmos" Version="4.0.0-preview3"/>
   </ItemGroup>
 </Project>

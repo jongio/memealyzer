@@ -1,8 +1,8 @@
 name: memealyzer
-registry: memealyzerdevacr.azurecr.io
+registry: meme528acr.azurecr.io
 services:
   - name: azurite
-    image: mcr.microsoft.com/azure-storage/azurite:alpha
+    image: mcr.microsoft.com/azure-storage/azurite
     bindings:
       - name: blob
         port: 10000
