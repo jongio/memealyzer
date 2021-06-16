@@ -7,10 +7,11 @@ using Azure.Data.AppConfiguration;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Lib.Data;
-using Lib.Media;
 using Lib.Ingest;
+using Lib.Media;
 using Lib.Messaging;
 using Lib.Storage;
+using Memealyzer;
 
 namespace Lib
 {
@@ -27,7 +28,7 @@ namespace Lib
         public IDataProvider DataProvider;
         public IImageClient ImageClient;
         public IIngestClient IngestClient;
-        private HttpClient HttpClient = new HttpClient();
+        public HttpClient HttpClient = new HttpClient();
 
         public Clients()
         {

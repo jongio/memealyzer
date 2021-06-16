@@ -22,12 +22,11 @@ namespace Lib.Ingest
         public async Task<Image> Ingest(Image image)
         {
             // Get Image Stream
-            using (var stream = await imageClient.GetImageStream(image))
-            {
-                // Upload to Blob
-                var blobInfo = await storageClient.UploadBlobAsync(image, stream);
-                //Console.WriteLine($"Uploaded to Blob Storage: {blobInfo.Uri}");
-            }
+            using var stream = await imageClient.GetImageStream(image);
+
+            // Upload to Blob
+            var blobInfo = await storageClient.UploadBlobAsync(image, stream);
+            //Console.WriteLine($"Uploaded to Blob Storage: {blobInfo.Uri}");
 
             // Send Queue Message
             var sendReceipt = await messagingProvider.ImageQueueClient.SendMessageAsync(new ImageQueueMessage { Image = image });

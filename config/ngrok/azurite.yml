@@ -1,0 +1,10 @@
+web_addr: 0.0.0.0:4040
+tunnels:
+  blob:
+    proto: http
+    addr: host.docker.internal:10000
+    bind_tls: false
+  queue:
+    proto: http
+    addr: host.docker.internal:10001 
+    bind_tls: false

@@ -194,10 +194,23 @@ You can add override any of the following environment variables to suit your nee
 |AZURE_COSMOS_ENDPOINT|https://${BASENAME}cosmosaccount.documents.azure.com:443||
 |AZURE_COSMOS_KEY|Default value in .env files||
 |USE_COSMOS_EMULATOR|Set to true to enable Cosmos Emulator|false|
+|AZURE_COSMOS_DB|memealyzer||
+|AZURE_COSMOS_COLLECTION|images||
+|AZURE_COSMOS_KEY_SECRET_NAME|CosmosKey||
+|AZURE_COSMOS_THROUGHPUT|400||
 |USE_AZURITE|Set this to true to use Azurite for Tables, Blobs, and Queue|false|
+|USE_AZURITE_BLOB|Set this to true to use Azurite for Blob|false|
+|USE_AZURITE_QUEUE|Set this to true to use Azurite for Queue|false|
+|USE_AZURITE_TABLE|Set this to true to use Azurite for Table|false|
+|AZURITE_ACCOUNT_KEY|Default value in .env files||
+|AZURITE_CONNECTION_STRING|Default value in Config.cs||
+|NGROK_URI|Default value is read at runtime from localhost:4040||
 |AZURE_FORM_RECOGNIZER_ENDPOINT|https://${BASENAME}fr.cognitiveservices.azure.com/||
 |AZURE_KEYVAULT_ENDPOINT|https://${BASENAME}kv.vault.azure.net/||
 |AZURE_STORAGE_ACCOUNT_NAME|${BASENAME}storage||
+|AZURE_STORAGE_BLOB_ACCOUNT_NAME|${BASENAME}storage||
+|AZURE_STORAGE_QUEUE_ACCOUNT_NAME|${BASENAME}storage||
+|AZURE_STORAGE_TABLE_ACCOUNT_NAME|${BASENAME}storage||
 |AZURE_STORAGE_BLOB_ENDPOINT|https://${BASENAME}storage.blob.core.windows.net/||
 |AZURE_STORAGE_QUEUE_ENDPOINT|https://${BASENAME}storage.queue.core.windows.net/||
 |AZURE_STORAGE_TABLE_ENDPOINT|https://${BASENAME}storage.table.core.windows.net/||
@@ -209,15 +222,9 @@ You can add override any of the following environment variables to suit your nee
 |AZURE_STORAGE_QUEUE_MSG_COUNT|10||
 |AZURE_STORAGE_QUEUE_RECEIVE_SLEEP|1 second||
 |AZURE_STORAGE_TABLE_NAME|images||
-|AZURE_COSMOS_DB|memealyzer||
-|AZURE_COSMOS_COLLECTION|images||
-|AZURE_COSMOS_KEY_SECRET_NAME|CosmosKey||
 |AZURE_STORAGE_TYPE|COSMOS_SQL|COSMOS_SQL, STORAGE_TABLE|
 |AZURE_MESSAGING_TYPE|SERVICE_BUS_QUEUE|SERVICE_BUS_QUEUE, STORAGE_QUEUE|
 |AZURE_STORAGE_KEY_SECRET_NAME|StorageKey||
 |AZURE_CLIENT_SYNC_QUEUE_NAME|sync||
 |AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME|SignalRConnectionString||
-|AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME|StorageConnectionString||
-|AZURE_SERVICE_BUS_CONNECTION_STRING_SECRET_NAME|ServiceBusConnectionString||
 |IMAGE_ENDPOINT|https://meme-api.herokuapp.com/gimme/wholesomememes||
-|AZURITE_ACCOUNT_KEY|Default value in .env files||

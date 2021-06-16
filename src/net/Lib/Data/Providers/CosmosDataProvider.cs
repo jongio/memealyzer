@@ -7,6 +7,7 @@ using Azure.Cosmos;
 using Azure.Cosmos.Serialization;
 using Azure.Security.KeyVault.Secrets;
 using Lib.Model;
+using Memealyzer;
 
 namespace Lib.Data.Providers
 {

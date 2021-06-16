@@ -6,6 +6,7 @@ using Azure.Core;
 using Azure.Data.Tables;
 using Azure.Security.KeyVault.Secrets;
 using Lib.Model;
+using Memealyzer;
 
 namespace Lib.Data.Providers
 {
@@ -19,7 +20,7 @@ namespace Lib.Data.Providers
         {
             var storageKeyValue = string.Empty;
 
-            if (Config.StorageTableEndpoint.ToString().Contains("127"))
+            if (Config.UseAzurite)
             {
                 storageKeyValue = Config.AzuriteAccountKey;
             }
@@ -33,7 +34,7 @@ namespace Lib.Data.Providers
 
             TableClient = new TableClient(Config.StorageTableEndpoint,
                 Config.StorageTableName,
-                new TableSharedKeyCredential(Config.StorageAccountName, storageKeyValue));
+                new TableSharedKeyCredential(Config.StorageTableAccountName, storageKeyValue));
 
             await TableClient.CreateIfNotExistsAsync();
         }

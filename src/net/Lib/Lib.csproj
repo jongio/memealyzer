@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
@@ -19,8 +19,11 @@
     <PackageReference Include="Azure.AI.TextAnalytics" Version="5.0.0"/>
     <!-- Needed due to this issue: https://github.com/dotnet/roslyn/issues/47304. Do not upgrade to 3.17 or it will break the app -->
     <PackageReference Include="Microsoft.Azure.Cosmos.Direct" Version="3.4.1.0"/>
+    <PackageReference Include="Ngrok.ApiClient" Version="2.0.0-alpha1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lib.Model\Lib.Model.csproj"/>
+    <ProjectReference Include="..\Lib.Proxy\Lib.Proxy.csproj"/>
+    <ProjectReference Include="..\Config\Config.csproj"/>
   </ItemGroup>
 </Project>

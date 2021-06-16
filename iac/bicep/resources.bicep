@@ -180,7 +180,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2020-09-01' = {
     type: 'SystemAssigned'
   }
   properties: {
-    kubernetesVersion: '1.20.2'
+    kubernetesVersion: '1.20.7'
     nodeResourceGroup: '${basename}aksnodes'
     dnsPrefix: '${basename}aks'
 

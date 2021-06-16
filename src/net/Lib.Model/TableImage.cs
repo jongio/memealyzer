@@ -1,6 +1,6 @@
 using System;
-using Azure.Data.Tables;
 using Azure;
+using Azure.Data.Tables;
 
 namespace Lib.Model
 {

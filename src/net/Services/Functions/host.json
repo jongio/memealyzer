@@ -1,5 +1,10 @@
 {
     "version": "2.0",
+    "extensions": {
+        "queues": {
+            "maxPollingInterval": "00:00:10"
+        }
+    },
     "logging": {
         "fileLoggingMode": "always",
         "console": {

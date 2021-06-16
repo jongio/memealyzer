@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using Lib.Data;
 using Lib.Model;
+using Memealyzer;
 
 namespace Lib.Messaging.Providers
 {

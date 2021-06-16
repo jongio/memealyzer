@@ -7,6 +7,7 @@ using Azure.Storage.Queues;
 using Lib.Data;
 using Lib.Model;
 using Lib.Messaging;
+using Memealyzer;
 
 namespace Lib.Messaging.Providers
 {

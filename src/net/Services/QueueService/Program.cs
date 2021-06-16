@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Azure.Core.Diagnostics;
 using Lib;
+using Memealyzer;
+using Lib.Proxy;
 
 namespace QueueService
 {
@@ -35,7 +37,8 @@ namespace QueueService
                         // Extract Text from Image
                         try
                         {
-                            var recognizeContentOperation = await clients.FormRecognizerClient.StartRecognizeContentFromUriAsync(new Uri(message.Image.BlobUri));
+                            var blobUri = message.Image.GetBlobUri(Config.UseAzuriteBlob);
+                            var recognizeContentOperation = await clients.FormRecognizerClient.StartRecognizeContentFromUriAsync(new Uri(blobUri));
                             var recognizeContentCompletion = await recognizeContentOperation.WaitForCompletionAsync();
                             var content = recognizeContentCompletion.Value;
                             var text = content.SelectMany(page => page.Lines).Aggregate(new StringBuilder(), (a, b) =>

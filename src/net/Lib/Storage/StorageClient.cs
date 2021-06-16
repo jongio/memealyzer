@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Azure.Core;
+using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Lib.Model;
+using Memealyzer;
 
 namespace Lib.Storage
 {
@@ -15,7 +17,10 @@ namespace Lib.Storage
 
         public async Task InitializeAsync(TokenCredential credential)
         {
-            var blobServiceClient = new BlobServiceClient(Config.StorageBlobEndpoint, credential);
+            var blobServiceClient = Config.UseAzurite ?
+                new BlobServiceClient(Config.AzuriteConnectionString) :
+                new BlobServiceClient(Config.StorageBlobEndpoint, credential);
+
             ContainerClient = blobServiceClient.GetBlobContainerClient(Config.StorageBlobContainerName);
             await ContainerClient.CreateIfNotExistsAsync(PublicAccessType.BlobContainer);
         }
@@ -25,6 +30,7 @@ namespace Lib.Storage
             var blobClient = ContainerClient.GetBlobClient(image.BlobName);
             var blobContentInfo = await blobClient.UploadAsync(stream);
             image.BlobUri = blobClient.Uri.ToString();
+            
             return new BlobInfo { BlobContentInfo = blobContentInfo, Image = image };
         }
     }

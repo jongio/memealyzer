@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ngrok.ApiClient" Version="2.0.0-alpha1" />
+    <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
+  </ItemGroup>
+
+</Project>

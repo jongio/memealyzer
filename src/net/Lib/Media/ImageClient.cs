@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Lib.Model;
+using Memealyzer;
 
 namespace Lib.Media
 {
@@ -24,7 +25,9 @@ namespace Lib.Media
         {
             if (image?.Url is null || string.IsNullOrEmpty(image.Url))
             {
-                image = await GetRandomImage();
+                var tempImage = await GetRandomImage();
+                tempImage.Id = image.Id;
+                image = tempImage;
             }
 
             return await httpClient.GetStreamAsync(image.Url);

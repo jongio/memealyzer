@@ -6,6 +6,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Lib\Lib.csproj"/>
     <ProjectReference Include="..\Lib.Model\Lib.Model.csproj"/>
+    <ProjectReference Include="..\Config\Config.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="2.1.1"/>
