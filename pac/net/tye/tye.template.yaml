@@ -52,13 +52,13 @@ services:
     tags:
       - local
       - cloud
-  # - name: memealyzernetfunction
-  #   azureFunction: ${ROOT}/src/net/Services/Functions/
-  #   bindings:
-  #     - port: 3080
-  #       protocol: http
-  #   tags:
-  #     - local
+  - name: memealyzernetfunction
+    azureFunction: ${ROOT}/src/net/Services/Functions/
+    bindings:
+      - port: 3080
+        protocol: http
+    tags:
+      - local
   - name: memealyzernetqueueservice
     project: ${ROOT}/src/net/Services/QueueService/QueueService.csproj
     env_file: 
@@ -84,9 +84,9 @@ ingress:
       - path: /imagehub
         service: memealyzernetapi
         preservePath: true
-      # - path: /api/negotiate
-      #   service: memealyzernetfunction
-      #   preservePath: true
+      - path: /api/negotiate
+        service: memealyzernetfunction
+        preservePath: true
     tags:
       - local
   - name: ingress

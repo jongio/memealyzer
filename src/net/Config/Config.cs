@@ -17,7 +17,7 @@ namespace Memealyzer
         {
             ngrokClient = new NgrokClient(http);
 
-            if (UseAzurite || UseAzuriteBlob)
+            if (UseAzuriteBlob)
             {
                 var blobTunnel = ngrokClient.GetUri(10000);
                 if (blobTunnel != null)
@@ -26,7 +26,7 @@ namespace Memealyzer
                 }
             }
 
-            if (UseAzurite || UseAzuriteQueue)
+            if (UseAzuriteQueue)
             {
                 var queueTunnel = ngrokClient.GetUri(10001);
                 if (queueTunnel != null)

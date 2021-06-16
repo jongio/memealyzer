@@ -49,6 +49,9 @@ namespace Memealyzer
             if (Config.UseAzuriteQueue)
             {
                 settings.Add("StorageConnection", Config.AzuriteProxyConnectionString);
+
+                // Bumping up the MaxPollingInterval so we don't trottle our proxy server
+                builder.Services.PostConfigure<QueuesOptions>(options => options.MaxPollingInterval = TimeSpan.FromSeconds(4));
             }
             else
             {
@@ -62,61 +65,6 @@ namespace Memealyzer
                         .Build();
 
             builder.Services.AddSingleton<IConfiguration>(config);
-
-            // var serviceProvider = builder.Services.BuildServiceProvider();
-            // var env = serviceProvider.GetRequiredService<IHostEnvironment>();
-            // var appDirectory = serviceProvider.GetRequiredService<IOptions<ExecutionContextOptions>>().Value.AppDirectory;
-
-            // IWebJobsBuilders instance
-            // var webJobsBuilder = builder.Services.AddWebJobs(x => { return; });
-            // webJobsBuilder.AddAzureStorageQueues(options => options.MaxPollingInterval = TimeSpan.FromMinutes(1));
-
-
-
-            // var executioncontextoptions = builder.Services.BuildServiceProvider()
-            //                 .GetService<IOptions<ExecutionContextOptions>>().Value;
-            // var currentDirectory = executioncontextoptions.AppDirectory;
-
-            // var serviceProvider = builder.Services.BuildServiceProvider();
-            // var existingConfig = serviceProvider.GetService<IConfiguration>();
-
-            // var rootPath = currentDirectory;
-            // var config = new ConfigurationBuilder()
-            //     .AddConfiguration(existingConfig)
-            //     .AddInMemoryCollection(settings)
-            //     .AddEnvironmentVariables()
-            //     .Build();
-
-            // builder.Services.Replace(new ServiceDescriptor(typeof(IConfiguration), config));
-
-            /////////////////
-
-
-            // var providers = new List<IConfigurationProvider>();
-            // foreach (var descriptor in builder.Services.Where(descriptor => descriptor.ServiceType == typeof(IConfiguration)).ToList())
-
-            // {
-            //     var existingConfiguration = descriptor.ImplementationInstance as IConfigurationRoot;
-            //     if (existingConfiguration is null)
-            //     {
-            //         continue;
-            //     }
-            //     providers.AddRange(existingConfiguration.Providers);
-            //     builder.Services.Remove(descriptor);
-            // }
-
-            // var executioncontextoptions = builder.Services.BuildServiceProvider()
-            //     .GetService<IOptions<ExecutionContextOptions>>().Value;
-            // var currentDirectory = executioncontextoptions.AppDirectory;
-
-            // var config = new ConfigurationBuilder()
-            //     .AddInMemoryCollection(settings)
-            //     .AddEnvironmentVariables();
-
-            // providers.AddRange(config.Build().Providers);
-
-            // builder.Services.AddSingleton<IConfiguration>(new ConfigurationRoot(providers));
-
         }
     }
 }
