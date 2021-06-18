@@ -169,10 +169,10 @@ You can locally emulate all three Azure Storage services: Blobs, Queues, and Tab
 
 To emulate all three of them, all you need to do is set the `USE_AZURITE` environment variable in the `.env` file to `true`.  You can also enable or disable each individual service emulation with the following settings:
 
-`USE_AZURITE` - Enables emulation for all three.
-`USE_AZURITE_BLOB` - Enables emulation for blobs only.
-`USE_AZURITE_QUEUE` - Enables emulation for queues only.
-`USE_AZURITE_TABLE` - Enables emulation for tables only.
+- `USE_AZURITE` - Enables emulation for all three.
+- `USE_AZURITE_BLOB` - Enables emulation for blobs only.
+- `USE_AZURITE_QUEUE` - Enables emulation for queues only.
+- `USE_AZURITE_TABLE` - Enables emulation for tables only.
 
 #### Ngrok Tunnel to Azurite
 
