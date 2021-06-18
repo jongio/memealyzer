@@ -64,16 +64,16 @@ We follow a 4 step process to go from nothing to a completely deployed Azure sol
 
 > We use the Azure CLI to perform resource deployment and configuration. The scripts below will automatically prompt you to login to the Azure CLI and set your active Azure subscription. You can set the `AZURE_SUBSCRIPTION_ID` environment variable in the `.env` file if you don't want to be prompted every time you run these scripts.
 
-### 1. Start Dev Environment
-The fastest way to get to get the Memealyzer dev machine setup is to use the Codespaces Dev Container which includes all of your development dependencies.
+### 1. Start Dev Environment
+The fastest way to get to get the Memealyzer dev machine setup is to use the Codespaces Dev Container which includes all of your development dependencies.
 
-   1. Install [VS Code](https://code.visualstudio.com)
-   1. Install [VS Code - Remote Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-   1. Open a Linux shell, such as bash or WSL bash
-   1. Clone the repo: 
-      - `git clone https://github.com/jongio/memealyzer`
-   1. Open the repo in VS Code `code memealyzer`
-   1. Hit F1, then select "Remote Containers - Open Folder in Container"
+   1. Install [VS Code](https://code.visualstudio.com)
+   1. Install [VS Code - Remote Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+   1. Open a Linux shell, such as bash or WSL bash
+   1. Clone the repo: 
+      - `git clone https://github.com/jongio/memealyzer`
+   1. Open the repo in VS Code `code memealyzer`
+   1. Hit F1, then select "Remote Containers - Open Folder in Container"
    1. Select the memealyzer root folder and click the Open button.
 
    > It can take a while to open the Dev Container the first time, but subsequent opens will load much faster.
@@ -261,4 +261,3 @@ You can add override any of the following environment variables to suit your nee
 |IMAGE_ENDPOINT|https://meme-api.herokuapp.com/gimme/wholesomememes||
 |TUNNEL_TYPE|NGROK|NGROK|
 |NGROK_AUTHTOKEN|Needs to have --authtoken and then your token||
-
