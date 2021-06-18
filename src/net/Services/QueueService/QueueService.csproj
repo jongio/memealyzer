@@ -15,7 +15,8 @@
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include=".\..\..\Lib\Lib.csproj"/>
-    <ProjectReference Include="..\..\Lib.Model\Lib.Model.csproj"/>
+    <ProjectReference Include="..\..\Libs\Lib\Lib.csproj"/>
+    <ProjectReference Include="..\..\Libs\Lib.Model\Lib.Model.csproj"/>
+    <ProjectReference Include="..\..\Libs\Lib.Configuration\Lib.Configuration.csproj"/>
   </ItemGroup>
 </Project>

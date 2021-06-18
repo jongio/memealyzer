@@ -64,16 +64,16 @@ We follow a 4 step process to go from nothing to a completely deployed Azure sol
 
 > We use the Azure CLI to perform resource deployment and configuration. The scripts below will automatically prompt you to login to the Azure CLI and set your active Azure subscription. You can set the `AZURE_SUBSCRIPTION_ID` environment variable in the `.env` file if you don't want to be prompted every time you run these scripts.
 
-### 1. Start Dev Environment
-The fastest way to get to get the Memealyzer dev machine setup is to use the Codespaces Dev Container which includes all of your development dependencies.
+### 1. Start Dev Environment
+The fastest way to get to get the Memealyzer dev machine setup is to use the Codespaces Dev Container which includes all of your development dependencies.
 
-   1. Install [VS Code](https://code.visualstudio.com)
-   1. Install [VS Code - Remote Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-   1. Open a Linux shell, such as bash or WSL bash
-   1. Clone the repo: 
-      - `git clone https://github.com/jongio/memealyzer`
-   1. Open the repo in VS Code `code memealyzer`
-   1. Hit F1, then select "Remote Containers - Open Folder in Container"
+   1. Install [VS Code](https://code.visualstudio.com)
+   1. Install [VS Code - Remote Containers Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+   1. Open a Linux shell, such as bash or WSL bash
+   1. Clone the repo: 
+      - `git clone https://github.com/jongio/memealyzer`
+   1. Open the repo in VS Code `code memealyzer`
+   1. Hit F1, then select "Remote Containers - Open Folder in Container"
    1. Select the memealyzer root folder and click the Open button.
 
    > It can take a while to open the Dev Container the first time, but subsequent opens will load much faster.
@@ -163,6 +163,34 @@ You can now use the Cosmos Emulator instead of Azure Cosmos. Follow these steps 
 
    `The remote certificate is invalid because of errors in the certificate chain: UntrustedRoot`
 
+### Azure Storage Emulation (Azurite)
+
+You can locally emulate all three Azure Storage services: Blobs, Queues, and Tables with [Azurite](https://github.com/Azure/Azurite).
+
+To emulate all three of them, all you need to do is set the `USE_AZURITE` environment variable in the `.env` file to `true`.  You can also enable or disable each individual service emulation with the following settings:
+
+`USE_AZURITE` - Enables emulation for all three.
+`USE_AZURITE_BLOB` - Enables emulation for blobs only.
+`USE_AZURITE_QUEUE` - Enables emulation for queues only.
+`USE_AZURITE_TABLE` - Enables emulation for tables only.
+
+#### Ngrok Tunnel to Azurite
+
+When Azurite is enabled, an Ngrok tunnel is created to the blob and queue endpoints.  This is done because: 
+1. The Form Recognizer client requires a publically addressable endpoint to read the blob from
+2. The Azure Function Queue binding requires a queue that is also public.
+
+See the `Lib.Tunnel` project for more information.
+
+Ngrok is the only currently supported tunneling client, but we may consider adding alternatives in the future.
+
+
+By default Ngrok has very aggressive throttling for the free account and it will often throttle requests from the Storage Queue Function.  For this reason, do not use the "Meme Stream" feature and do not aggresively add memes while using Azurite/Ngrok.  For this reason we have added the `AZURE_STORAGE_QUEUE_MAX_POLLING_INTERVAL` config setting that allows you to specify how long the function should wait before polling the queue for new messages. The default is set to 10 seconds, but this still will not prevent you from being throttled if you add a lot of memes at once.
+
+If you have a paid account, then you can specify your auth token in the `NGROK_AUTHTOKEN` environment variable in this format `--authtoken yourtoken`.
+
+> Note that Azurite and Ngrok run over HTTP, not HTTPS so if you adopt this pattern in your application, then ensure you are not transporting any sensitive data in your application.
+
 ### Messaging Provider
 
 You can configure which messaging service you want to use, either Service Bus Queue or Azure Storage Queue.
@@ -194,30 +222,42 @@ You can add override any of the following environment variables to suit your nee
 |AZURE_COSMOS_ENDPOINT|https://${BASENAME}cosmosaccount.documents.azure.com:443||
 |AZURE_COSMOS_KEY|Default value in .env files||
 |USE_COSMOS_EMULATOR|Set to true to enable Cosmos Emulator|false|
+|AZURE_COSMOS_DB|memealyzer||
+|AZURE_COSMOS_COLLECTION|images||
+|AZURE_COSMOS_KEY_SECRET_NAME|CosmosKey||
+|AZURE_COSMOS_THROUGHPUT|400||
 |USE_AZURITE|Set this to true to use Azurite for Tables, Blobs, and Queue|false|
+|USE_AZURITE_BLOB|Set this to true to use Azurite for Blob|false|
+|USE_AZURITE_QUEUE|Set this to true to use Azurite for Queue|false|
+|USE_AZURITE_TABLE|Set this to true to use Azurite for Table|false|
+|AZURITE_ACCOUNT_KEY|devstoreaccount1||
+|AZURITE_CONNECTION_STRING|Default value in Config.cs||
+|AZURITE_PROXY_CONNECTION_STRING|The Azurite connection string with the Tunnel endpoints.||
+|NGROK_URI|Default value is read at runtime from localhost:4040||
 |AZURE_FORM_RECOGNIZER_ENDPOINT|https://${BASENAME}fr.cognitiveservices.azure.com/||
 |AZURE_KEYVAULT_ENDPOINT|https://${BASENAME}kv.vault.azure.net/||
 |AZURE_STORAGE_ACCOUNT_NAME|${BASENAME}storage||
+|AZURE_STORAGE_BLOB_ACCOUNT_NAME|${BASENAME}storage||
+|AZURE_STORAGE_QUEUE_ACCOUNT_NAME|${BASENAME}storage||
+|AZURE_STORAGE_TABLE_ACCOUNT_NAME|${BASENAME}storage||
 |AZURE_STORAGE_BLOB_ENDPOINT|https://${BASENAME}storage.blob.core.windows.net/||
 |AZURE_STORAGE_QUEUE_ENDPOINT|https://${BASENAME}storage.queue.core.windows.net/||
 |AZURE_STORAGE_TABLE_ENDPOINT|https://${BASENAME}storage.table.core.windows.net/||
+|AZURE_STORAGE_QUEUE_MAX_POLLING_INTERVAL|"00:00:10"||
 |AZURE_TEXT_ANALYTICS_ENDPOINT|https://${BASENAME}ta.cognitiveservices.azure.com/||
 |AZURE_APP_CONFIG_ENDPOINT|https://${BASENAME}appconfig.azconfig.io||
 |AZURE_CONTAINER_REGISTRY_SERVER|${BASENAME}acr.azurecr.io||
+|AZURE_SERVICE_BUS_NAMESPACE|{BaseName}sb.servicebus.windows.net||
 |AZURE_STORAGE_BLOB_CONTAINER_NAME|blobs||
 |AZURE_MESSAGES_QUEUE_NAME|messages||
 |AZURE_STORAGE_QUEUE_MSG_COUNT|10||
 |AZURE_STORAGE_QUEUE_RECEIVE_SLEEP|1 second||
 |AZURE_STORAGE_TABLE_NAME|images||
-|AZURE_COSMOS_DB|memealyzer||
-|AZURE_COSMOS_COLLECTION|images||
-|AZURE_COSMOS_KEY_SECRET_NAME|CosmosKey||
 |AZURE_STORAGE_TYPE|COSMOS_SQL|COSMOS_SQL, STORAGE_TABLE|
 |AZURE_MESSAGING_TYPE|SERVICE_BUS_QUEUE|SERVICE_BUS_QUEUE, STORAGE_QUEUE|
 |AZURE_STORAGE_KEY_SECRET_NAME|StorageKey||
 |AZURE_CLIENT_SYNC_QUEUE_NAME|sync||
 |AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME|SignalRConnectionString||
-|AZURE_STORAGE_CONNECTION_STRING_SECRET_NAME|StorageConnectionString||
-|AZURE_SERVICE_BUS_CONNECTION_STRING_SECRET_NAME|ServiceBusConnectionString||
 |IMAGE_ENDPOINT|https://meme-api.herokuapp.com/gimme/wholesomememes||
-|AZURITE_ACCOUNT_KEY|Default value in .env files||
+|TUNNEL_TYPE|NGROK|NGROK|
+|NGROK_AUTHTOKEN|Needs to have --authtoken and then your token||

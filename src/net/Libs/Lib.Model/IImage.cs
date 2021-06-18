@@ -19,5 +19,6 @@ namespace Lib.Model
         string Color { get; set; }
         string Error { get; set; }
         bool Complete { get; set; }
+        string GetBlobUri(bool proxy);
     }
 }

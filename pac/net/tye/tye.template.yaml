@@ -16,8 +16,24 @@ services:
         port: 10002
         containerPort: 10002
         protocol: http
+    volumes:
+      - source: /azurite/data
+        target: /data
     tags:
       - local
+  - name: ngrok
+    image: wernight/ngrok
+    args: ngrok start -config /home/config/ngrok/azurite.yml --all ${NGROK_AUTHTOKEN}
+    bindings:
+      - name: tunnels
+        port: 4040
+        containerPort: 4040
+        protocol: http
+    volumes:
+      - source: ${ROOT}/config/ngrok
+        target: /home/config/ngrok
+    tags:
+      - ${TUNNEL_ENABLED}
   - name: memealyzernetwebapp
     project: ${ROOT}/src/net/WebApp/WebApp.csproj
     bindings:

@@ -1,7 +1,7 @@
 using System;
-using Azure.Data.Tables;
 using Azure;
 using Azure.Cosmos;
+using Azure.Data.Tables;
 
 namespace Lib.Model
 {

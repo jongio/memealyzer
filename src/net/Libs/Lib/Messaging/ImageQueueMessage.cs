@@ -1,4 +1,3 @@
-
 using Lib.Model;
 
 namespace Lib.Messaging

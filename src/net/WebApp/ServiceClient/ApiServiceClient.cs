@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Threading.Tasks;
-using Lib.Model;
 using System.Net.Http.Json;
-using Azure.Data.AppConfiguration;
 using System.Text.Json;
+using System.Threading.Tasks;
+using Azure.Data.AppConfiguration;
+using Lib.Model;
 
 public class ApiServiceClient : ServiceClient
 {

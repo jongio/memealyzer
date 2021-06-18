@@ -16,3 +16,11 @@ export DOTENV_FULLPATH=$(get_abs_filename $DOTENV)
 
 echo "LOADING ENV VARS FROM: ${DOTENV}"
 set -o allexport; source $DOTENV; set +o allexport
+
+# We only want to startup Ngrok container if Azurite is enabled.  "local" is the tag used by Tye and we ingect that into the tye.yaml
+if [ "${USE_AZURITE:-}" == "true" ] || [ "${USE_AZURITE_BLOB:-}" == "true" ] || [ "${USE_AZURITE_QUEUE:-}" == "true" ] || [ "${USE_AZURITE_TABLE:-}" == "true" ]; then
+  echo "AZURITE IS ENABLED. ENABLING TUNNEL..."
+  export TUNNEL_ENABLED=local
+else
+  export TUNNEL_ENABLED=
+fi

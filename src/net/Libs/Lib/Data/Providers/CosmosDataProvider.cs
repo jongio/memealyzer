@@ -6,6 +6,7 @@ using Azure.Core;
 using Azure.Cosmos;
 using Azure.Cosmos.Serialization;
 using Azure.Security.KeyVault.Secrets;
+using Lib.Configuration;
 using Lib.Model;
 
 namespace Lib.Data.Providers

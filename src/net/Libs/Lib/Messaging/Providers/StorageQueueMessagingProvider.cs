@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Azure.Core;
 using Azure.Storage.Queues;
+using Lib.Configuration;
 using Lib.Data;
 
 namespace Lib.Messaging.Providers
@@ -12,7 +13,9 @@ namespace Lib.Messaging.Providers
 
         public async Task InitializeAsync(TokenCredential credential, IDataProvider dataProvider) 
         {
-            var queueServiceClient = new QueueServiceClient(Config.StorageQueueEndpoint, credential);
+            var queueServiceClient = Config.UseAzuriteQueue ?
+                new QueueServiceClient(Config.AzuriteConnectionString) :
+                new QueueServiceClient(Config.StorageQueueEndpoint, credential);
 
             ImageQueueClient = new StorageQueue(queueServiceClient, Config.MessagesQueueName, dataProvider);
             await ImageQueueClient.InitializeAsync();

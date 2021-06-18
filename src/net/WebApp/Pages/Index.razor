@@ -58,9 +58,13 @@ else
                                     <div class="col text-left"><span style="display:inline-block;height:38px;width:42px;font-size:16px;padding:6px 12px;" class="oi oi-@(GetSentimentIcon(image)) text-@image.Color" title="Sentiment: @image.Sentiment"
                                                 aria-hidden="true"></span></div>
                                     <div class="col">
-                                        @if( !image.Complete ){
-                                            <div class="d-flex justify-content-center" style="padding-top:8px;"><div class="spinner-border spinner-border-sm text-primary" role="status"><span class="sr-only">@image.Status</span></div></div>
-                                        }
+                                        <div class="d-flex justify-content-center" style="padding-top:8px;">
+                                            @if( !image.Complete ){
+                                                <div class="spinner-border spinner-border-sm text-primary" role="status"><span class="sr-only">@image.Status</span></div>
+                                            } else {
+                                                <div>@image.Sentiment</div>
+                                            }
+                                        </div>
                                     </div>
                                     <div class="col text-right">
                                         <button type="submit" value="submit" class="btn" disabled="@(!image.Complete)"

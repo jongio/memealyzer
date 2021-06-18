@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Azure.Core;
 using Azure.Messaging.ServiceBus;
+using Lib.Configuration;
 using Lib.Data;
 
 namespace Lib.Messaging.Providers

@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Azure.Data.AppConfiguration;
-using Lib;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Azure.Data.AppConfiguration;
+using Lib;
 
 namespace Api.Controllers
 {
