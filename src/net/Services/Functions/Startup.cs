@@ -16,7 +16,8 @@ using Azure.Core.Diagnostics;
 using Azure.Security.KeyVault.Secrets;
 using DotNetEnv;
 using Lib;
-using Lib.Proxy;
+using Lib.Configuration;
+using Lib.Tunnel;
 
 [assembly: FunctionsStartup(typeof(Memealyzer.Startup))]
 namespace Memealyzer
@@ -51,7 +52,7 @@ namespace Memealyzer
                 settings.Add("StorageConnection", Config.AzuriteProxyConnectionString);
 
                 // Bumping up the MaxPollingInterval so we don't trottle our proxy server
-                builder.Services.PostConfigure<QueuesOptions>(options => options.MaxPollingInterval = TimeSpan.FromSeconds(4));
+                builder.Services.PostConfigure<QueuesOptions>(options => options.MaxPollingInterval = Config.StorageQueueMaxPollingInterval);
             }
             else
             {

@@ -14,7 +14,7 @@
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Lib.Model\Lib.Model.csproj"/>
+    <ProjectReference Include="..\Libs\Lib.Model\Lib.Model.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <None Update="nginx.conf" CopyToOutputDirectory="Always"/>

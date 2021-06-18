@@ -163,6 +163,34 @@ You can now use the Cosmos Emulator instead of Azure Cosmos. Follow these steps 
 
    `The remote certificate is invalid because of errors in the certificate chain: UntrustedRoot`
 
+### Azure Storage Emulation (Azurite)
+
+You can locally emulate all three Azure Storage services: Blobs, Queues, and Tables with [Azurite](https://github.com/Azure/Azurite).
+
+To emulate all three of them, all you need to do is set the `USE_AZURITE` environment variable in the `.env` file to `true`.  You can also enable or disable each individual service emulation with the following settings:
+
+`USE_AZURITE` - Enables emulation for all three.
+`USE_AZURITE_BLOB` - Enables emulation for blobs only.
+`USE_AZURITE_QUEUE` - Enables emulation for queues only.
+`USE_AZURITE_TABLE` - Enables emulation for tables only.
+
+#### Ngrok Tunnel to Azurite
+
+When Azurite is enabled, an Ngrok tunnel is created to the blob and queue endpoints.  This is done because: 
+1. The Form Recognizer client requires a publically addressable endpoint to read the blob from
+2. The Azure Function Queue binding requires a queue that is also public.
+
+See the `Lib.Tunnel` project for more information.
+
+Ngrok is the only currently supported tunneling client, but we may consider adding alternatives in the future.
+
+
+By default Ngrok has very aggressive throttling for the free account and it will often throttle requests from the Storage Queue Function.  For this reason, do not use the "Meme Stream" feature and do not aggresively add memes while using Azurite/Ngrok.  For this reason we have added the `AZURE_STORAGE_QUEUE_MAX_POLLING_INTERVAL` config setting that allows you to specify how long the function should wait before polling the queue for new messages. The default is set to 10 seconds, but this still will not prevent you from being throttled if you add a lot of memes at once.
+
+If you have a paid account, then you can specify your auth token in the `NGROK_AUTHTOKEN` environment variable in this format `--authtoken yourtoken`.
+
+> Note that Azurite and Ngrok run over HTTP, not HTTPS so if you adopt this pattern in your application, then ensure you are not transporting any sensitive data in your application.
+
 ### Messaging Provider
 
 You can configure which messaging service you want to use, either Service Bus Queue or Azure Storage Queue.
@@ -202,8 +230,9 @@ You can add override any of the following environment variables to suit your nee
 |USE_AZURITE_BLOB|Set this to true to use Azurite for Blob|false|
 |USE_AZURITE_QUEUE|Set this to true to use Azurite for Queue|false|
 |USE_AZURITE_TABLE|Set this to true to use Azurite for Table|false|
-|AZURITE_ACCOUNT_KEY|Default value in .env files||
+|AZURITE_ACCOUNT_KEY|devstoreaccount1||
 |AZURITE_CONNECTION_STRING|Default value in Config.cs||
+|AZURITE_PROXY_CONNECTION_STRING|The Azurite connection string with the Tunnel endpoints.||
 |NGROK_URI|Default value is read at runtime from localhost:4040||
 |AZURE_FORM_RECOGNIZER_ENDPOINT|https://${BASENAME}fr.cognitiveservices.azure.com/||
 |AZURE_KEYVAULT_ENDPOINT|https://${BASENAME}kv.vault.azure.net/||
@@ -214,9 +243,11 @@ You can add override any of the following environment variables to suit your nee
 |AZURE_STORAGE_BLOB_ENDPOINT|https://${BASENAME}storage.blob.core.windows.net/||
 |AZURE_STORAGE_QUEUE_ENDPOINT|https://${BASENAME}storage.queue.core.windows.net/||
 |AZURE_STORAGE_TABLE_ENDPOINT|https://${BASENAME}storage.table.core.windows.net/||
+|AZURE_STORAGE_QUEUE_MAX_POLLING_INTERVAL|"00:00:10"||
 |AZURE_TEXT_ANALYTICS_ENDPOINT|https://${BASENAME}ta.cognitiveservices.azure.com/||
 |AZURE_APP_CONFIG_ENDPOINT|https://${BASENAME}appconfig.azconfig.io||
 |AZURE_CONTAINER_REGISTRY_SERVER|${BASENAME}acr.azurecr.io||
+|AZURE_SERVICE_BUS_NAMESPACE|{BaseName}sb.servicebus.windows.net||
 |AZURE_STORAGE_BLOB_CONTAINER_NAME|blobs||
 |AZURE_MESSAGES_QUEUE_NAME|messages||
 |AZURE_STORAGE_QUEUE_MSG_COUNT|10||
@@ -228,3 +259,6 @@ You can add override any of the following environment variables to suit your nee
 |AZURE_CLIENT_SYNC_QUEUE_NAME|sync||
 |AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME|SignalRConnectionString||
 |IMAGE_ENDPOINT|https://meme-api.herokuapp.com/gimme/wholesomememes||
+|TUNNEL_TYPE|NGROK|NGROK|
+|NGROK_AUTHTOKEN|Needs to have --authtoken and then your token||
+

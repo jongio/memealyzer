@@ -33,7 +33,7 @@ services:
       - source: ../../../config/ngrok
         target: /home/config/ngrok
     tags:
-      - local
+      - 
   - name: memealyzernetwebapp
     project: ../../../src/net/WebApp/WebApp.csproj
     bindings:

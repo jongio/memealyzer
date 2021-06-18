@@ -23,7 +23,7 @@ services:
       - local
   - name: ngrok
     image: wernight/ngrok
-    args: ngrok start -config /home/config/ngrok/azurite.yml --all 
+    args: ngrok start -config /home/config/ngrok/azurite.yml --all ${NGROK_AUTHTOKEN}
     bindings:
       - name: tunnels
         port: 4040
@@ -33,7 +33,7 @@ services:
       - source: ${ROOT}/config/ngrok
         target: /home/config/ngrok
     tags:
-      - local
+      - ${TUNNEL_ENABLED}
   - name: memealyzernetwebapp
     project: ${ROOT}/src/net/WebApp/WebApp.csproj
     bindings:

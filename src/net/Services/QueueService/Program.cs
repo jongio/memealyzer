@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Azure.Core.Diagnostics;
 using Lib;
-using Memealyzer;
-using Lib.Proxy;
+using Lib.Configuration;
+using Lib.Tunnel;
 
 namespace QueueService
 {
@@ -35,9 +35,9 @@ namespace QueueService
                         Console.WriteLine(message.Message.Text);
 
                         // Extract Text from Image
+                        var blobUri = message.Image.GetBlobUri(Config.UseAzuriteBlob);
                         try
                         {
-                            var blobUri = message.Image.GetBlobUri(Config.UseAzuriteBlob);
                             var recognizeContentOperation = await clients.FormRecognizerClient.StartRecognizeContentFromUriAsync(new Uri(blobUri));
                             var recognizeContentCompletion = await recognizeContentOperation.WaitForCompletionAsync();
                             var content = recognizeContentCompletion.Value;
