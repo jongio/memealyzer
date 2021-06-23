@@ -60,7 +60,13 @@ namespace Memealyzer
                 settings.Add("StorageConnection:queueServiceUri", Config.StorageQueueEndpoint.ToString());
             }
 
+            var executioncontextoptions = builder.Services.BuildServiceProvider().GetService<IOptions<ExecutionContextOptions>>().Value;
+
+            var currentDirectory = executioncontextoptions.AppDirectory;
+
             var config = new ConfigurationBuilder()
+                        .SetBasePath(currentDirectory)
+                        .AddJsonFile("host.json", optional: false, reloadOnChange: true)
                         .AddInMemoryCollection(settings)
                         .AddEnvironmentVariables()
                         .Build();
