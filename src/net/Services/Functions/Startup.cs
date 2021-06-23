@@ -51,8 +51,8 @@ namespace Memealyzer
             {
                 settings.Add("StorageConnection", Config.AzuriteProxyConnectionString);
 
-                // Bumping up the MaxPollingInterval so we don't trottle our proxy server
-                builder.Services.PostConfigure<QueuesOptions>(options => options.MaxPollingInterval = Config.StorageQueueMaxPollingInterval);
+                // Bumping up the MaxPollingInterval so we don't get trottled our proxy server
+                builder.Services.Configure<QueuesOptions>(options => options.MaxPollingInterval = Config.StorageQueueMaxPollingInterval);
             }
             else
             {
