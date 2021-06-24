@@ -4,7 +4,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Azure.Core;
 using Azure.Data.Tables;
-using Azure.Security.KeyVault.Secrets;
 using Lib.Configuration;
 using Lib.Model;
 
@@ -12,31 +11,15 @@ namespace Lib.Data.Providers
 {
     public class TableDataProvider : IDataProvider, IDisposable
     {
-        public TableServiceClient TableServiceClient;
-        public TableClient TableClient;
-        public SecretClient SecretClient;
+        private TableClient tableClient;
 
         public async Task InitializeAsync(TokenCredential credential)
         {
-            var storageKeyValue = string.Empty;
+            tableClient = Config.UseAzuriteTable ?
+                new TableClient(Config.AzuriteConnectionString, Config.StorageTableName) :
+                new TableClient(Config.StorageTableEndpoint, Config.StorageTableName, credential);
 
-            if (Config.UseAzuriteTable)
-            {
-                storageKeyValue = Config.AzuriteAccountKey;
-            }
-            else
-            {
-                // KeyVault
-                SecretClient = new SecretClient(Config.KeyVaultEndpoint, credential);
-                var storageKey = await SecretClient.GetSecretAsync(Config.StorageKeySecretName);
-                storageKeyValue = storageKey.Value.Value;
-            }
-
-            TableClient = new TableClient(Config.StorageTableEndpoint,
-                Config.StorageTableName,
-                new TableSharedKeyCredential(Config.StorageTableAccountName, storageKeyValue));
-
-            await TableClient.CreateIfNotExistsAsync();
+            await tableClient.CreateIfNotExistsAsync();
         }
 
         public void Dispose()
@@ -47,7 +30,7 @@ namespace Lib.Data.Providers
         {
             var image = new TableImage() { Id = id };
 
-            await foreach (TableImage item in TableClient.QueryAsync<TableImage>(i => i.PartitionKey == image.PartitionKey && i.RowKey == image.RowKey))
+            await foreach (TableImage item in tableClient.QueryAsync<TableImage>(i => i.PartitionKey == image.PartitionKey && i.RowKey == image.RowKey))
             {
                 return item;
             }
@@ -57,7 +40,7 @@ namespace Lib.Data.Providers
         public async Task<Image> DeleteImageAsync(string id)
         {
             var image = new TableImage { Id = id };
-            await TableClient.DeleteEntityAsync(image.PartitionKey, image.RowKey);
+            await tableClient.DeleteEntityAsync(image.PartitionKey, image.RowKey);
             return image;
 
             //TODO : Bubble up errors through the stack
@@ -65,7 +48,7 @@ namespace Lib.Data.Providers
 
         public async IAsyncEnumerable<Image> GetImagesAsync()
         {
-            await foreach (var item in TableClient.QueryAsync<TableImage>())
+            await foreach (var item in tableClient.QueryAsync<TableImage>())
             {
                 yield return item;
             }
@@ -73,7 +56,7 @@ namespace Lib.Data.Providers
 
         public async Task<Image> UpsertImageAsync(IImage image)
         {
-            var response = await TableClient.UpsertEntityAsync<TableImage>(image as TableImage);
+            var response = await tableClient.UpsertEntityAsync<TableImage>(image as TableImage);
             return image as TableImage;
         }
 

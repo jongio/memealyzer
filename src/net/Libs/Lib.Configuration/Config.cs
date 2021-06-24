@@ -106,7 +106,6 @@ namespace Lib.Configuration
         public static string StorageTableName { get { return Env.GetString("AZURE_STORAGE_TABLE_NAME", "images"); } }
         public static string StorageType { get { return Env.GetString("AZURE_STORAGE_TYPE", "COSMOS_SQL"); } }
         public static string MessagingType { get { return Env.GetString("AZURE_MESSAGING_TYPE", "SERVICE_BUS_QUEUE"); } }
-        public static string StorageKeySecretName { get { return Env.GetString("AZURE_STORAGE_KEY_SECRET_NAME", "StorageKey"); } }
         public static string ClientSyncQueueName { get { return Env.GetString("AZURE_CLIENT_SYNC_QUEUE_NAME", "sync"); } }
         public static string SignalRConnectionStringSecretName { get { return Env.GetString("AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME", "SignalRConnectionString"); } }
         public static string ImageEndpoint { get { return Env.GetString("IMAGE_ENDPOINT", "https://meme-api.herokuapp.com/gimme/wholesomememes"); } }
