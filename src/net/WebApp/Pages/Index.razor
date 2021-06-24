@@ -13,16 +13,22 @@
         <div class="col-12">
             <div class="form-row">
                 <div class="col col-6">
-                    <EditForm OnValidSubmit="HandleAddFormSubmit" Model="@image">
-                        <DataAnnotationsValidator />
-                        <ValidationSummary />
-                        <button type="submit" value="submit" disabled="@(!IsConnected)" class="btn shadow-none" style="cursor:pointer"><span style="font-size: 18px" class="oi oi-plus" title="Add Meme"
-                                aria-hidden="true"></span></button>
-                    </EditForm>
+                    <button type="submit" value="submit" disabled="@(!IsConnected)" class="btn shadow-none" style="cursor:pointer" @onclick="@(async () => await PostImage())"><span
+                            style="font-size: 18px" class="oi oi-plus" title="Add Meme" aria-hidden="true"></span></button>
                 </div>
                 <div class="col col-6">
-                    <button disabled="@(!IsConnected)" class="btn shadow-none btn-@streaming" @onclick="ToggleStream" style="cursor:pointer"><span style="font-size: 22px" class="oi oi-infinity" title="Meme Stream"
-                            aria-hidden="true"></span></button>
+                    <button disabled="@(!IsConnected)" class="btn shadow-none" @onclick="ToggleStream" style="cursor:pointer">
+                        <div class="memestream">
+                            @if (streaming)
+                            {
+                                <span class="spinner-border spinner-border-sm text-primary" role="status" title="Memestream is running"></span>
+                            }
+                            else
+                            {
+                                <span style="font-size: 20px" class="oi oi-infinity" title="Start Memestream" aria-hidden="true"></span>
+                            }
+                        </div>
+                    </button>
                 </div>
             </div>
 
@@ -33,43 +39,46 @@
 @if (images == null)
 {
     <div class="container">
-        <div class="row text-center">
-            <div class="col-md-12">
-                <div class="spinner-grow" role="status">
-                    <span class="sr-only">Loading memes...</span>
-                </div>
-                <p>Loading memes...</p>
+    <div class="row text-center">
+        <div class="col-md-12">
+            <div class="spinner-grow" role="status">
+                <span class="sr-only">Loading memes...</span>
             </div>
+            <p>Loading memes...</p>
         </div>
     </div>
+</div>
 }
 else
 {
     <div class="container">
-        <div class="row text-center text-lg-left">
-            @foreach (var image in images)
+    <div class="row text-center text-lg-left">
+        @foreach (var image in images)
             {
                 <div class="col-md-4" @key="image" style="margin-bottom:5px;">
                     <div class="card" style="width: 100%;">
-                        <a href="@image.Url" target="_blank"><img class="card-img-top border border-8 border-@image.Color img-thumbnail" style="border-style: @borderStyle !important" src="@image.BlobUri" alt="@image.Text" title="@image.Text"></a>
+                        <a href="@image.Url" target="_blank"><img class="card-img-top border border-8 border-@image.Color img-thumbnail" style="border-style: @borderStyle !important"
+                        src="@image.BlobUri" alt="@image.Text" title="@image.Text"></a>
                         <div class="card-body">
                             <div class="container">
                                 <div class="row">
-                                    <div class="col text-left"><span style="display:inline-block;height:38px;width:42px;font-size:16px;padding:6px 12px;" class="oi oi-@(GetSentimentIcon(image)) text-@image.Color" title="Sentiment: @image.Sentiment"
-                                                aria-hidden="true"></span></div>
+                                    <div class="col text-left"><span style="display:inline-block;height:38px;width:42px;font-size:16px;padding:6px 12px;"
+                                    class="oi oi-@(GetSentimentIcon(image)) text-@image.Color" title="Sentiment: @image.Sentiment" aria-hidden="true"></span></div>
                                     <div class="col">
                                         <div class="d-flex justify-content-center" style="padding-top:8px;">
-                                            @if( !image.Complete ){
+                                            @if (!image.Complete)
+                                            {
                                                 <div class="spinner-border spinner-border-sm text-primary" role="status"><span class="sr-only">@image.Status</span></div>
-                                            } else {
+                                            }
+                                            else
+                                            {
                                                 <div>@image.Sentiment</div>
                                             }
                                         </div>
                                     </div>
                                     <div class="col text-right">
-                                        <button type="submit" value="submit" class="btn" disabled="@(!image.Complete)"
-                                            @onclick="@(async () => await DeleteImage(image.Id))"><span style="font-size: 16px" class="oi oi-trash" title="Delete Meme"
-                                                aria-hidden="true"></span></button>
+                                        <button type="submit" value="submit" class="btn" disabled="@(!image.Complete)" @onclick="@(async () => await DeleteImage(image.Id))"><span
+                                        style="font-size: 16px" class="oi oi-trash" title="Delete Meme" aria-hidden="true"></span></button>
                                     </div>
                                 </div>
                             </div>
@@ -83,28 +92,10 @@ else
 
 @code {
     private List<Image> images;
-    private Image image = new Image();
     private HubConnection hubConnection;
     private string borderStyle;
     private bool streaming = false;
     private Timer timer;
-
-    private string GetSentimentIcon(Image image) 
-    {
-        switch( image.Sentiment ){
-            case "Positive": 
-                return "check";
-            case "Negative": 
-                return "x";
-            case "Mixed":
-            case "Neutral": 
-                return "warning";
-            case "None":
-                return "ban";
-            default: 
-                return "ellipses";
-        }
-    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -131,31 +122,44 @@ else
         await hubConnection.StartAsync();
     }
 
-    private int FindImageById(string id)
+    string GetSentimentIcon(Image image)
+    {
+        switch (image.Sentiment)
+        {
+            case "Positive":
+                return "check";
+            case "Negative":
+                return "x";
+            case "Mixed":
+            case "Neutral":
+                return "warning";
+            case "None":
+                return "ban";
+            default:
+                return "ellipses";
+        }
+    }
+
+    int FindImageById(string id)
     {
         return images.FindIndex(0, f => string.Compare(f.Id, id, true) == 0);
     }
 
-    private async Task HandleAddFormSubmit()
+    async Task PostImage()
     {
-        await PostImageAsync();
+        var image = new Image { Id = Guid.NewGuid().ToString() };
+        image = await ApiServiceClient.PostImage(image);
+        images.Insert(0, image);
     }
 
-    private async Task PostImageAsync()
-    {
-        Image postedImage = new Image { Id = Guid.NewGuid().ToString() };
-        postedImage = await ApiServiceClient.PostImage(postedImage);
-        images.Insert(0, postedImage);
-    }
-
-    private void ToggleStream(MouseEventArgs e)
+    void ToggleStream()
     {
         streaming = !streaming;
         if (streaming)
         {
             timer = new Timer(async (object stateInfo) =>
             {
-                await PostImageAsync();
+                await PostImage();
                 StateHasChanged();
             }, new AutoResetEvent(false), 0, 5000);
         }
@@ -169,7 +173,7 @@ else
         }
     }
 
-    public async Task DeleteImage(string id)
+    async Task DeleteImage(string id)
     {
         int index = FindImageById(id);
         Console.WriteLine(index);
@@ -181,8 +185,8 @@ else
         var deletedImage = await ApiServiceClient.DeleteImage(id);
     }
 
-    public bool IsConnected =>
-        hubConnection != null && hubConnection.State == HubConnectionState.Connected;
+    bool IsConnected =>
+    hubConnection != null && hubConnection.State == HubConnectionState.Connected;
 
     public void Dispose()
     {

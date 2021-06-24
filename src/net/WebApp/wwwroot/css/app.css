@@ -190,12 +190,9 @@ app {
   border-width: 8px !important;
 }
 
-.btn-True {
-  color: #28a745;
-}
-
-.btn-False {
-  color: #cccccc;
+.memestream {
+  height: 20px;
+  width: 20px
 }
 
 .card-body {
