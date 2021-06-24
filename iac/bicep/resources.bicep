@@ -97,13 +97,6 @@ resource key_vault 'Microsoft.KeyVault/vaults@2019-09-01' = {
     }
   }
 
-  resource storage_key_secret 'secrets' = {
-    name: 'StorageKey'
-    properties: {
-      value: listKeys(storage.id, storage.apiVersion).keys[0].value
-    }
-  }
-
   resource signalr_connection_string_secret 'secrets' = {
     name: 'SignalRConnectionString'
     properties: {

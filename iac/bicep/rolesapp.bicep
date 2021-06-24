@@ -12,6 +12,10 @@ var roles = [
     id: '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
   }
   {
+    name: 'table_contrib-${principalId}'
+    id: '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'
+  }
+  {
     name: 'queue_msg-${principalId}'
     id: '8a0f0c08-91a1-4084-bc3d-661d67233fed'
   }

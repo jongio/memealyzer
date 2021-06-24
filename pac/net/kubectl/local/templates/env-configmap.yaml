@@ -23,7 +23,6 @@ data:
   IMAGE_ENDPOINT: https://meme-api.herokuapp.com/gimme/wholesomememes
   AZURE_STORAGE_ACCOUNT_NAME: ${AZURE_STORAGE_ACCOUNT_NAME}
   AZURE_STORAGE_TYPE: ${AZURE_STORAGE_TYPE}
-  AZURE_STORAGE_KEY_SECRET_NAME: StorageKey
   AZURE_STORAGE_TABLE_NAME: images
 kind: ConfigMap
 metadata:

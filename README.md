@@ -255,7 +255,6 @@ You can add override any of the following environment variables to suit your nee
 |AZURE_STORAGE_TABLE_NAME|images||
 |AZURE_STORAGE_TYPE|COSMOS_SQL|COSMOS_SQL, STORAGE_TABLE|
 |AZURE_MESSAGING_TYPE|SERVICE_BUS_QUEUE|SERVICE_BUS_QUEUE, STORAGE_QUEUE|
-|AZURE_STORAGE_KEY_SECRET_NAME|StorageKey||
 |AZURE_CLIENT_SYNC_QUEUE_NAME|sync||
 |AZURE_SIGNALR_CONNECTION_STRING_SECRET_NAME|SignalRConnectionString||
 |IMAGE_ENDPOINT|https://meme-api.herokuapp.com/gimme/wholesomememes||
