@@ -137,6 +137,18 @@ We recommend using a VS Code Dev Container, but you can setup on bare metal with
 1. [Project Tye](https://github.com/dotnet/tye/blob/master/docs/getting_started.md)
 1. [Bicep](https://github.com/Azure/bicep/blob/main/docs/installing.md) - `az bicep install`
 
+
+## Troubleshooting
+
+1. Error while loading WebApp
+
+If you see this error:
+```bash
+A fatal error was encountered. The library 'libhostpolicy.so' required to execute the application was not found in './src/net/WebApp/bin/Debug/net5.0/'.
+```
+
+Then stop running the soltion and run it again.  We do not know why this occasionally happens.
+
 ## Configuration
 
 ### Data Provider
