@@ -5,12 +5,17 @@
 			"path": "src/net/Api"
 		},
 		{
-			"name": "Lib",
-			"path": "src/net/Lib"
+			"path": "src/net/Libs/Lib"
+		},
+		{
+			"path": "src/net/Libs/Lib.Configuration"
 		},
 		{
 			"name": "Lib.Model",
 			"path": "src/net/Lib.Model"
+		},
+		{
+			"path": "src/net/Libs/Lib.Tunnel"
 		},
 		{
 			"name": "Functions",
