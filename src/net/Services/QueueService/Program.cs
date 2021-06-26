@@ -14,8 +14,6 @@ namespace QueueService
     {
         static async Task Main(string[] args)
         {
-            Envs.Load();
-
             //using var listener = AzureEventSourceListener.CreateConsoleLogger();
 
             await using var clients = new Clients();
