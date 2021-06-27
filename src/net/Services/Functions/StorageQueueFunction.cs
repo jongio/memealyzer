@@ -11,7 +11,7 @@ namespace Memealyzer.Functions
     {
         [FunctionName(nameof(StorageQueueFunctionRun))]
         public static async Task StorageQueueFunctionRun(
-            [QueueTrigger("sync", Connection = "StorageConnection")] string message,
+            [QueueTrigger("%ClientSyncQueueName%", Connection = "StorageConnection")] string message,
             [SignalR(HubName = "STORAGE_QUEUE")] IAsyncCollector<SignalRMessage> messages,
             ILogger log)
         {

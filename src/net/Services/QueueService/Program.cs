@@ -33,7 +33,7 @@ namespace QueueService
                         Console.WriteLine(message.Message.Text);
 
                         // Extract Text from Image
-                        var blobUri = message.Image.GetBlobUri(Config.UseAzuriteBlob);
+                        var blobUri = message.Image.GetBlobUri(Config.UseAzuriteBlob, Config.StorageBlobProxyEndpoint.ToString(), Config.StorageBlobContainerName);
                         try
                         {
                             var recognizeContentOperation = await clients.FormRecognizerClient.StartRecognizeContentFromUriAsync(new Uri(blobUri));

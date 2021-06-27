@@ -9,7 +9,7 @@ namespace Memealyzer.Functions
     {
         [FunctionName(nameof(ServiceBusFunctionRun))]
         public static async Task ServiceBusFunctionRun(
-            [ServiceBusTrigger("sync", Connection = "ServiceBusConnection")] string message,
+            [ServiceBusTrigger("%ClientSyncQueueName%", Connection = "ServiceBusConnection")] string message,
             [SignalR(HubName = "SERVICE_BUS_QUEUE")] IAsyncCollector<SignalRMessage> messages,
             ILogger log)
         {
