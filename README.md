@@ -1,7 +1,10 @@
 # Memealyzer
 
-[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](vscode://github.remotehub/open?url%3Dhttps%3A%2F%2Fgithub.com%jongio%2Fmemealyzer) [![Open in Visual Studio Code Insiders](assets/open-in-vscode-insiders.svg)](vscode-insiders://github.remotehub/open?url%3Dhttps%3A%2F%2Fgithub.com%jongio%2Fmemealyzer)
+[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](vscode://github.remotehub/open?url%3Dhttps%3A%2F%2Fgithub.com%jongio%2Fmemealyzer) 
 
+[![Open in Visual Studio Code Insiders](assets/open-in-vscode-insiders.svg)](vscode-insiders://github.remotehub/open?url%3Dhttps%3A%2F%2Fgithub.com%jongio%2Fmemealyzer)
+
+[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/jongio/memealyzer)
 
 ## Meme + Analyzer = Memealyzer
 
