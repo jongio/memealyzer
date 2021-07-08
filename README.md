@@ -1,5 +1,7 @@
 # Memealyzer
+
 [![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/jongio/memealyzer)
+[![Open in Visual Studio Code Insiders](assets/open-in-vscode-insiders.svg)](https://tinyurl.com/memealyzercodeinsiders)
 
 ## Meme + Analyzer = Memealyzer
 
