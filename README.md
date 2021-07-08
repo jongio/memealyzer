@@ -1,5 +1,8 @@
 # Memealyzer
 
+[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](vscode://github.remotehub/open?url%3Dhttps%3A%2F%2Fgithub.com%jongio%2Fmemealyzer) [![Open in Visual Studio Code Insiders](assets/open-in-vscode-insiders.svg)](vscode-insiders://github.remotehub/open?url%3Dhttps%3A%2F%2Fgithub.com%jongio%2Fmemealyzer)
+
+
 ## Meme + Analyzer = Memealyzer
 
 Memealyzer determines if a meme's sentiment is positive, negative, or neutral. 
