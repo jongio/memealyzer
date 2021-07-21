@@ -64,6 +64,7 @@ namespace Memealyzer
                     // If using AzuriteQueue, then we need to use the Azurite connection string that has proxy settings 
                     settings.Add("StorageConnection", Config.AzuriteProxyConnectionString);
 
+                    // NONE OF THE SETTINGS BELOW WORKED. See Configure method above for what worked.
                     // We need to set the maxPollingInterval so we don't get throttled by the proxy
                     // settings.Add("AzureFunctionsJobHost__Extensions__Queues__MaxPollingInterval", Config.StorageQueueMaxPollingInterval.ToString());
                     // settings.Add("AzureFunctionsJobHost.Extensions.Queues.MaxPollingInterval", Config.StorageQueueMaxPollingInterval.ToString());
