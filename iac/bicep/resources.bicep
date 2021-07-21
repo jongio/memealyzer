@@ -93,14 +93,14 @@ resource key_vault 'Microsoft.KeyVault/vaults@2019-09-01' = {
   resource cosmos_key_secret 'secrets' = {
     name: 'CosmosKey'
     properties: {
-      value: listKeys(cosmos_account.id, cosmos_account.apiVersion).primaryMasterKey
+      value: cosmos_account.listKeys().primaryMasterKey
     }
   }
 
   resource signalr_connection_string_secret 'secrets' = {
     name: 'SignalRConnectionString'
     properties: {
-      value: listKeys(signalr.id, signalr.apiVersion).primaryConnectionString
+      value: signalr.listKeys().primaryConnectionString
     }
   }
 }
@@ -173,7 +173,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2020-09-01' = {
     type: 'SystemAssigned'
   }
   properties: {
-    kubernetesVersion: '1.20.7'
+    kubernetesVersion: '1.21.1'
     nodeResourceGroup: '${basename}aksnodes'
     dnsPrefix: '${basename}aks'
 
