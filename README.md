@@ -48,7 +48,7 @@ The following Azure resources are used in this application:
 1. [Azure Functions](https://azure.microsoft.com/services/functions/)
 1. [Azure Service Bus](https://azure.microsoft.com/services/service-bus/)
 
-> You can select the Data and Messaging Providers via environment variables.  See the ["Environment Variables"](#environment-variables) section below for more information.
+> You can select the Data and Messaging Providers via Environment Variables.  See the ["Environment Variables"](#environment-variables) section below for more information.
 
 ## Quickstart
 
