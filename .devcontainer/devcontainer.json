@@ -47,7 +47,7 @@
 		"ms-azuretools.vscode-bicep"
 	],
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	"forwardPorts": [1080, 2080, 3080],
 	// "oryx build" will automatically install your dependencies and attempt to build your project
 	// "postCreateCommand": "sudo chmod a+x /root"
 }

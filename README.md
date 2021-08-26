@@ -102,7 +102,7 @@ The fastest way to get to get the Memealyzer dev machine setup is to use the Cod
    1. You can add memes by clicking on the "+" button
    1. You can start the memestream by clicking on the "&#8734;" button. This will add a new meme every 5 seconds.
 
-   > If you get build errors, then CD to `./src/net` and run `clean.sh` to clean up the .NET dirs.
+   > If you get build errors, then CD to `./src/net` and run `./clean.sh` to clean up the .NET dirs.
 
    > If the app doesn't start correctly, then stop using CTRL+C and re-run the run.sh command.  We are researching why this happens.
 
@@ -151,6 +151,15 @@ A fatal error was encountered. The library 'libhostpolicy.so' required to execut
 ```
 
 Then stop running the soltion and run it again.  We do not know why this occasionally happens.
+
+2. Error while building or running
+
+If you see this error:
+```bash
+/opt/dotnet/5.0.100/sdk/5.0.100/Microsoft.Common.CurrentVersion.targets(4354,5): error MSB3021: Unable to copy file "obj/Debug/netstandard2.1/Lib.Model.dll" to "bin/Debug/netstandard2.1/Lib.Model.dll". Access to the path is denied. [/home/codespace/workspace/src/net/Libs/Lib.Model/Lib.Model.csproj]
+```
+
+Then CD to `./src/net` and run `./clean.sh` to clean up the .NET dirs.
 
 ## Configuration
 

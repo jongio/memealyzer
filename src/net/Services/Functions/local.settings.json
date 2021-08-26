@@ -3,7 +3,7 @@
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true;",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-    "BASENAME": "meme617"
+    "AzureWebJobsSecretStorageType": "files"
   },
   "Host": {
     "CORS": "*",
