@@ -44,7 +44,10 @@
 	"extensions": [
 		"GitHub.vscode-pull-request-github",
 		"ms-azuretools.vscode-azurefunctions",
-		"ms-azuretools.vscode-bicep"
+		"ms-azuretools.vscode-bicep",
+		"ms-playwright.playwright",
+		"ms-dotnettools.csharp",
+		"esbenp.prettier-vscode"
 	],
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [1080, 2080, 3080],
