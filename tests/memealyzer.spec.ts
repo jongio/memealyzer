@@ -1,6 +1,6 @@
 import { test, expect, WebSocket } from "@playwright/test";
 
-var uri: string = "http://localhost:1080/";
+let uri = process.env.WEBAPP_ENDPOINT || "http://localhost:1080/";
 
 interface Image {
   id: string;
@@ -12,6 +12,9 @@ interface ImageEvent {
 }
 
 test("Add Meme Test", async ({ page }) => {
+
+  // This test will add a meme and check SignalR response
+
   await page.goto(uri);
 
   let webSocket: WebSocket;
@@ -37,9 +40,8 @@ test("Add Meme Test", async ({ page }) => {
         (response) =>
           response.url().endsWith("/image") && response.status() === 200
       )
-      .then((response) => response.text())
-      .then((text) => {
-        const image = JSON.parse(text) as Image;
+      .then(async (response) => {
+        const image = await response.json() as Image;
         expectedId = image.id;
       }),
     await add.click(),
@@ -51,8 +53,8 @@ test("Add Meme Test", async ({ page }) => {
 
   await webSocket.waitForEvent("framereceived", (event) => {
     if (event.payload.indexOf("ReceiveImage") > 0) {
-      const payload = event.payload.toString().replace('', "");
-      const imageEvent = JSON.parse(payload) as ImageEvent
+      const payload = event.payload.toString().replace("", ""); // Remove hidden char
+      const imageEvent = JSON.parse(payload) as ImageEvent;
       actualId = imageEvent.arguments[0].Id;
       return true;
     }
