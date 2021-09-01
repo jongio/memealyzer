@@ -27,6 +27,7 @@
 		}
 	},
 	"remoteUser": "codespace",
+	"containerUser": "codespace",
 	"overrideCommand": false,
 	"workspaceMount": "source=${localWorkspaceFolder},target=/home/codespace/workspace,type=bind,consistency=cached",
 	"workspaceFolder": "/home/codespace/workspace",
@@ -52,7 +53,8 @@
 		"esbenp.prettier-vscode"
 	],
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [1080, 2080, 3080],
+	// 1080, 2080, 3080 - app ports, 8400 - az cli auth response port
+	"forwardPorts": [1080, 2080, 3080, 8400],
 	// "oryx build" will automatically install your dependencies and attempt to build your project
-	// "postCreateCommand": "sudo chmod a+x /root"
+	"postCreateCommand": "sudo chown -R codespace ~/workspace/src"
 }

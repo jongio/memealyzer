@@ -139,6 +139,7 @@ We recommend using a VS Code Dev Container, but you can setup on bare metal with
 1. [Azure Functions Core Tools](https://docs.microsoft.com/azure/azure-functions/functions-run-local) - v3.0.2881 minimum
 1. [Project Tye](https://github.com/dotnet/tye/blob/master/docs/getting_started.md)
 1. [Bicep](https://github.com/Azure/bicep/blob/main/docs/installing.md) - `az bicep install`
+1. [Playwright - Test Automation](https://playwright.dev/docs/intro/) - Install Playwright via npm and run this to install dependencies: `npx playwright install-deps`
 
 
 ## Troubleshooting
@@ -159,7 +160,8 @@ If you see this error:
 /opt/dotnet/5.0.100/sdk/5.0.100/Microsoft.Common.CurrentVersion.targets(4354,5): error MSB3021: Unable to copy file "obj/Debug/netstandard2.1/Lib.Model.dll" to "bin/Debug/netstandard2.1/Lib.Model.dll". Access to the path is denied. [/home/codespace/workspace/src/net/Libs/Lib.Model/Lib.Model.csproj]
 ```
 
-Then CD to `./src/net` and run `./clean.sh` to clean up the .NET dirs.
+Option 1: Run this from within the devcontainer to take ownership of the files: `sudo chown -R codespace ~/workspace/src`
+Option 2: CD to `./src/net` and run `./clean.sh` to clean up the .NET dirs.
 
 ## Configuration
 
