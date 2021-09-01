@@ -13,6 +13,7 @@ debug.log
 **/azurite/**
 .bin
 .tye
+**node_modules**
 
 pac/net/tye/.env*
 __*storage__

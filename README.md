@@ -102,7 +102,7 @@ The fastest way to get to get the Memealyzer dev machine setup is to use the Cod
    1. You can add memes by clicking on the "+" button
    1. You can start the memestream by clicking on the "&#8734;" button. This will add a new meme every 5 seconds.
 
-   > If you get build errors, then CD to `./src/net` and run `clean.sh` to clean up the .NET dirs.
+   > If you get build errors, then CD to `./src/net` and run `./clean.sh` to clean up the .NET dirs.
 
    > If the app doesn't start correctly, then stop using CTRL+C and re-run the run.sh command.  We are researching why this happens.
 
@@ -139,6 +139,7 @@ We recommend using a VS Code Dev Container, but you can setup on bare metal with
 1. [Azure Functions Core Tools](https://docs.microsoft.com/azure/azure-functions/functions-run-local) - v3.0.2881 minimum
 1. [Project Tye](https://github.com/dotnet/tye/blob/master/docs/getting_started.md)
 1. [Bicep](https://github.com/Azure/bicep/blob/main/docs/installing.md) - `az bicep install`
+1. [Playwright - Test Automation](https://playwright.dev/docs/intro/) - Install Playwright via npm and run this to install dependencies: `npx playwright install-deps`
 
 
 ## Troubleshooting
@@ -151,6 +152,16 @@ A fatal error was encountered. The library 'libhostpolicy.so' required to execut
 ```
 
 Then stop running the soltion and run it again.  We do not know why this occasionally happens.
+
+2. Error while building or running
+
+If you see this error:
+```bash
+/opt/dotnet/5.0.100/sdk/5.0.100/Microsoft.Common.CurrentVersion.targets(4354,5): error MSB3021: Unable to copy file "obj/Debug/netstandard2.1/Lib.Model.dll" to "bin/Debug/netstandard2.1/Lib.Model.dll". Access to the path is denied. [/home/codespace/workspace/src/net/Libs/Lib.Model/Lib.Model.csproj]
+```
+
+Option 1: Run this from within the devcontainer to take ownership of the files: `sudo chown -R codespace ~/workspace/src`
+Option 2: CD to `./src/net` and run `./clean.sh` to clean up the .NET dirs.
 
 ## Configuration
 

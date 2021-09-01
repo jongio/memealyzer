@@ -4,5 +4,9 @@ USER root
 RUN apt-get update && apt-get install -y --no-install-recommends apt-utils && apt-get install -y curl unzip procps && curl -sSL https://aka.ms/InstallAzureCLIDeb | bash
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
      && apt-get -y install --no-install-recommends azure-functions-core-tools-3 \
-     && az bicep install 
+     && az bicep install \
+     && npm i -D @playwright/test \
+     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 USER codespace
+RUN npx -q playwright install \
+     && npx playwright install-deps
