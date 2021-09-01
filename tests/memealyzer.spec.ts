@@ -1,4 +1,5 @@
 import { test, expect, WebSocket } from "@playwright/test";
+import { TextMessageFormat } from "./textMessageFormat";
 
 let uri = process.env.WEBAPP_ENDPOINT || "http://localhost:1080/";
 
@@ -12,16 +13,12 @@ interface ImageEvent {
 }
 
 test("Add Meme Test", async ({ page }) => {
-
   // This test will add a meme and check SignalR response
 
-  await page.goto(uri);
-
-  let webSocket: WebSocket;
-
-  page.on("websocket", (ws) => {
-    webSocket = ws;
-  });
+  const [webSocket] = await Promise.all([
+    page.waitForEvent("websocket"),
+    page.goto(uri),
+  ]);
 
   const add = page.locator(".form-row button").first();
 
@@ -41,10 +38,10 @@ test("Add Meme Test", async ({ page }) => {
           response.url().endsWith("/image") && response.status() === 200
       )
       .then(async (response) => {
-        const image = await response.json() as Image;
+        const image = (await response.json()) as Image;
         expectedId = image.id;
       }),
-    await add.click(),
+    add.click(),
   ]);
 
   const afterCardCount = await cards.count();
@@ -53,10 +50,12 @@ test("Add Meme Test", async ({ page }) => {
 
   await webSocket.waitForEvent("framereceived", (event) => {
     if (event.payload.indexOf("ReceiveImage") > 0) {
-      const payload = event.payload.toString().replace("", ""); // Remove hidden char
-      const imageEvent = JSON.parse(payload) as ImageEvent;
-      actualId = imageEvent.arguments[0].Id;
-      return true;
+      const imageEvents = TextMessageFormat.parse(event.payload.toString());
+      for (let imageEventRaw of imageEvents) {
+        const imageEvent = JSON.parse(imageEventRaw) as ImageEvent;
+        actualId = imageEvent.arguments[0].Id;
+        return true;
+      }
     }
   });
 
