@@ -4,14 +4,14 @@
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.1.1"/>
-    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0"/>
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.0.0-beta.3"/>
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.SignalRService" Version="1.4.1"/>
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="5.0.0-beta.4"/>
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.12"/>
-    <PackageReference Include="DotNetEnv" Version="2.1.1"/>
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0"/>
+    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.1.1" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.0.0-beta.6" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.SignalRService" Version="1.6.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="5.0.0-beta.4" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.12" />
+    <PackageReference Include="DotNetEnv" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
@@ -23,8 +23,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Libs\Lib\Lib.csproj"/>
-    <ProjectReference Include="..\..\Libs\Lib.Model\Lib.Model.csproj"/>
-    <ProjectReference Include="..\..\Libs\Lib.Configuration\Lib.Configuration.csproj"/>
+    <ProjectReference Include="..\..\Libs\Lib\Lib.csproj" />
+    <ProjectReference Include="..\..\Libs\Lib.Model\Lib.Model.csproj" />
+    <ProjectReference Include="..\..\Libs\Lib.Configuration\Lib.Configuration.csproj" />
   </ItemGroup>
 </Project>

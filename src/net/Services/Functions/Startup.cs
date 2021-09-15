@@ -28,7 +28,7 @@ namespace Memealyzer
         {
             if (Config.UseAzuriteQueue)
             {
-                // Bumping up the MaxPollingInterval so we don't trottle our proxy server
+                // Bumping up the MaxPollingInterval so we don't get throttled by our proxy server
                 builder.Services.PostConfigure<QueuesOptions>(options => options.MaxPollingInterval = Config.StorageQueueMaxPollingInterval);
             }
         }
@@ -46,17 +46,12 @@ namespace Memealyzer
                 { "AzureWebJobs.ServiceBusFunctionRun.Disabled", storageQueueEnabled.ToString()}
             };
 
+            // These settings only need to be set locally as in prod they are set as app setting values of the host.
             if (Config.IsDevelopment)
             {
                 using var listener = AzureEventSourceListener.CreateConsoleLogger();
 
-                // If running locally, get the Azure SignalR ConnectionString from KV because Azure Functions doesn't support the @Microsoft.KeyVault reference locally.
-                // For Azure hosted (not local) the host will automatically read it from appSettings
-
-                var secretClient = new SecretClient(Config.KeyVaultEndpoint, Identity.GetCredentialChain());
-                var signalRConnectionString = secretClient.GetSecret(Config.SignalRConnectionStringSecretName);
-                settings.Add("AzureSignalRConnectionString", signalRConnectionString.Value.Value);
-
+                settings.Add("AzureSignalRConnectionString:serviceUri", Config.SignalREndpoint.ToString());
                 settings.Add("ServiceBusConnection:fullyQualifiedNamespace", Config.ServiceBusNamespace);
 
                 if (Config.UseAzuriteQueue)
