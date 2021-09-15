@@ -1,6 +1,3 @@
-.terraform
-terraform.tfstate.backup
-.terraform.tfstate.lock.info
 crash.log
 *.tfstate
 *.swp
