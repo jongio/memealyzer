@@ -24,8 +24,6 @@ Memealyzer is an app built to demonstrate some the latest and greatest Azure tec
 - [Azure Functions](https://azure.microsoft.com/services/functions/) - to connect message queues with SignalR
 - [Azure SignalR Service](https://azure.microsoft.com/services/signalr-service/) - to send messages to the web app
 
-> Since 12/5/2020, this project will use Bicep and Project Tye instead of Terraform and Docker Compose, so we will **not** keep those files up to date. They will be kept in the project for historical purposes only. More info can be found on the ["Legacy Tools"](docs/LegacyTools.md) page.  You can find the Terraform files in the [terraform branch](https://github.com/jongio/memealyzer/tree/terraform).
-
 ## Architecture
 
 !["Architecture"](assets/arch.png)
