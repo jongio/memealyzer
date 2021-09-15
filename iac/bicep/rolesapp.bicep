@@ -35,6 +35,10 @@ var roles = [
     name: 'app_config-${principalId}'
     id: '5ae67dd6-50cb-40e7-96ff-dc2bfa4b606b'
   }
+  {
+    name: 'signalr_owner-${principalId}'
+    id: '7e4f1700-ea5a-4f59-8f37-079cfe29dce3'
+  }
 ]
 
 module appRoleAssignments './roles.bicep' = {
