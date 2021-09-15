@@ -2,6 +2,8 @@
 
 This page is for historical purposes only.  It will not be kept up to date, because this project has fully moved to Bicep and Project Tye instead of Docker Compose and Terraform.
 
+You can find the Terraform files in the [terraform branch](https://github.com/jongio/memealyzer/tree/terraform).
+
 ## Terraform to Provision Azure Resources
 
 [Terraform](https://terraform.io) is a system that abstracts Azure resource creation and uses the Azure SDK for Go to generate the resources instead of ARM templates.
