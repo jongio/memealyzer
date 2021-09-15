@@ -96,13 +96,6 @@ resource key_vault 'Microsoft.KeyVault/vaults@2019-09-01' = {
       value: cosmos_account.listKeys().primaryMasterKey
     }
   }
-
-  resource signalr_connection_string_secret 'secrets' = {
-    name: 'SignalRConnectionString'
-    properties: {
-      value: signalr.listKeys().primaryConnectionString
-    }
-  }
 }
 
 resource cosmos_account 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
@@ -273,10 +266,9 @@ resource function 'Microsoft.Web/sites@2020-06-01' = {
     name: 'appsettings'
     properties: {
       'AzureWebJobsStorage__accountName': storage.name
-      'AzureSignalRConnectionString': '@Microsoft.KeyVault(VaultName=${key_vault.name};SecretName=${key_vault::signalr_connection_string_secret.name})'
       'ServiceBusConnection__fullyQualifiedNamespace': '${service_bus.name}.servicebus.windows.net'
       'StorageConnection__queueServiceUri': storage.properties.primaryEndpoints.queue
-      'SignalRConnection__serviceUri': 'https://${signalr.properties.hostName}'
+      'AzureSignalRConnectionString__serviceUri': 'https://${signalr.properties.hostName}'
       'APPINSIGHTS_INSTRUMENTATIONKEY': logging.properties.InstrumentationKey
       'FUNCTIONS_WORKER_RUNTIME': 'dotnet'
       'FUNCTIONS_EXTENSION_VERSION': '~3'
