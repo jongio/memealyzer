@@ -51,7 +51,7 @@ namespace Memealyzer
             {
                 using var listener = AzureEventSourceListener.CreateConsoleLogger();
 
-                settings.Add("AzureSignalRConnectionString:serviceUri", Config.SignalREndpoint.ToString());
+                settings.Add("SignalRConnection:serviceUri", Config.SignalREndpoint.ToString());
                 settings.Add("ServiceBusConnection:fullyQualifiedNamespace", Config.ServiceBusNamespace);
 
                 if (Config.UseAzuriteQueue)

@@ -268,7 +268,7 @@ resource function 'Microsoft.Web/sites@2020-06-01' = {
       'AzureWebJobsStorage__accountName': storage.name
       'ServiceBusConnection__fullyQualifiedNamespace': '${service_bus.name}.servicebus.windows.net'
       'StorageConnection__queueServiceUri': storage.properties.primaryEndpoints.queue
-      'AzureSignalRConnectionString__serviceUri': 'https://${signalr.properties.hostName}'
+      'SignalRConnection__serviceUri': 'https://${signalr.properties.hostName}'
       'APPINSIGHTS_INSTRUMENTATIONKEY': logging.properties.InstrumentationKey
       'FUNCTIONS_WORKER_RUNTIME': 'dotnet'
       'FUNCTIONS_EXTENSION_VERSION': '~3'

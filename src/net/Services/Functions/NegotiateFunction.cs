@@ -11,7 +11,7 @@ namespace Memealyzer.Functions
         [FunctionName(nameof(Negotiate))]
         public static SignalRConnectionInfo Negotiate(
                     [HttpTrigger(AuthorizationLevel.Anonymous)] HttpRequest req,
-                    [SignalRConnectionInfo(HubName = "%MessagingType%")] SignalRConnectionInfo connectionInfo, ILogger log)
+                    [SignalRConnectionInfo(HubName = "%MessagingType%", ConnectionStringSetting = "SignalRConnection")] SignalRConnectionInfo connectionInfo, ILogger log)
         {
             log.LogInformation(connectionInfo.ToString());   
             return connectionInfo;
