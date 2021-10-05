@@ -1,13 +1,13 @@
 on:
   workflow_dispatch:
     branches:
-      - staging
+      - cdk
   push:
     branches:
       - cdk
   pull_request:
     branches:
-      - staging
+      - cdk
 env:
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
   BASENAME: memecdk1
