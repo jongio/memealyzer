@@ -1,5 +1,5 @@
 name: memealyzer
-registry: ${AZURE_CONTAINER_REGISTRY_SERVER}
+registry: memecdk1acr.azurecr.io
 services:
   - name: azurite
     image: mcr.microsoft.com/azure-storage/azurite
@@ -30,12 +30,12 @@ services:
         containerPort: 4040
         protocol: http
     volumes:
-      - source: ${ROOT}/config/ngrok
+      - source: config/ngrok
         target: /home/config/ngrok
     tags:
       - ${TUNNEL_ENABLED}
   - name: memealyzernetwebapp
-    project: ${ROOT}/src/net/WebApp/WebApp.csproj
+    project: src/net/WebApp/WebApp.csproj
     bindings:
       - port: 1080
         containerPort: 80
@@ -43,35 +43,41 @@ services:
       - local
       - cloud
   - name: memealyzernetapi
-    project: ${ROOT}/src/net/Api/Api.csproj
+    project: src/net/Api/Api.csproj
     bindings:
       - port: 2080
         containerPort: 80
-    env_file: 
-      - ${DOTENV_FILENAME}
+    env_file:
+      - .env
     tags:
       - local
       - cloud
   - name: memealyzernetfunction
-    azureFunction: ${ROOT}/src/net/Services/Functions/
+    azureFunction: src/net/Services/Functions/
     bindings:
       - port: 3080
         protocol: http
     tags:
       - local
   - name: memealyzernetqueueservice
-    project: ${ROOT}/src/net/Services/QueueService/QueueService.csproj
-    env_file: 
-    - ${DOTENV_FILENAME}
+    project: src/net/Services/QueueService/QueueService.csproj
+    env_file:
+      - .env
     tags:
       - local
       - cloud
 
 ingress:
   - name: ingresslocal
+    bindings:
+      - port: 5000
+        protocol: http
     rules:
       - path: /
         service: memealyzernetwebapp
+      - path: /endpoints
+        service: memealyzernetapi
+        preservePath: true
       - path: /images
         service: memealyzernetapi
         preservePath: true
@@ -93,6 +99,9 @@ ingress:
     rules:
       - path: /
         service: memealyzernetwebapp
+      - path: /endpoints
+        service: memealyzernetapi
+        preservePath: true
       - path: /images
         service: memealyzernetapi
         preservePath: true

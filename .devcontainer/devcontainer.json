@@ -39,9 +39,12 @@
 		"--security-opt",
 		"seccomp=unconfined",
 		"--privileged",
-		"--net", "host", 
-        "-e", "DISPLAY=host.docker.internal:0",
-        "-v", "/tmp/.X11-unix:/tmp/.X11-unix"
+		"--net",
+		"host",
+		"-e",
+		"DISPLAY=host.docker.internal:0",
+		"-v",
+		"/tmp/.X11-unix:/tmp/.X11-unix"
 	],
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
@@ -50,11 +53,17 @@
 		"ms-azuretools.vscode-bicep",
 		"ms-playwright.playwright",
 		"ms-dotnettools.csharp",
-		"esbenp.prettier-vscode"
+		"esbenp.prettier-vscode",
+		"ms-azuretools.vscode-tye"
 	],
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// 1080, 2080, 3080 - app ports, 8400 - az cli auth response port
-	"forwardPorts": [1080, 2080, 3080, 8400],
+	"forwardPorts": [
+		1080,
+		2080,
+		3080,
+		8400
+	],
 	// "oryx build" will automatically install your dependencies and attempt to build your project
 	"postCreateCommand": "sudo chown -R codespace ~/workspace/src",
 	"postStartCommand": "sudo chown -R codespace ~/workspace/src"

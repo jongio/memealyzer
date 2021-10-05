@@ -17,19 +17,8 @@ namespace WebApp
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
-            var apiEndpoint = string.IsNullOrEmpty(builder.Configuration["API_ENDPOINT"]) ?
-                builder.HostEnvironment.BaseAddress :
-                builder.Configuration["API_ENDPOINT"];
-
-
-            var functionsEndpoint = string.IsNullOrEmpty(builder.Configuration["FUNCTIONS_ENDPOINT"]) ?
-                apiEndpoint :
-                builder.Configuration["FUNCTIONS_ENDPOINT"];
-
-            builder.Services.AddHttpClient<ApiServiceClient>(client => client.BaseAddress = new Uri(apiEndpoint));
-
-            builder.Services.AddHttpClient<FunctionsServiceClient>(client => client.BaseAddress = new Uri(functionsEndpoint));
-
+            builder.Services.AddHttpClient<ApiServiceClient>(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+            builder.Services.AddHttpClient<FunctionsServiceClient>(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
             await builder.Build().RunAsync();
         }
     }

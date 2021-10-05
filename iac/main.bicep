@@ -11,8 +11,7 @@ param location string = 'westus2'
 @description('Failover location for Cosmos DB')
 param failoverLocation string = 'eastus2'
 
-@minLength(1)
-param principalId string
+param principalId string = ''
 
 resource rg 'Microsoft.Resources/resourceGroups@2020-06-01' = {
   name: '${basename}rg'

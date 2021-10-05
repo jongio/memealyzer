@@ -1,7 +1,7 @@
 param basename string
 param location string = 'westus2'
 param failoverLocation string = 'eastus2'
-param principalId string
+param principalId string= ''
 
 var secrets = [
   'get'
@@ -273,7 +273,7 @@ resource function 'Microsoft.Web/sites@2020-06-01' = {
       'FUNCTIONS_WORKER_RUNTIME': 'dotnet'
       'FUNCTIONS_EXTENSION_VERSION': '~3'
       'WEBSITES_ENABLE_APP_SERVICE_STORAGE': 'false'
-      'WEBSITE_RUN_FROM_PACKAGE': ''
+      'WEBSITE_RUN_FROM_PACKAGE': '1'
       'BASENAME': basename
     }
   }

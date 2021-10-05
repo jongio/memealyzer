@@ -4,91 +4,29 @@ on:
       - staging
   push:
     branches:
-      - staging
+      - cdk
   pull_request:
     branches:
       - staging
 env:
-  REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD_STAGING }}
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-  DOTENV_FILENAME: .env
-  ENV: cloud
-  BASENAME: memealyzerstaging
-  ROOT: ${{ github.workspace }}
-  AZURE_CONTAINER_REGISTRY_SERVER: memealyzerstagingacr.azurecr.io
-  FUNCTIONS_ENDPOINT: https://memealyzerstagingfunction.azurewebsites.net
-  REGISTRY_USERNAME: memealyzerstagingacr
-  AZURE_AKS_CLUSTER_NAME: memealyzerstagingaks
-  AZURE_RESOURCE_GROUP: memealyzerstagingrg
-  AZURE_FUNCTIONAPP_NAME: memealyzerstagingfunction
-  DOTNET_VERSION: '5.0.100'
+  BASENAME: memecdk1
+  LOCATION: westus2
+  FAILOVER_LOCATION: eastus2
+  AZURE_FUNCTION_APPS: ${{ env.BASENAME }}function|src/net/Services/Functions
   CONTAINER_TAG: 1.0.${{ github.run_number }}
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './src/net/Services/Functions'    # set this to the path to your web app project, defaults to the repository root
+  IMAGE_ENDPOINT: https://meme-api.herokuapp.com/gimme/wholesomememes
+  TYE_DEPLOY_ARGS: -v debug --tags cloud
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:   
 
-    - name: 'Checkout'
+    - name: Checkout
       uses: actions/checkout@v2 
-
-    - name: 'Setup DotNet ${{ env.DOTNET_VERSION }} Environment'
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-
-    - name: 'Setup DotNet 3.1.300 Environment'
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '3.1.300'
-
-      # Issue: We need 3.1.300 b/c tye is compiled against it. Will be resolved soon.
-      # https://github.com/dotnet/tye/issues/733
-      
-    - name: 'Install Tye tools'
-      run: |
-        dotnet tool install -g Microsoft.Tye --version "0.7.0-*" --add-source https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet5/nuget/v3/index.json
     
-    - name: 'Login to ACR'
-      uses: Azure/docker-login@v1
-      with:
-        login-server: ${{ env.AZURE_CONTAINER_REGISTRY_SERVER }}
-        username: ${{ env.REGISTRY_USERNAME }}
-        password: ${{ env.REGISTRY_PASSWORD }}
-           
-    - name: 'Set AKS Cluster'
-      uses: Azure/aks-set-context@v1
-      with:
-        creds: '${{ env.AZURE_CREDENTIALS }}'
-        cluster-name: ${{ env.AZURE_AKS_CLUSTER_NAME }}
-        resource-group: ${{ env.AZURE_RESOURCE_GROUP }} 
-
-    - name: 'tye deploy'
-      run: |
-        pushd $GITHUB_WORKSPACE/pac/net/tye
-        sh genfiles.sh
-        sh $GITHUB_WORKSPACE/scripts/genappsettings.sh
-        #kubectl apply -f https://aka.ms/tye/ingress/deploy
-        tye deploy tye.yaml -v Debug --tags cloud
-        popd
-
-    - name: 'Login via Azure CLI'
-      uses: azure/login@v1
-      with:
-        creds: ${{ env.AZURE_CREDENTIALS }}
-
-    - name: 'Resolve Project Dependencies Using Dotnet'
-      shell: bash
-      run: |
-        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-        dotnet build --configuration Release --output ./output
-        popd
-
-    - name: 'Run Azure Functions Action'
-      uses: Azure/functions-action@v1
-      id: fa
-      with:
-        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-        package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+    - name: Azure CDK Deploy
+      id:   azure-cdk-deploy
+      uses: jongio/azure-cdk-action@v1
 

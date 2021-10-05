@@ -1,5 +1,5 @@
 name: memealyzer
-registry: meme721acr.azurecr.io
+registry: ${AZURE_CONTAINER_REGISTRY_SERVER}
 services:
   - name: azurite
     image: mcr.microsoft.com/azure-storage/azurite
@@ -23,19 +23,19 @@ services:
       - local
   - name: ngrok
     image: wernight/ngrok
-    args: ngrok start -config /home/config/ngrok/azurite.yml --all 
+    args: ngrok start -config /home/config/ngrok/azurite.yml --all ${NGROK_AUTHTOKEN}
     bindings:
       - name: tunnels
         port: 4040
         containerPort: 4040
         protocol: http
     volumes:
-      - source: ../config/ngrok
+      - source: config/ngrok
         target: /home/config/ngrok
     tags:
-      - 
+      - ${TUNNEL_ENABLED}
   - name: memealyzernetwebapp
-    project: ../src/net/WebApp/WebApp.csproj
+    project: src/net/WebApp/WebApp.csproj
     bindings:
       - port: 1080
         containerPort: 80
@@ -43,35 +43,41 @@ services:
       - local
       - cloud
   - name: memealyzernetapi
-    project: ../src/net/Api/Api.csproj
+    project: src/net/Api/Api.csproj
     bindings:
       - port: 2080
         containerPort: 80
-    env_file: 
+    env_file:
       - .env
     tags:
       - local
       - cloud
   - name: memealyzernetfunction
-    azureFunction: ../src/net/Services/Functions/
+    azureFunction: src/net/Services/Functions/
     bindings:
       - port: 3080
         protocol: http
     tags:
       - local
   - name: memealyzernetqueueservice
-    project: ../src/net/Services/QueueService/QueueService.csproj
-    env_file: 
-    - .env
+    project: src/net/Services/QueueService/QueueService.csproj
+    env_file:
+      - .env
     tags:
       - local
       - cloud
 
 ingress:
   - name: ingresslocal
+    bindings:
+      - port: 5000
+        protocol: http
     rules:
       - path: /
         service: memealyzernetwebapp
+      - path: /endpoints
+        service: memealyzernetapi
+        preservePath: true
       - path: /images
         service: memealyzernetapi
         preservePath: true
@@ -93,6 +99,9 @@ ingress:
     rules:
       - path: /
         service: memealyzernetwebapp
+      - path: /endpoints
+        service: memealyzernetapi
+        preservePath: true
       - path: /images
         service: memealyzernetapi
         preservePath: true

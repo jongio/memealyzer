@@ -102,6 +102,7 @@ else
         borderStyle = await ApiServiceClient.GetBorderStyle();
         images = await ApiServiceClient.GetImages();
 
+        await FunctionsServiceClient.InitializeAsync();
         hubConnection = FunctionsServiceClient.GetHubConnection();
 
         hubConnection.On<Image>("ReceiveImage", (image) =>

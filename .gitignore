@@ -11,10 +11,11 @@ debug.log
 .bin
 .tye
 **node_modules**
-
-pac/net/tye/.env*
+.env
+.env.bkp
 __*storage__
 __azurite*
+main.parameters.json
 
 # Visual Studio Code
 **/.vscode/settings.json

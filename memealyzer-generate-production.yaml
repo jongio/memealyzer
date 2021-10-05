@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: memealyzernetwebapp
-        image: memedev2acr.azurecr.io/memealyzernetwebapp:1.0.11
+        image: meme721acr.azurecr.io/memealyzernetwebapp:1.0.13
         imagePullPolicy: Always
         env:
         - name: DOTNET_LOGGING__CONSOLE__DISABLECOLORS
@@ -81,37 +81,45 @@ spec:
     spec:
       containers:
       - name: memealyzernetapi
-        image: memedev2acr.azurecr.io/memealyzernetapi:1.0.11
+        image: meme721acr.azurecr.io/memealyzernetapi:1.0.13
         imagePullPolicy: Always
         env:
         - name: BASENAME
-          value: 'memedev2'
-        - name: REGION
+          value: 'meme721'
+        - name: LOCATION
           value: 'westus2'
-        - name: FAILOVER_REGION
+        - name: FAILOVER_LOCATION
           value: 'eastus2'
-        - name: AZURE_SUBSCRIPTION_ID
-          value: '25fd0362-aa79-488b-b37b-d6e892009fdf'
-        - name: TF_VAR_basename
-          value: 'memedev2'
-        - name: TF_VAR_location
-          value: 'westus2'
-        - name: TF_VAR_failover_location
-          value: 'eastus2'
-        - name: AZURE_FUNCTION_APP_NAME
-          value: 'memedev2function'
+        - name: DOTENV_FILENAME
+          value: '.env'
+        - name: FUNCTION_APPS
+          value: 'meme721function|src/net/Services/Functions'
+        - name: PROVISION_FILE
+          value: 'iac/main.bicep'
+        - name: PROVISION_TEMPLATE_FILE
+          value: '@iac/main.parameters.json'
+        - name: TYE_FILE
+          value: 'tye.yaml'
+        - name: TYE_RUN_ARGS
+          value: '--watch --logs console -v debug --tags local'
+        - name: TYE_DEPLOY_ARGS
+          value: '-v debug --tags cloud'
+        - name: TYE_UNDEPLOY_ARGS
+          value: '-v debug --tags cloud'
+        - name: TYE_DEBUG_ARGS
+          value: '--watch --logs console -v debug --tags local --debug memealyzernetqueueservice'
+        - name: TYE_GENERATE_ARGS
+          value: '-v debug --tags cloud'
+        - name: AZURE_CLI_DEBUG
+          value: 'false'
         - name: AZURE_CONTAINER_REGISTRY_SERVER
-          value: 'memedev2acr.azurecr.io'
-        - name: K8S_CONTEXT
-          value: 'memedev2aks'
+          value: 'meme721acr.azurecr.io'
+        - name: ENVSUBS
+          value: 'tye.template.yaml|tye.yaml,src/net/WebApp/wwwroot/appsettings.template.json|src/net/WebApp/wwwroot/appsettings.json,iac/main.parameters.template.json|iac/main.parameters.json'
         - name: CONTAINER_TAG
-          value: '1.0.11'
+          value: '1.0.13'
         - name: IMAGE_ENDPOINT
           value: 'https://meme-api.herokuapp.com/gimme/wholesomememes'
-        - name: AZURE_STORAGE_TYPE
-          value: 'STORAGE_TABLE'
-        - name: AZURE_MESSAGING_TYPE
-          value: 'STORAGE_QUEUE'
         - name: DOTNET_LOGGING__CONSOLE__DISABLECOLORS
           value: 'true'
         - name: ASPNETCORE_URLS
@@ -172,37 +180,45 @@ spec:
     spec:
       containers:
       - name: memealyzernetqueueservice
-        image: memedev2acr.azurecr.io/memealyzernetqueueservice:1.0.11
+        image: meme721acr.azurecr.io/memealyzernetqueueservice:1.0.13
         imagePullPolicy: Always
         env:
         - name: BASENAME
-          value: 'memedev2'
-        - name: REGION
+          value: 'meme721'
+        - name: LOCATION
           value: 'westus2'
-        - name: FAILOVER_REGION
+        - name: FAILOVER_LOCATION
           value: 'eastus2'
-        - name: AZURE_SUBSCRIPTION_ID
-          value: '25fd0362-aa79-488b-b37b-d6e892009fdf'
-        - name: TF_VAR_basename
-          value: 'memedev2'
-        - name: TF_VAR_location
-          value: 'westus2'
-        - name: TF_VAR_failover_location
-          value: 'eastus2'
-        - name: AZURE_FUNCTION_APP_NAME
-          value: 'memedev2function'
+        - name: DOTENV_FILENAME
+          value: '.env'
+        - name: FUNCTION_APPS
+          value: 'meme721function|src/net/Services/Functions'
+        - name: PROVISION_FILE
+          value: 'iac/main.bicep'
+        - name: PROVISION_TEMPLATE_FILE
+          value: '@iac/main.parameters.json'
+        - name: TYE_FILE
+          value: 'tye.yaml'
+        - name: TYE_RUN_ARGS
+          value: '--watch --logs console -v debug --tags local'
+        - name: TYE_DEPLOY_ARGS
+          value: '-v debug --tags cloud'
+        - name: TYE_UNDEPLOY_ARGS
+          value: '-v debug --tags cloud'
+        - name: TYE_DEBUG_ARGS
+          value: '--watch --logs console -v debug --tags local --debug memealyzernetqueueservice'
+        - name: TYE_GENERATE_ARGS
+          value: '-v debug --tags cloud'
+        - name: AZURE_CLI_DEBUG
+          value: 'false'
         - name: AZURE_CONTAINER_REGISTRY_SERVER
-          value: 'memedev2acr.azurecr.io'
-        - name: K8S_CONTEXT
-          value: 'memedev2aks'
+          value: 'meme721acr.azurecr.io'
+        - name: ENVSUBS
+          value: 'tye.template.yaml|tye.yaml,src/net/WebApp/wwwroot/appsettings.template.json|src/net/WebApp/wwwroot/appsettings.json,iac/main.parameters.template.json|iac/main.parameters.json'
         - name: CONTAINER_TAG
-          value: '1.0.11'
+          value: '1.0.13'
         - name: IMAGE_ENDPOINT
           value: 'https://meme-api.herokuapp.com/gimme/wholesomememes'
-        - name: AZURE_STORAGE_TYPE
-          value: 'STORAGE_TABLE'
-        - name: AZURE_MESSAGING_TYPE
-          value: 'STORAGE_QUEUE'
         - name: DOTNET_LOGGING__CONSOLE__DISABLECOLORS
           value: 'true'
         - name: SERVICE__MEMEALYZERNETWEBAPP__PROTOCOL

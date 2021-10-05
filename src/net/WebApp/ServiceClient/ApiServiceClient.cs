@@ -12,6 +12,11 @@ public class ApiServiceClient : ServiceClient
     {
     }
 
+    public async Task<Dictionary<string,Endpoint>> GetEndpoints()
+    {
+        return await base.httpClient.GetFromJsonAsync<Dictionary<string, Endpoint>>("/endpoints");
+    }
+
     public async Task<List<Image>> GetImages()
     {
         return await base.httpClient.GetFromJsonAsync<List<Image>>("/images");

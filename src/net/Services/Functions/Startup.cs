@@ -47,7 +47,7 @@ namespace Memealyzer
             };
 
             // These settings only need to be set locally as in prod they are set as app setting values of the host.
-            if (Config.IsDevelopment)
+            if (Config.IsFunctionsDevelopment)
             {
                 using var listener = AzureEventSourceListener.CreateConsoleLogger();
 

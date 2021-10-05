@@ -100,6 +100,7 @@ namespace Lib.Configuration
         public static Uri TextAnalyticsEndpoint { get { return new Uri(Env.GetString("AZURE_TEXT_ANALYTICS_ENDPOINT", $"https://{BaseName}ta.cognitiveservices.azure.com/")); } }
         public static Uri AppConfigEndpoint { get { return new Uri(Env.GetString("AZURE_APP_CONFIG_ENDPOINT", $"https://{BaseName}appconfig.azconfig.io")); } }
         public static Uri SignalREndpoint { get { return new Uri(Env.GetString("AZURE_SIGNALR_ENDPOINT", $"https://{BaseName}signalr.service.signalr.net")); } }
+        public static Uri FunctionsEndpoint { get { return new Uri(Env.GetString("AZURE_FUNCTIONS_ENDPOINT", $"https://{BaseName}function.azurewebsites.net")); } }
         public static string ServiceBusNamespace { get { return Env.GetString("AZURE_SERVICE_BUS_NAMESPACE", $"{BaseName}sb.servicebus.windows.net"); } }
         public static string StorageBlobContainerName { get { return Env.GetString("AZURE_STORAGE_BLOB_CONTAINER_NAME", "blobs"); } }
         public static string MessagesQueueName { get { return Env.GetString("AZURE_MESSAGES_QUEUE_NAME", "messages"); } }
@@ -110,6 +111,7 @@ namespace Lib.Configuration
         public static string MessagingType { get { return Env.GetString("AZURE_MESSAGING_TYPE", "SERVICE_BUS_QUEUE"); } }
         public static string ClientSyncQueueName { get { return Env.GetString("AZURE_CLIENT_SYNC_QUEUE_NAME", "sync"); } }
         public static string ImageEndpoint { get { return Env.GetString("IMAGE_ENDPOINT", "https://meme-api.herokuapp.com/gimme/wholesomememes"); } }
-        public static bool IsDevelopment { get { return string.IsNullOrEmpty(Env.GetString("WEBSITE_INSTANCE_ID")); } }
+        public static bool IsFunctionsDevelopment { get { return string.IsNullOrEmpty(Env.GetString("WEBSITE_INSTANCE_ID")); } }
+        public static bool IsContainerDevelopment { get { return !string.IsNullOrEmpty(Env.GetString("APP_INSTANCE")); } }
     }
 }

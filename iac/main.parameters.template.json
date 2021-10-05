@@ -1,0 +1,18 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "basename": {
+        "value": "${BASENAME}"
+      },
+      "location": {
+        "value": "${LOCATION}"
+      },
+      "failoverlocation": {
+        "value": "${FAILOVER_LOCATION}"
+      },
+      "principalId": {
+        "value": "${CLI_PRINCIPAL_ID}"
+      }
+    }
+  }
