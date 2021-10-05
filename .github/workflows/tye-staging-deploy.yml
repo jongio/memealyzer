@@ -26,6 +26,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2 
     
+    - name: 'Setup DotNet 3.1.300 Environment'
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.300'
+
     - name: Azure CDK Deploy
       id:   azure-cdk-deploy
       uses: jongio/azure-cdk-action@v1
