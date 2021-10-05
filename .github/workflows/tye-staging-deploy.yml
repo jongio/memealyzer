@@ -28,5 +28,5 @@ jobs:
     
     - name: Azure CDK Deploy
       id:   azure-cdk-deploy
-      uses: jongio/azure-cdk-action
+      uses: jongio/azure-cdk-action@v1
 
