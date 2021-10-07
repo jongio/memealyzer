@@ -29,4 +29,3 @@ find $ROOT -type f \( -name '*.dll' -o -name '*.CopyComplete' \) | xargs sudo ch
 # local install az cdk
 az extension remove -n azure-cdk &  az extension add --source ~/azure-cdk-cli-extension/dist/azure_cdk-0.0.1-py2.py3-none-any.whl -y
 
-"source=d:/OneDriveMS/code/GitHub/jongio/azure-cdk-cli-extension,target=/home/codespace/azure-cdk-cli-extension,type=bind,consistency=cached"

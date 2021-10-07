@@ -16,6 +16,7 @@ debug.log
 __*storage__
 __azurite*
 main.parameters.json
+.cdk
 
 # Visual Studio Code
 **/.vscode/settings.json

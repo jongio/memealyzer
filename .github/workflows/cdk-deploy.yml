@@ -16,7 +16,7 @@ env:
   AZURE_FUNCTION_APPS: memecdk1function|src/net/Services/Functions
   CONTAINER_TAG: 1.0.${{ github.run_number }}
   IMAGE_ENDPOINT: https://meme-api.herokuapp.com/gimme/wholesomememes
-  TYE_DEPLOY_ARGS: -v debug --tags cloud
+  DEPLOY_ARGS: -v debug --tags cloud
 
 jobs:
   build:
