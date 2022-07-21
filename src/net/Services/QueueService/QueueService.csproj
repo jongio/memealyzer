@@ -8,7 +8,7 @@
     <PackageReference Include="Azure.AI.FormRecognizer" Version="3.1.1"/>
     <PackageReference Include="Azure.AI.TextAnalytics" Version="5.0.0"/>
     <PackageReference Include="Azure.Identity" Version="1.4.0"/>
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.9.0"/>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.13.0"/>
     <PackageReference Include="Azure.Storage.Queues" Version="12.7.0"/>
     <PackageReference Include="DotNetEnv" Version="2.1.1"/>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0"/>
