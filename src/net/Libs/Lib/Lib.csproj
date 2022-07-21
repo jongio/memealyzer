@@ -10,7 +10,7 @@
     <PackageReference Include="System.Linq.Async" Version="5.0.0"/>
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0"/>
     <PackageReference Include="Azure.Identity" Version="1.4.0"/>
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.9.0"/>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.13.0"/>
     <PackageReference Include="Azure.Storage.Queues" Version="12.7.0"/>
     <PackageReference Include="Azure.Cosmos" Version="4.0.0-preview3"/>
     <PackageReference Include="Azure.Data.Tables" Version="12.1.0-alpha.20210623.1"/>
